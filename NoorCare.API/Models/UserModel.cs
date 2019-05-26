@@ -17,12 +17,16 @@ namespace AngularJSAuthentication.API.Models
         public string Email { get; set; }
 
         [Required]
-        [Display(Name = "Mobile No")]
-        public string MobileNo { get; set; }
-
-        [Required]
         [Display(Name = "Phone number")]
         public string PhoneNo { get; set; }
+
+        [Required]
+        [Display(Name = "Job Type")]
+        public string jobType { get; set; }
+
+        [Required]
+        [Display(Name = "Account Type")]
+        public string AccountType { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
