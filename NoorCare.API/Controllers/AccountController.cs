@@ -1,5 +1,6 @@
 ﻿using AngularJSAuthentication.API.Models;
 using AngularJSAuthentication.API.Results;
+using AngularJSAuthentication.API.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -23,6 +24,8 @@ namespace AngularJSAuthentication.API.Controllers
     {
         private AuthRepository _repo = null;
 
+        private EmailSender _emailSender = null;
+
         private IAuthenticationManager Authentication
         {
             get { return Request.GetOwinContext().Authentication; }
@@ -31,6 +34,7 @@ namespace AngularJSAuthentication.API.Controllers
         public AccountController()
         {
             _repo = new AuthRepository();
+            _emailSender = new EmailSender();
         }
 
         // POST api/Account/Register
@@ -38,21 +42,25 @@ namespace AngularJSAuthentication.API.Controllers
         [Route("Register")]
         public async Task<IHttpActionResult> Register(UserModel userModel)
         {
-             if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-             IdentityResult result = await _repo.RegisterUser(userModel);
+            IdentityResult result = await _repo.RegisterUser(userModel);
 
-             IHttpActionResult errorResult = GetErrorResult(result);
+            IHttpActionResult errorResult = GetErrorResult(result);
 
-             if (errorResult != null)
-             {
-                 return errorResult;
-             }
+            if (errorResult != null)
+            {
+                return errorResult;
+            }
+            else
+            {
+                _emailSender.email_send(userModel.Email, userModel.UserName);
+            }
 
-             return Ok();
+            return Ok();
         }
 
         // GET api/Account/ExternalLogin

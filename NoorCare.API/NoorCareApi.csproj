@@ -125,6 +125,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Services\templat.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -136,8 +137,15 @@
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\RefreshTokensController.cs" />
     <Compile Include="Entities\Client.cs" />
+    <Compile Include="Entities\ClientDetail.cs" />
+    <Compile Include="Entities\ClientDoc.cs" />
     <Compile Include="Entities\Currency.cs" />
+    <Compile Include="Entities\Disease.cs" />
+    <Compile Include="Entities\Doctor.cs" />
+    <Compile Include="Entities\Hospital.cs" />
+    <Compile Include="Entities\IEntity.cs" />
     <Compile Include="Entities\RefreshToken.cs" />
+    <Compile Include="Entities\Student.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Migrations\201407121205456_AddClientsAndRefreshTokenTables.cs" />
     <Compile Include="Migrations\201407121205456_AddClientsAndRefreshTokenTables.Designer.cs">
@@ -152,7 +160,15 @@
     <Compile Include="Providers\GoogleAuthProvider.cs" />
     <Compile Include="Providers\SimpleAuthorizationServerProvider.cs" />
     <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
+    <Compile Include="Repo\comman\IClientDetailRepository.cs" />
+    <Compile Include="Repo\ContextTypes.cs" />
+    <Compile Include="Repo\EFRepositoryBase.cs" />
+    <Compile Include="Repo\IRepository.cs" />
+    <Compile Include="Repo\IStudentRepository.cs" />
+    <Compile Include="Repo\RepositoryFactory.cs" />
+    <Compile Include="Repo\XMLRepositoryBase.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
+    <Compile Include="Services\EmailSender.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -167,7 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Repo\" />
+    <Folder Include="Repo\generic\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201407121205456_AddClientsAndRefreshTokenTables.resx">

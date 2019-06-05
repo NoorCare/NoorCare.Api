@@ -1,8 +1,10 @@
 ﻿using AngularJSAuthentication.API.Entities;
 using AngularJSAuthentication.API.Models;
+using AngularJSAuthentication.API.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
+using RepositoryPattern.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +18,14 @@ namespace AngularJSAuthentication.API
     public class AuthRepository : IDisposable
     {
         private AuthContext _ctx;
-
+        private EmailSender _emailSender;
+        var source = RepositoryFactory.Create<IStudentRepository>(ContextTypes.EntityFramework);
         private UserManager<IdentityUser> _userManager;
 
         public AuthRepository()
         {
             _ctx = new AuthContext();
+            _emailSender = new EmailSender();
             _userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_ctx));
         }
 
@@ -29,11 +33,14 @@ namespace AngularJSAuthentication.API
         {
             IdentityUser user = new IdentityUser
             {
-                UserName = userModel.UserName
+                UserName = userModel.UserName,
+                Email = userModel.Email,
+                PhoneNumber = userModel.PhoneNo,
+                Id= "NCM974-" + _emailSender.Get()
             };
 
             var result = await _userManager.CreateAsync(user, userModel.Password);
-
+           
             return result;
         }
 

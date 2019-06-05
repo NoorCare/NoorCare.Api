@@ -2,7 +2,7 @@ namespace AngularJSAuthentication.API.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class AddClientsAndRefreshTokenTables : DbMigration
     {
         public override void Up()
@@ -10,28 +10,28 @@ namespace AngularJSAuthentication.API.Migrations
             CreateTable(
                 "dbo.Clients",
                 c => new
-                    {
-                        Id = c.String(nullable: false, maxLength: 128),
-                        Secret = c.String(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 100),
-                        ApplicationType = c.Int(nullable: false),
-                        Active = c.Boolean(nullable: false),
-                        RefreshTokenLifeTime = c.Int(nullable: false),
-                        AllowedOrigin = c.String(maxLength: 100),
-                    })
+                {
+                    Id = c.String(nullable: false, maxLength: 128),
+                    Secret = c.String(nullable: false),
+                    Name = c.String(nullable: false, maxLength: 100),
+                    ApplicationType = c.Int(nullable: false),
+                    Active = c.Boolean(nullable: false),
+                    RefreshTokenLifeTime = c.Int(nullable: false),
+                    AllowedOrigin = c.String(maxLength: 100),
+                })
                 .PrimaryKey(t => t.Id);
-            
+
             CreateTable(
                 "dbo.RefreshTokens",
                 c => new
-                    {
-                        Id = c.String(nullable: false, maxLength: 128),
-                        Subject = c.String(nullable: false, maxLength: 50),
-                        ClientId = c.String(nullable: false, maxLength: 50),
-                        IssuedUtc = c.DateTime(nullable: false),
-                        ExpiresUtc = c.DateTime(nullable: false),
-                        ProtectedTicket = c.String(nullable: false),
-                    })
+                {
+                    Id = c.String(nullable: false, maxLength: 128),
+                    Subject = c.String(nullable: false, maxLength: 50),
+                    ClientId = c.String(nullable: false, maxLength: 50),
+                    IssuedUtc = c.DateTime(nullable: false),
+                    ExpiresUtc = c.DateTime(nullable: false),
+                    ProtectedTicket = c.String(nullable: false),
+                })
                 .PrimaryKey(t => t.Id);
 
             CreateTable(
@@ -73,8 +73,6 @@ namespace AngularJSAuthentication.API.Migrations
                     LockoutEnabled = c.Boolean(nullable: false),
                     AccessFailedCount = c.Int(nullable: false),
                     UserName = c.String(nullable: false, maxLength: 256),
-                    AccountType = c.String(nullable: true, maxLength: 50),
-                    jobType = c.String(nullable: true, maxLength: 50),
                 })
                 .PrimaryKey(t => t.Id)
                 .Index(t => t.UserName, unique: true, name: "UserNameIndex");
@@ -103,9 +101,9 @@ namespace AngularJSAuthentication.API.Migrations
                 .PrimaryKey(t => new { t.LoginProvider, t.ProviderKey, t.UserId })
                 .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
-             
+
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
