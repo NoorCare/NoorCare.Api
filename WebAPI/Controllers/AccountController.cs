@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
     public class AccountController : ApiController
     {
 
-        IClientDetailRepository clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
+        IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
         EmailSender _emailSender = new EmailSender();
 
         [Route("api/account/register")]
@@ -24,7 +24,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IdentityResult Register(AccountModel model)
         {
-           
+
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             string clientId = model.Gender == 1 ? "NCM974-" + _emailSender.Get() : "NCF974-" + _emailSender.Get();
@@ -52,7 +52,7 @@ namespace WebAPI.Controllers
                 Jobtype = model.jobType,
                 CreatedDate = DateTime.Now
             };
-            clientDetailRepo.Insert(_clientDetail);
+            _clientDetailRepo.Insert(_clientDetail);
             IHttpActionResult errorResult = GetErrorResult(result);
 
             if (errorResult != null)
@@ -61,7 +61,7 @@ namespace WebAPI.Controllers
             }
             else
             {
-                _emailSender.email_send(model.Email, clientId);
+                _emailSender.email_send(model.Email, "");
             }
             return result;
         }
@@ -112,17 +112,42 @@ namespace WebAPI.Controllers
             return model;
         }
 
-        //[HttpGet]
-        //[Route("api/GetUserClaims")]
-        //public bool GetUserNameEmailIdExit(AccountModel model)
-        //{
-        //    //public virtual Task<TUser> FindByEmailAsync(string email);
-        //    //public virtual Task<TUser> FindByIdAsync(TKey userId);
-        //    //public virtual Task<TUser> FindByNameAsync(string userName);
-        //    var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
-        //    var manager = new UserManager<ApplicationUser>(userStore);
-        //var user = await manager.FindByEmailAsync(model.Email);
-        //   return clientDetailRepo.Find(p => p.EmailId )
-        //}
+        [HttpPost]
+        [Route("api/user/updateProfile")]
+        public IHttpActionResult UpdateProfile(ClientDetail model)
+        {
+            ClientDetail _clientDetail = new ClientDetail
+            {
+                ClientId = model.ClientId,
+                Name = model.Name,
+                Gender = model.Gender,
+                Address = model.Address,
+                City = model.City,
+                State = model.State,
+                Country = model.Country,
+                MobileNo = model.MobileNo,
+                EmailId = model.EmailId,
+                Jobtype = model.Jobtype,
+            };
+            _clientDetailRepo.Update(_clientDetail);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("api/user/changePassword")]
+        public IHttpActionResult ChangePassword(ChangePassword model)
+        {
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var manager = new UserManager<ApplicationUser>(userStore);
+            IdentityResult result = manager.ChangePassword(model.UserName, model.OldPassword, model.NewPassword);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("api/userNameExist")]
+        public bool GetUserNameEmailIdExit(AccountModel model)
+        {
+            return _clientDetailRepo.Find(p => p.EmailId == model.Email).Any();
+        }
     }
 }

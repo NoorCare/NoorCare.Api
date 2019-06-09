@@ -12,15 +12,16 @@ namespace AngularJSAuthentication.API.Services
 {
     public class EmailSender
     {
-        public void email_send(string mailTo = "manishcs0019@gmail.com", string clientName)
+        public void email_send(string mailTo = "manishcs0019@gmail.com", string clientName = "NCM974-070986464400")
         {
+            string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
             mail.From = new MailAddress("noorcare2019@gmail.com");
             mail.To.Add(mailTo);
             mail.IsBodyHtml = true; //to make message body as html  
             mail.Subject = "Registration Successfully ";
-            mail.Body = "Hi"+ clientName + "<br/> <span style='color:green'>Registration Successfully</span> ";
+            mail.Body = html.Replace("[[UserName]]", clientName);
             SmtpServer.Port = 587;
             SmtpServer.EnableSsl = true;
             SmtpServer.UseDefaultCredentials = false;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
+using WebAPI.Entity;
 
 namespace WebAPI.Models
 {
@@ -30,6 +31,8 @@ namespace WebAPI.Models
             //AspNetUserLogins -> UserLogin
             modelBuilder.Entity<IdentityUserLogin>().ToTable("UserLogin");
             modelBuilder.Entity<ClientDetail>().ToTable("ClientDetail");
-    }
+            modelBuilder.Entity<Facility>().ToTable("Facility");
+            modelBuilder.Entity<Disease>().ToTable("DiseaseType");
+        }
     }
 }

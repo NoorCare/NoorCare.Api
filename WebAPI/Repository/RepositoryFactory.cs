@@ -12,6 +12,10 @@
                     {
                         return new ClientDetailRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IFacilityRepository))
+                    {
+                        return new FacilityRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;
