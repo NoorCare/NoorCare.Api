@@ -134,6 +134,15 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
+        [Route("api/user/profile/{ClientId}")]
+        public IHttpActionResult getProfileData(string ClientId)
+        {
+            return Ok(_clientDetailRepo.Find(x =>x.ClientId == ClientId));
+        }
+
+
+
+        [HttpPost]
         [Route("api/user/changePassword")]
         public IHttpActionResult ChangePassword(ChangePassword model)
         {
