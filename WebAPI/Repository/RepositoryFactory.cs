@@ -16,6 +16,10 @@
                     {
                         return new FacilityRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IDiseaseRepository))
+                    {
+                        return new DiseaseRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;

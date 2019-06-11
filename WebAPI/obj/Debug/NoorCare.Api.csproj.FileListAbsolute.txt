@@ -58,7 +58,6 @@ C:\Users\manish.sharma\Desktop\WebAPI\WebAPI\obj\Debug\NoorCare.Api.csproj.CopyC
 C:\Users\manish.sharma\Desktop\WebAPI\WebAPI\obj\Debug\WebAPI.dll
 C:\Users\manish.sharma\Desktop\WebAPI\WebAPI\obj\Debug\WebAPI.pdb
 C:\Users\manish.sharma\Desktop\WebAPI\WebAPI\obj\Debug\NoorCare.Api.csprojAssemblyReference.cache
-C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\NoorCare.Api.csprojAssemblyReference.cache
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\NoorCare.Api.csproj.CoreCompileInputs.cache
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\WebAPI.dll
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\WebAPI.pdb

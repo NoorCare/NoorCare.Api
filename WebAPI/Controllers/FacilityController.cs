@@ -11,26 +11,26 @@ namespace WebAPI.Controllers
 {
     public class FacilityController : ApiController
     {
-        IFacilityRepository _facilityDetailRepo = RepositoryFactory.Create<IFacilityRepository>(
-            ContextTypes.EntityFramework);
+       
 
-        IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(
-            ContextTypes.EntityFramework);
+       
 
         [Route("api/facility")]
         [HttpGet]
         [AllowAnonymous]
-        public IHttpActionResult GetFacility()
+        public List<Facility> GetFacility()
         {
-            return Ok(_facilityDetailRepo.GetAll());
+            IFacilityRepository _facilityDetailRepo = RepositoryFactory.Create<IFacilityRepository>(ContextTypes.EntityFramework);
+            return _facilityDetailRepo.GetAll().ToList();
         }
 
         [Route("api/diseaseType")]
         [HttpGet]
         [AllowAnonymous]
-        public IHttpActionResult GetDisease()
+        public List<Disease> GetDisease()
         {
-            return Ok(_diseaseDetailRepo.GetAll());
+            IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
+            return _diseaseDetailRepo.GetAll().ToList();
         }
 
     }

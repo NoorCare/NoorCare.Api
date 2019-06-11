@@ -37,7 +37,7 @@ namespace NoorCare.Repository
             }
         }
 
-        public ICollection<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+        public List<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace NoorCare.Repository
             }
         }
 
-        public ICollection<TEntity> GetAll()
+        public List<TEntity> GetAll()
         {
             try
             {

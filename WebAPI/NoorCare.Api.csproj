@@ -200,7 +200,7 @@
     <Compile Include="Repository\ContextTypes.cs" />
     <Compile Include="Repository\EFRepositoryBase.cs" />
     <Compile Include="Repository\IRepository.cs" />
-    <Compile Include="Repository\IStudentRepository.cs" />
+    <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\RepositoryFactory.cs" />
     <Compile Include="Services\EmailSender.cs" />
     <Compile Include="Startup.cs" />

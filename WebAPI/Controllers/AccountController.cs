@@ -65,7 +65,7 @@ namespace WebAPI.Controllers
             }
             return result;
         }
-
+    
         private IHttpActionResult GetErrorResult(IdentityResult result)
         {
             if (result == null)
