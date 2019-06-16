@@ -5,9 +5,8 @@ using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using System.Web.Http;
 using WebAPI.Models;
 
@@ -17,12 +16,15 @@ namespace WebAPI.Controllers
     {
 
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
+        IAccountModelRepository _accountRepository = 
+            RepositoryFactory.Create<IAccountModelRepository>(ContextTypes.EntityFramework);
         EmailSender _emailSender = new EmailSender();
+        string tokenCode = "";
 
         [Route("api/account/register")]
         [HttpPost]
         [AllowAnonymous]
-        public IdentityResult Register(AccountModel model)
+        public async Task<IdentityResult> Register(AccountModel model)
         {
 
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
@@ -37,7 +39,7 @@ namespace WebAPI.Controllers
                 RequiredLength = 3
             };
             IdentityResult result = manager.Create(user, model.Password);
-
+            
             ClientDetail _clientDetail = new ClientDetail
             {
                 ClientId = clientId,
@@ -54,14 +56,13 @@ namespace WebAPI.Controllers
             };
             _clientDetailRepo.Insert(_clientDetail);
             IHttpActionResult errorResult = GetErrorResult(result);
-
             if (errorResult != null)
             {
                 return null;
             }
             else
             {
-                _emailSender.email_send(model.Email, "");
+                _emailSender.email_send(tokenCode, model.Email, user.FirstName+ " "+ user.LastName ,user.Id);
             }
             return result;
         }
@@ -133,14 +134,19 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("api/user/profile/{ClientId}")]
         public IHttpActionResult getProfileData(string ClientId)
         {
             return Ok(_clientDetailRepo.Find(x =>x.ClientId == ClientId));
         }
 
-
+        [HttpGet]
+        [Route("api/{Email}")]
+        public IHttpActionResult emailVerification(string Email)
+        {
+            return Ok(_accountRepository.Update(new AccountModel { Email = Email, EmailConfirmed = true }));
+        }
 
         [HttpPost]
         [Route("api/user/changePassword")]

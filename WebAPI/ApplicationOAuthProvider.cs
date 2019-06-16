@@ -24,6 +24,10 @@ namespace WebAPI
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             var user = await manager.FindAsync(context.UserName,context.Password);
+            var isEmailVarified = manager.IsEmailConfirmed(user.Id);
+            if (!isEmailVarified) {
+                return;
+            }
             if (user != null) {
                 var identity = new ClaimsIdentity(context.Options.AuthenticationType);
                 identity.AddClaim(new Claim("Username", user.UserName));

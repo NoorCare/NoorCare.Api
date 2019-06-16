@@ -17,6 +17,10 @@ namespace NoorCare.Repository
     {
     }
 
+    public interface IAccountModelRepository : IRepository<AccountModel, int>
+    {
+    }
+
     public class ClientDetailRepository : EFRepositoryBase<ApplicationDbContext, ClientDetail, int>, IClientDetailRepository
     {
 
@@ -31,4 +35,11 @@ namespace NoorCare.Repository
     {
 
     }
+
+    public class AccountModelRepository : EFRepositoryBase<ApplicationDbContext, AccountModel, int>, IAccountModelRepository
+    {
+
+    }
 }
+
+

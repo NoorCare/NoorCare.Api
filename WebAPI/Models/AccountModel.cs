@@ -21,6 +21,7 @@ namespace WebAPI.Models
         public string State { get; set; }
         public string Country { get; set; }
         public string LoggedOn { get; set; }
+        public bool EmailConfirmed { get; set; }
     }
 
     public class ChangePassword

@@ -117,3 +117,4 @@ C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\System.Web.WebPag
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\System.Web.WebPages.Razor.xml
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\Antlr3.Runtime.pdb
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\NoorCare.Api.csproj.CopyComplete
+C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\NoorCare.Api.csprojAssemblyReference.cache
