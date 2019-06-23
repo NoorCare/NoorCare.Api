@@ -24,6 +24,15 @@ namespace WebAPI.Models
         public bool EmailConfirmed { get; set; }
     }
 
+    public class ViewAccount
+    {
+        public string ClientId { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
+
     public class ChangePassword
     {
         public string UserName { get; set; }

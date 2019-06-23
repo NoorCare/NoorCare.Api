@@ -21,6 +21,7 @@ public partial class ClientDetail : IEntity<int>
     public string EmailId { get; set; }
     public string ModifyBy { get; set; }
     public int Jobtype { get; set; }
+    public bool EmailConfirmed { get; set; }
     public DateTime CreatedDate { get; set; }
 
 }

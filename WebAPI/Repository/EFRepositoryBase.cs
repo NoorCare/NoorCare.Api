@@ -112,7 +112,7 @@ namespace NoorCare.Repository
                 this.m_dbContext.SaveChanges();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }

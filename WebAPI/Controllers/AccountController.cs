@@ -16,30 +16,25 @@ namespace WebAPI.Controllers
     {
 
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
-        IAccountModelRepository _accountRepository = 
-            RepositoryFactory.Create<IAccountModelRepository>(ContextTypes.EntityFramework);
         EmailSender _emailSender = new EmailSender();
         string tokenCode = "";
 
         [Route("api/account/register")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IdentityResult> Register(AccountModel model)
+        public string Register(AccountModel model)
         {
 
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             string clientId = model.Gender == 1 ? "NCM974-" + _emailSender.Get() : "NCF974-" + _emailSender.Get();
-            var user = new ApplicationUser() { UserName = model.UserName, Email = model.Email };
+            var user = new ApplicationUser() {
+                UserName = model.UserName, Email = model.Email
+            };
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.Id = clientId;
-            manager.PasswordValidator = new PasswordValidator
-            {
-                RequiredLength = 3
-            };
             IdentityResult result = manager.Create(user, model.Password);
-            
             ClientDetail _clientDetail = new ClientDetail
             {
                 ClientId = clientId,
@@ -58,13 +53,16 @@ namespace WebAPI.Controllers
             IHttpActionResult errorResult = GetErrorResult(result);
             if (errorResult != null)
             {
-                return null;
+                return "Registration has been Faild";
             }
             else
             {
-                _emailSender.email_send(tokenCode, model.Email, user.FirstName+ " "+ user.LastName ,user.Id);
+                _emailSender.email_send(model.Email, user.FirstName+ " "+ user.LastName ,user.Id);
             }
-            return result;
+            
+            return "Registration has been done, And Account activation link" +
+                        "has been sent your eamil id: " + 
+                            model.Email;
         }
     
         private IHttpActionResult GetErrorResult(IdentityResult result)
@@ -98,17 +96,17 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Route("api/GetUserClaims")]
-        public AccountModel GetUserClaims()
+        public ViewAccount GetUserClaims()
         {
             var identityClaims = (ClaimsIdentity)User.Identity;
             IEnumerable<Claim> claims = identityClaims.Claims;
-            AccountModel model = new AccountModel()
+            ViewAccount model = new ViewAccount()
             {
                 UserName = identityClaims.FindFirst("Username").Value,
                 Email = identityClaims.FindFirst("Email").Value,
                 FirstName = identityClaims.FindFirst("FirstName").Value,
                 LastName = identityClaims.FindFirst("LastName").Value,
-                LoggedOn = identityClaims.FindFirst("LoggedOn").Value
+                ClientId = identityClaims.FindFirst("UserId").Value,
             };
             return model;
         }
@@ -142,10 +140,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("api/{Email}")]
-        public IHttpActionResult emailVerification(string Email)
+        [Route("api/user/emailverfication/{userName}")]
+        [AllowAnonymous]
+        public IHttpActionResult emailVerification(string userName)
         {
-            return Ok(_accountRepository.Update(new AccountModel { Email = Email, EmailConfirmed = true }));
+            ClientDetail clientDetail = _clientDetailRepo.Find(p => p.ClientId == userName).FirstOrDefault();
+            clientDetail.EmailConfirmed = true;
+            return Ok(_clientDetailRepo.Update(clientDetail));
         }
 
         [HttpPost]

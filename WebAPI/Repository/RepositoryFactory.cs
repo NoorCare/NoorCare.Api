@@ -20,10 +20,6 @@
                     {
                         return new DiseaseRepository() as TRepository;
                     }
-                    if (typeof(TRepository) == typeof(IAccountModelRepository))
-                    {
-                        return new AccountModelRepository() as TRepository;
-                    }
                     return null;
                 default:
                     return null;
