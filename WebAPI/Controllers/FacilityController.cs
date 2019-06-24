@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using WebAPI.Entity;
+using WebAPI.Repository;
 
 namespace WebAPI.Controllers
 {
@@ -31,6 +32,33 @@ namespace WebAPI.Controllers
         {
             IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
             return _diseaseDetailRepo.GetAll().ToList();
+        }
+
+        [Route("api/countryCode")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<CountryCode> GetCountryCode()
+        {
+            ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
+            return _countryCodeRepository.GetAll().ToList();
+        }
+
+        [Route("api/state")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<City> GetCity()
+        {
+            ICityRepository _cityRepository = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
+            return _cityRepository.GetAll().ToList();
+        }
+
+        [Route("api/city")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<State> GetState()
+        {
+            IStateRepository _stateRepository = RepositoryFactory.Create<IStateRepository>(ContextTypes.EntityFramework);
+            return _stateRepository.GetAll().ToList();
         }
 
     }

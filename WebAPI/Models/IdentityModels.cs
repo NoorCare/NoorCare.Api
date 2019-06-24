@@ -33,6 +33,11 @@ namespace WebAPI.Models
             modelBuilder.Entity<ClientDetail>().ToTable("ClientDetail");
             modelBuilder.Entity<Facility>().ToTable("Facility");
             modelBuilder.Entity<Disease>().ToTable("DiseaseType");
+            modelBuilder.Entity<EmergencyContact>().ToTable("EmergencyContact");
+            modelBuilder.Entity<MedicalInformation>().ToTable("MedicalInformation");
+            modelBuilder.Entity<CountryCode>().ToTable("CountryCode");
+            modelBuilder.Entity<City>().ToTable("citys");
+            modelBuilder.Entity<State>().ToTable("tblState");
         }
     }
 }

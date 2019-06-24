@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using WebAPI.Models;
+using WebAPI.Repository;
 
 namespace WebAPI.Controllers
 {
@@ -32,8 +33,10 @@ namespace WebAPI.Controllers
                 UserName = model.UserName, Email = model.Email
             };
             user.FirstName = model.FirstName;
+            user.PhoneNumber = model.PhoneNumber;
             user.LastName = model.LastName;
             user.Id = clientId;
+
             IdentityResult result = manager.Create(user, model.Password);
             ClientDetail _clientDetail = new ClientDetail
             {
@@ -44,7 +47,7 @@ namespace WebAPI.Controllers
                 City = model.City,
                 State = model.State,
                 Country = model.Country,
-                MobileNo = model.PhoneNumber,
+                MobileNo = Convert.ToInt32(model.PhoneNumber),
                 EmailId = model.Email,
                 Jobtype = model.jobType,
                 CreatedDate = DateTime.Now
@@ -107,6 +110,7 @@ namespace WebAPI.Controllers
                 FirstName = identityClaims.FindFirst("FirstName").Value,
                 LastName = identityClaims.FindFirst("LastName").Value,
                 ClientId = identityClaims.FindFirst("UserId").Value,
+                PhoneNo = identityClaims.FindFirst("PhoneNo").Value,
             };
             return model;
         }
@@ -157,6 +161,19 @@ namespace WebAPI.Controllers
             var manager = new UserManager<ApplicationUser>(userStore);
             IdentityResult result = manager.ChangePassword(model.UserName, model.OldPassword, model.NewPassword);
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("api/user/forgetPassword")]
+        [AllowAnonymous]
+        public IHttpActionResult ForgetPassword(ForgetPassword model)
+        {
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var manager = new UserManager<ApplicationUser>(userStore);
+            ApplicationUser cUser = manager.FindByName(model.UserName);
+            string hashedNewPassword = manager.PasswordHasher.HashPassword(model.NewPassword);
+            userStore.SetPasswordHashAsync(cUser, hashedNewPassword);
+            return Ok();
         }
 
         [HttpGet]

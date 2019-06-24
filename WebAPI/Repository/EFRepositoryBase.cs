@@ -67,7 +67,7 @@ namespace NoorCare.Repository
             {
                 return this.GetSet().ToList();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return new List<TEntity>(); 
             }

@@ -17,4 +17,34 @@ namespace WebAPI.Entity
         public string facility { get; set; }
 
     }
+
+    [Serializable]
+    [Table("CountryCode")]
+    public class CountryCode : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public string CountryCodes { get; set; }
+
+    }
+
+    [Serializable]
+    [Table("citys")]
+    public class City : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public string city { get; set; }
+
+    }
+
+    [Serializable]
+    [Table("tblState")]
+    public class State : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public string state { get; set; }
+
+    }
 }

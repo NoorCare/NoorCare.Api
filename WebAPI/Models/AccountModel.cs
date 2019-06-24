@@ -12,7 +12,7 @@ namespace WebAPI.Models
         public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public int jobType { get; set; }
         public string AccountType { get; set; }
         public int Gender { get; set; }
@@ -31,6 +31,7 @@ namespace WebAPI.Models
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string PhoneNo { get; set; }
     }
 
     public class ChangePassword
@@ -39,5 +40,11 @@ namespace WebAPI.Models
         public string OldPassword { get; set; }
         public string NewPassword { get; set; }
       
+    }
+
+    public class ForgetPassword
+    {
+        public string UserName { get; set; }
+        public string NewPassword { get; set; }
     }
 }

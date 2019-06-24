@@ -9,7 +9,8 @@ namespace AngularJSAuthentication.API.Services
 {
     public class EmailSender
     {
-        public void email_send(string mailTo = "manishcs0019@gmail.com", string clientName = "Manish Sharma", string ClientId = "Test")
+        public void email_send(string mailTo = "manishcs0019@gmail.com", string clientName = "Manish Sharma", 
+            string ClientId = "Test")
         {
             string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
             MailMessage mail = new MailMessage();
@@ -18,7 +19,12 @@ namespace AngularJSAuthentication.API.Services
             mail.To.Add(mailTo);
             mail.IsBodyHtml = true; //to make message body as html  
             mail.Subject = "Registration Successfully ";
-            mail.Body = html.Replace("CLIENTNAME", clientName);
+            for (int i = 3; i <= ClientId.Length; i += 3)
+            {
+                ClientId = i == 15 ? ClientId : ClientId.Insert(i, "-");
+                i++;
+            }
+            mail.Body = html.Replace("CLIENTNAME", clientName +"("+ ClientId + ")");
              
             mail.Body = getLogoUrl(mail.Body);
             mail.Body = getVereficationUrl(mail.Body, ClientId);

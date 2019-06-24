@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using WebAPI.Models;
+using WebAPI.Repository;
 
 namespace WebAPI
 {
@@ -46,6 +47,7 @@ namespace WebAPI
                     identity.AddClaim(new Claim("FirstName", user.FirstName));
                     identity.AddClaim(new Claim("LastName", user.LastName));
                     identity.AddClaim(new Claim("LoggedOn", DateTime.Now.ToString()));
+                    identity.AddClaim(new Claim("PhoneNo", user.PhoneNumber == null? " " : user.PhoneNumber));
                     context.Validated(identity);
                 }
             }
