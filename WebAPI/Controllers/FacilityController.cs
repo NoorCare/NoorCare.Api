@@ -43,7 +43,7 @@ namespace WebAPI.Controllers
             return _countryCodeRepository.GetAll().ToList();
         }
 
-        [Route("api/state")]
+        [Route("api/city")]
         [HttpGet]
         [AllowAnonymous]
         public List<City> GetCity()
@@ -52,7 +52,7 @@ namespace WebAPI.Controllers
             return _cityRepository.GetAll().ToList();
         }
 
-        [Route("api/city")]
+        [Route("api/state")]
         [HttpGet]
         [AllowAnonymous]
         public List<State> GetState()
