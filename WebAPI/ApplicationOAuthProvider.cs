@@ -26,7 +26,9 @@ namespace WebAPI
         {
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
-            var user = await manager.FindAsync(context.UserName, context.Password);
+            var userFindByEmail = manager.FindByEmail(context.UserName);
+            var user = userFindByEmail != null ? await manager.FindAsync(userFindByEmail.UserName, context.Password)
+                : await manager.FindAsync(context.UserName, context.Password);
             if (user == null)
             {
                 context.SetError("Please check username and password");

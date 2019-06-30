@@ -12,11 +12,14 @@ namespace WebAPI.Controllers
 {
     public class UserController : ApiController
     {
-        IEmergencyContactRepository _emergencyContactRepository = 
+        IEmergencyContactRepository _emergencyContactRepository =
             RepositoryFactory.Create<IEmergencyContactRepository>(ContextTypes.EntityFramework);
 
         IMedicalInformationRepository _medicalInformationRepository =
             RepositoryFactory.Create<IMedicalInformationRepository>(ContextTypes.EntityFramework);
+
+        IInsuranceInformationRepository _insuranceInformationRepository =
+            RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
 
         /// <summary>
         /// Emergency Contact Detail
@@ -125,5 +128,40 @@ namespace WebAPI.Controllers
             MedicalInformation _miContact = _medicalInformationRepository.Find(x => x.clientId == ClientId).FirstOrDefault();
             return Ok(_miContact);
         }
+
+
+        [HttpGet]
+        [Route("api/user/get/insuranceinfo/{ClientId}")]
+        public IHttpActionResult getInsurancenformationt(string ClientId)
+        {
+            InsuranceInformation _insuranceContact = _insuranceInformationRepository.Find(x => x.ClientId == ClientId).FirstOrDefault();
+            return Ok(_insuranceContact);
+        }
+
+        [HttpPost]
+        [Route("api/user/add/insuranceinfo/{ClientId}")]
+        public IHttpActionResult AddInsurancenformationt(string ClientId, InsuranceInformation insuranceInformation)
+        {
+            InsuranceInformation _insuranceInformation = new InsuranceInformation
+            {
+                ClientId = ClientId,
+                CompanyName = insuranceInformation.CompanyName,
+                InsuraceNo = insuranceInformation.InsuraceNo
+            };
+            return Ok(_insuranceInformationRepository.Insert(_insuranceInformation));
+        }
+
+        [HttpPost]
+        [Route("api/user/update/insuranceinfo/{ClientId}")]
+        public IHttpActionResult UpdateInsurancenformationt(string ClientId, InsuranceInformation insuranceInformation)
+        {
+            InsuranceInformation _insuranceInformation = _insuranceInformationRepository.Find(x => x.ClientId == ClientId).FirstOrDefault();
+
+            _insuranceInformation.ClientId = ClientId;
+            _insuranceInformation.CompanyName = insuranceInformation.CompanyName;
+            _insuranceInformation.InsuraceNo = insuranceInformation.InsuraceNo;
+            return Ok(_insuranceInformationRepository.Update(_insuranceInformation));
+        }
+
     }
 }

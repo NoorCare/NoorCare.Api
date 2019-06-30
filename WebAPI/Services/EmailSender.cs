@@ -19,11 +19,11 @@ namespace AngularJSAuthentication.API.Services
             mail.To.Add(mailTo);
             mail.IsBodyHtml = true; //to make message body as html  
             mail.Subject = "Registration Successfully ";
-            for (int i = 3; i <= ClientId.Length; i += 3)
-            {
-                ClientId = i == 15 ? ClientId : ClientId.Insert(i, "-");
-                i++;
-            }
+            //for (int i = 10; i <= ClientId.Length; i += 3)
+            //{
+            //    ClientId = i == 15 ? ClientId : ClientId.Insert(i, "-");
+            //    i++;
+            //}
             mail.Body = html.Replace("CLIENTNAME", clientName +"("+ ClientId + ")");
              
             mail.Body = getLogoUrl(mail.Body);
@@ -47,8 +47,12 @@ namespace AngularJSAuthentication.API.Services
             var seconds = (int)(now - DateTime.Today).TotalSeconds;
 
             var counter = _InternalCounter++ % 100;
-
             string result = days.ToString("00000") + seconds.ToString("00000") + counter.ToString("00");
+            for (int i = 3; i <= result.Length; i += 3)
+            {
+                result = i == result.Length ? result : result.Insert(i, "-");
+                i++;
+            }
             return result;
         }
 

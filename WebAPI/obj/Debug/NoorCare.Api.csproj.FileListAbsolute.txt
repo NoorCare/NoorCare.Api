@@ -58,9 +58,6 @@ C:\Users\manish.sharma\Desktop\WebAPI\WebAPI\obj\Debug\NoorCare.Api.csproj.CopyC
 C:\Users\manish.sharma\Desktop\WebAPI\WebAPI\obj\Debug\WebAPI.dll
 C:\Users\manish.sharma\Desktop\WebAPI\WebAPI\obj\Debug\WebAPI.pdb
 C:\Users\manish.sharma\Desktop\WebAPI\WebAPI\obj\Debug\NoorCare.Api.csprojAssemblyReference.cache
-C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\NoorCare.Api.csproj.CoreCompileInputs.cache
-C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\WebAPI.dll
-C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\WebAPI.pdb
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\WebAPI.dll.config
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\WebAPI.dll
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\WebAPI.pdb
@@ -116,5 +113,7 @@ C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\System.Web.WebPag
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\System.Web.WebPages.Deployment.xml
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\System.Web.WebPages.Razor.xml
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\bin\Antlr3.Runtime.pdb
+C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\NoorCare.Api.csproj.CoreCompileInputs.cache
 C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\NoorCare.Api.csproj.CopyComplete
-C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\NoorCare.Api.csprojAssemblyReference.cache
+C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\WebAPI.dll
+C:\Users\manish.sharma\Documents\GitHub\NoorCareApi\WebAPI\obj\Debug\WebAPI.pdb

@@ -11,4 +11,8 @@ namespace WebAPI.Repository
     public interface ICountryCodeRepository : IRepository<CountryCode, int> { }
     public interface ICityRepository : IRepository<City, int> { }
     public interface IStateRepository : IRepository<State, int> { }
+    public interface IInsuranceInformationRepository : IRepository<InsuranceInformation, int> { }
+    public interface IQuickHealthRepository : IRepository<QuickHeathDetails, int> { }
+    public interface IHospitalDetailsRepository : IRepository<HospitalDetail, int> { }
+    public interface IQuickUploadRepository : IRepository<QuickUpload, int> { }
 }

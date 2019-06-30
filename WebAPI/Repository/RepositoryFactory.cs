@@ -42,6 +42,22 @@ namespace NoorCare.Repository
                     {
                         return new StateRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IInsuranceInformationRepository))
+                    {
+                        return new InsuranceInformationRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IQuickHealthRepository))
+                    {
+                        return new QuickHealthRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IHospitalDetailsRepository))
+                    {
+                        return new HospitalDetailsRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IQuickUploadRepository))
+                    {
+                        return new QuickUploadRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;

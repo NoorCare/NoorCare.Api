@@ -13,6 +13,11 @@ namespace NoorCare.Repository
     public class CountryCodeRepository : EFRepositoryBase<ApplicationDbContext, CountryCode, int>, ICountryCodeRepository { }
     public class CityRepository : EFRepositoryBase<ApplicationDbContext, City, int>, ICityRepository { }
     public class StateRepository : EFRepositoryBase<ApplicationDbContext, State, int>, IStateRepository { }
+    public class InsuranceInformationRepository : EFRepositoryBase<ApplicationDbContext, InsuranceInformation, int>,
+        IInsuranceInformationRepository { }
+    public class QuickHealthRepository : EFRepositoryBase<ApplicationDbContext, QuickHeathDetails, int>, IQuickHealthRepository { }
+    public class HospitalDetailsRepository : EFRepositoryBase<ApplicationDbContext, HospitalDetail, int>, IHospitalDetailsRepository { }
+    public class QuickUploadRepository : EFRepositoryBase<ApplicationDbContext, QuickUpload, int>, IQuickUploadRepository { }
 }
 
 

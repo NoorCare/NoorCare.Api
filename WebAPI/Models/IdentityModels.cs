@@ -38,6 +38,10 @@ namespace WebAPI.Models
             modelBuilder.Entity<CountryCode>().ToTable("CountryCode");
             modelBuilder.Entity<City>().ToTable("citys");
             modelBuilder.Entity<State>().ToTable("tblState");
+            modelBuilder.Entity<InsuranceInformation>().ToTable("InsuranceInformation");
+            modelBuilder.Entity<QuickHeathDetails>().ToTable("QuickHeathDetails");
+            modelBuilder.Entity<HospitalDetail>().ToTable("HospitalDetail");
+            modelBuilder.Entity<QuickUpload>().ToTable("QuickUpload");
         }
     }
 }

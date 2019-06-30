@@ -23,6 +23,7 @@ public partial class ClientDetail : IEntity<int>
     public int Jobtype { get; set; }
     public bool EmailConfirmed { get; set; }
     public DateTime CreatedDate { get; set; }
+    public int CountryCode { get; set; }
 
 }
 

@@ -22,6 +22,7 @@ namespace WebAPI.Models
         public string Country { get; set; }
         public string LoggedOn { get; set; }
         public bool EmailConfirmed { get; set; }
+        public int CountryCode { get; set; }
     }
 
     public class ViewAccount

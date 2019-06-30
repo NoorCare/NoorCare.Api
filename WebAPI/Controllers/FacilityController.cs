@@ -12,10 +12,6 @@ namespace WebAPI.Controllers
 {
     public class FacilityController : ApiController
     {
-       
-
-       
-
         [Route("api/facility")]
         [HttpGet]
         [AllowAnonymous]

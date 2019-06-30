@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
+using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
 
@@ -25,10 +26,13 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public string Register(AccountModel model)
         {
+            ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
+            CountryCode countryCode = _countryCodeRepository.Find(x=>x.Id == model.CountryCode).FirstOrDefault();
 
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
-            string clientId = model.Gender == 1 ? "NCM974-" + _emailSender.Get() : "NCF974-" + _emailSender.Get();
+            string clientId = model.Gender == 1 ? "NCM-"+ countryCode.CountryCodes + "-" + _emailSender.Get() :
+                "NCF-"+ countryCode.CountryCodes + "-" + _emailSender.Get();
             var user = new ApplicationUser() {
                 UserName = model.UserName, Email = model.Email
             };
@@ -36,23 +40,7 @@ namespace WebAPI.Controllers
             user.PhoneNumber = model.PhoneNumber;
             user.LastName = model.LastName;
             user.Id = clientId;
-
             IdentityResult result = manager.Create(user, model.Password);
-            ClientDetail _clientDetail = new ClientDetail
-            {
-                ClientId = clientId,
-                Name = model.UserName,
-                Gender = model.Gender,
-                Address = model.Address,
-                City = model.City,
-                State = model.State,
-                Country = model.Country,
-                MobileNo = Convert.ToInt32(model.PhoneNumber),
-                EmailId = model.Email,
-                Jobtype = model.jobType,
-                CreatedDate = DateTime.Now
-            };
-            _clientDetailRepo.Insert(_clientDetail);
             IHttpActionResult errorResult = GetErrorResult(result);
             if (errorResult != null)
             {
@@ -60,6 +48,16 @@ namespace WebAPI.Controllers
             }
             else
             {
+                ClientDetail _clientDetail = new ClientDetail {
+                    ClientId = clientId, Name = model.UserName,
+                    Gender = model.Gender, Address = model.Address,
+                    City = model.City, State = model.State,
+                    Country = model.Country, MobileNo = Convert.ToInt32(model.PhoneNumber),
+                    EmailId = model.Email, Jobtype = model.jobType,
+                    CountryCode = model.CountryCode,
+                    CreatedDate = DateTime.Now
+                };
+                _clientDetailRepo.Insert(_clientDetail);
                 _emailSender.email_send(model.Email, user.FirstName+ " "+ user.LastName ,user.Id);
             }
             
@@ -149,8 +147,11 @@ namespace WebAPI.Controllers
         public IHttpActionResult emailVerification(string userName)
         {
             ClientDetail clientDetail = _clientDetailRepo.Find(p => p.ClientId == userName).FirstOrDefault();
-            clientDetail.EmailConfirmed = true;
-            return Ok(_clientDetailRepo.Update(clientDetail));
+            if (clientDetail != null) {
+                clientDetail.EmailConfirmed = true;
+                return Ok(_clientDetailRepo.Update(clientDetail));
+            }
+            return Ok();
         }
 
         [HttpPost]
@@ -176,11 +177,26 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("api/userNameExist")]
-        public bool GetUserNameEmailIdExit(AccountModel model)
+        [AllowAnonymous]
+        public IHttpActionResult GetUserNameEmailIdExit(AccountModel model)
         {
-            return _clientDetailRepo.Find(p => p.EmailId == model.Email).Any();
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var manager = new UserManager<ApplicationUser>(userStore);
+
+            return Ok(manager.FindByName(model.UserName));
+        }
+
+        [HttpPost]
+        [Route("api/userEmailExists")]
+        [AllowAnonymous]
+        public IHttpActionResult GetUserEmailId(AccountModel model)
+        {
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var manager = new UserManager<ApplicationUser>(userStore);
+
+            return Ok(manager.FindByEmail(model.Email));
         }
     }
 }
