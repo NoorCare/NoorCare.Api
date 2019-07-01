@@ -4,9 +4,12 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using WebAPI.Entity;
 using WebAPI.Models;
@@ -49,11 +52,14 @@ namespace WebAPI.Controllers
             else
             {
                 ClientDetail _clientDetail = new ClientDetail {
-                    ClientId = clientId, Name = model.UserName,
-                    Gender = model.Gender, Address = model.Address,
-                    City = model.City, State = model.State,
-                    Country = model.Country, MobileNo = Convert.ToInt32(model.PhoneNumber),
-                    EmailId = model.Email, Jobtype = model.jobType,
+                    ClientId = clientId,
+                    UserName = model.UserName,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Gender = model.Gender,
+                    MobileNo = Convert.ToInt32(model.PhoneNumber),
+                    EmailId = model.Email,
+                    Jobtype = model.jobType,
                     CountryCode = model.CountryCode,
                     CreatedDate = DateTime.Now
                 };
@@ -113,25 +119,51 @@ namespace WebAPI.Controllers
             return model;
         }
 
+        private void createDocPath(string clientId, int desiesId)
+        {
+            string subPath = $"ProfilePic/{clientId}";
+            bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath(subPath));
+            if (!exists)
+                System.IO.Directory.CreateDirectory(HttpContext.Current.Server.MapPath(subPath));
+        }
+
         [HttpPost]
         [Route("api/user/updateProfile")]
-        public IHttpActionResult UpdateProfile(ClientDetail model)
+        [AllowAnonymous]
+        public IHttpActionResult UpdateProfile()
         {
-            ClientDetail _clientDetail = new ClientDetail
-            {
-                ClientId = model.ClientId,
-                Name = model.Name,
-                Gender = model.Gender,
-                Address = model.Address,
-                City = model.City,
-                State = model.State,
-                Country = model.Country,
-                MobileNo = model.MobileNo,
-                EmailId = model.EmailId,
-                Jobtype = model.Jobtype,
-            };
-            _clientDetailRepo.Update(_clientDetail);
-            return Ok();
+            string imageName = null;
+            var httpRequest = HttpContext.Current.Request;
+
+            string clientId = httpRequest.Form["ClientId"];
+
+            var postedFile = httpRequest.Files["Image"];
+            if(postedFile != null){
+                imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).
+                    Take(10).ToArray()).
+                    Replace(" ", "-");
+                imageName = clientId + "." + ImageFormat.Jpeg;
+                var filePath = HttpContext.Current.Server.MapPath("~/ProfilePic/" + imageName);
+                bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ProfilePic/" + imageName));
+                if (exists) {
+                    File.Delete(filePath);
+                }
+                postedFile.SaveAs(filePath);
+            }
+            ClientDetail clientDetail = _clientDetailRepo.Find(p => p.ClientId == clientId).FirstOrDefault();
+            clientDetail.FirstName = httpRequest.Form["FirstName"] == null ? clientDetail.FirstName: httpRequest.Form["FirstName"];
+            clientDetail.LastName = httpRequest.Form["LastName"] == null ? clientDetail.LastName : httpRequest.Form["LastName"];
+            clientDetail.PinCode = httpRequest.Form["PinCode"] == null ? clientDetail.PinCode : Convert.ToInt16(httpRequest.Form["PinCode"]);
+            clientDetail.Gender = httpRequest.Form["Gender"] == null ? clientDetail.Gender : Convert.ToInt16(httpRequest.Form["Gender"]);
+            clientDetail.Address = httpRequest.Form["Address"] == null ? clientDetail.Address : httpRequest.Form["Address"];
+            clientDetail.City = httpRequest.Form["City"] == null ? clientDetail.City : httpRequest.Form["City"];
+            clientDetail.State = httpRequest.Form["State"] == null ? clientDetail.State : httpRequest.Form["State"];
+            clientDetail.Country = httpRequest.Form["Country"] == null ? clientDetail.Country : httpRequest.Form["Country"];
+            clientDetail.MobileNo = httpRequest.Form["MobileNo"] == null ? clientDetail.MobileNo : Convert.ToInt32(httpRequest.Form["MobileNo"]);
+            clientDetail.EmailId = httpRequest.Form["EmailId"] == null ? clientDetail.EmailId : httpRequest.Form["EmailId"];
+            clientDetail.MaritalStatus = httpRequest.Form["MaritalStatus"]== null ? clientDetail.MaritalStatus : Convert.ToInt16(httpRequest.Form["MaritalStatus"]);
+            clientDetail.DOB = httpRequest.Form["DOB"]== null ? clientDetail.DOB : Convert.ToDateTime(httpRequest.Form["DOB"]);
+            return Ok(_clientDetailRepo.Update(clientDetail));
         }
 
         [HttpGet]

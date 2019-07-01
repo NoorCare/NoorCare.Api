@@ -35,7 +35,9 @@ namespace WebAPI
             }
             else
             {
-                var clientDetailRepo = _clientDetailRepo.Find(x => x.ClientId == user.Id).FirstOrDefault();
+                List<ClientDetail> listclientDetailRepo = _clientDetailRepo.GetAll();
+
+                var clientDetailRepo = listclientDetailRepo.Find(x => x.ClientId.Trim() == user.Id.Trim());
                 if (!clientDetailRepo.EmailConfirmed)
                 {
                     context.SetError("Please verify your email address");

@@ -140,6 +140,7 @@ namespace WebAPI.Controllers
 
         [HttpPost]
         [Route("api/user/add/insuranceinfo/{ClientId}")]
+        [AllowAnonymous]
         public IHttpActionResult AddInsurancenformationt(string ClientId, InsuranceInformation insuranceInformation)
         {
             InsuranceInformation _insuranceInformation = new InsuranceInformation
