@@ -29,13 +29,24 @@ namespace WebAPI.Entity
     }
 
     [Serializable]
-    [Table("citys")]
-    public class City : IEntity<int>
+    [Table("TblCity")]
+    public class TblCity : IEntity<int>
     {
         [Key]
         public int Id { get; set; }
-        public string city { get; set; }
+        public string City { get; set; }
+        public string Lat { get; set; }
+        public int Lng { get; set; }
+        public int CountryId { get; set; }
+    }
 
+    [Serializable]
+    [Table("TblCountry")]
+    public class TblCountry : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public string CountryName { get; set; }
     }
 
     [Serializable]

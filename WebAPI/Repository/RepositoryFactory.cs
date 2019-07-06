@@ -58,6 +58,10 @@ namespace NoorCare.Repository
                     {
                         return new QuickUploadRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(ICountryRepository))
+                    {
+                        return new CountryRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;

@@ -25,7 +25,7 @@ public partial class ClientDetail : IEntity<int>
     public int Jobtype { get; set; }
     public bool EmailConfirmed { get; set; }
     public int MaritalStatus { get; set; }
-    public DateTime DOB { get; set; }
+    public string DOB { get; set; }
     public DateTime CreatedDate { get; set; }
     public int CountryCode { get; set; }
     public int PinCode { get; set; }

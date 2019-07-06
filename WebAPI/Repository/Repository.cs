@@ -11,7 +11,8 @@ namespace NoorCare.Repository
     public class EmergencyContactRepository : EFRepositoryBase<ApplicationDbContext, EmergencyContact, int>, IEmergencyContactRepository{}
     public class MedicalInformationRepository : EFRepositoryBase<ApplicationDbContext, MedicalInformation, int>, IMedicalInformationRepository{}
     public class CountryCodeRepository : EFRepositoryBase<ApplicationDbContext, CountryCode, int>, ICountryCodeRepository { }
-    public class CityRepository : EFRepositoryBase<ApplicationDbContext, City, int>, ICityRepository { }
+    public class CityRepository : EFRepositoryBase<ApplicationDbContext, TblCity, int>, ICityRepository { }
+    public class CountryRepository : EFRepositoryBase<ApplicationDbContext, TblCountry, int>, ICountryRepository { }
     public class StateRepository : EFRepositoryBase<ApplicationDbContext, State, int>, IStateRepository { }
     public class InsuranceInformationRepository : EFRepositoryBase<ApplicationDbContext, InsuranceInformation, int>,
         IInsuranceInformationRepository { }

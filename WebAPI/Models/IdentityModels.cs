@@ -36,8 +36,8 @@ namespace WebAPI.Models
             modelBuilder.Entity<EmergencyContact>().ToTable("EmergencyContact");
             modelBuilder.Entity<MedicalInformation>().ToTable("MedicalInformation");
             modelBuilder.Entity<CountryCode>().ToTable("CountryCode");
-            modelBuilder.Entity<City>().ToTable("citys");
-            modelBuilder.Entity<State>().ToTable("tblState");
+            modelBuilder.Entity<TblCity>().ToTable("TblCity");
+            modelBuilder.Entity<TblCountry>().ToTable("TblCountry");
             modelBuilder.Entity<InsuranceInformation>().ToTable("InsuranceInformation");
             modelBuilder.Entity<QuickHeathDetails>().ToTable("QuickHeathDetails");
             modelBuilder.Entity<HospitalDetail>().ToTable("HospitalDetail");

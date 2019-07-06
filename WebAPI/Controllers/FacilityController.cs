@@ -1,9 +1,6 @@
 ﻿using NoorCare.Repository;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using WebAPI.Entity;
 using WebAPI.Repository;
@@ -39,12 +36,21 @@ namespace WebAPI.Controllers
             return _countryCodeRepository.GetAll().ToList();
         }
 
-        [Route("api/city")]
+        [Route("api/city/{countryId}")]
         [HttpGet]
         [AllowAnonymous]
-        public List<City> GetCity()
+        public List<TblCity> GetCity(int countryId)
         {
             ICityRepository _cityRepository = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
+            return _cityRepository.Find(x=>x.CountryId == countryId).ToList();
+        }
+
+        [Route("api/countries")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<TblCountry> GetCountries()
+        {
+            ICountryRepository _cityRepository = RepositoryFactory.Create<ICountryRepository>(ContextTypes.EntityFramework);
             return _cityRepository.GetAll().ToList();
         }
 

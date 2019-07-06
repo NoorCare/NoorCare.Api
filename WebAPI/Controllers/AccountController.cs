@@ -136,20 +136,28 @@ namespace WebAPI.Controllers
             var httpRequest = HttpContext.Current.Request;
 
             string clientId = httpRequest.Form["ClientId"];
-
-            var postedFile = httpRequest.Files["Image"];
-            if(postedFile != null){
-                imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).
-                    Take(10).ToArray()).
-                    Replace(" ", "-");
-                imageName = clientId + "." + ImageFormat.Jpeg;
-                var filePath = HttpContext.Current.Server.MapPath("~/ProfilePic/" + imageName);
-                bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ProfilePic/" + imageName));
-                if (exists) {
-                    File.Delete(filePath);
+            try
+            {
+                var postedFile = httpRequest.Files["Image"];
+                if (postedFile != null)
+                {
+                    imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).
+                        Take(10).ToArray()).
+                        Replace(" ", "-");
+                    imageName = clientId + "." + ImageFormat.Jpeg;
+                    var filePath = HttpContext.Current.Server.MapPath("~/ProfilePic/" + imageName);
+                    bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ProfilePic/" + imageName));
+                    if (exists)
+                    {
+                        File.Delete(filePath);
+                    }
+                    postedFile.SaveAs(filePath);
                 }
-                postedFile.SaveAs(filePath);
             }
+            catch (Exception)
+            {
+            }
+            
             ClientDetail clientDetail = _clientDetailRepo.Find(p => p.ClientId == clientId).FirstOrDefault();
             clientDetail.FirstName = httpRequest.Form["FirstName"] == null ? clientDetail.FirstName: httpRequest.Form["FirstName"];
             clientDetail.LastName = httpRequest.Form["LastName"] == null ? clientDetail.LastName : httpRequest.Form["LastName"];
@@ -162,7 +170,7 @@ namespace WebAPI.Controllers
             clientDetail.MobileNo = httpRequest.Form["MobileNo"] == null ? clientDetail.MobileNo : Convert.ToInt32(httpRequest.Form["MobileNo"]);
             clientDetail.EmailId = httpRequest.Form["EmailId"] == null ? clientDetail.EmailId : httpRequest.Form["EmailId"];
             clientDetail.MaritalStatus = httpRequest.Form["MaritalStatus"]== null ? clientDetail.MaritalStatus : Convert.ToInt16(httpRequest.Form["MaritalStatus"]);
-            clientDetail.DOB = httpRequest.Form["DOB"]== null ? clientDetail.DOB : Convert.ToDateTime(httpRequest.Form["DOB"]);
+            clientDetail.DOB = httpRequest.Form["DOB"]== null ? clientDetail.DOB :httpRequest.Form["DOB"];
             return Ok(_clientDetailRepo.Update(clientDetail));
         }
 
