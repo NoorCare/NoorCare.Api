@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ClientDocument\" />
     <Folder Include="Migrations\" />
     <Folder Include="ProfilePic\" />
   </ItemGroup>

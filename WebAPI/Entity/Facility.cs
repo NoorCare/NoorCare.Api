@@ -36,7 +36,7 @@ namespace WebAPI.Entity
         public int Id { get; set; }
         public string City { get; set; }
         public string Lat { get; set; }
-        public int Lng { get; set; }
+        public string Lng { get; set; }
         public int CountryId { get; set; }
     }
 
