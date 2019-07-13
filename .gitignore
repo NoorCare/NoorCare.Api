@@ -42,7 +42,13 @@ local.properties
 *.sln.docstates
 
 # Build results
-
+*.dll
+*.dll.config
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal
+*.suo
 [Dd]ebug/
 [Rr]elease/
 x64/
