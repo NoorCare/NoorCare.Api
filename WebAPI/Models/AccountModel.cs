@@ -33,6 +33,7 @@ namespace WebAPI.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PhoneNo { get; set; }
+        public string JobType { get; set; }
     }
 
     public class ChangePassword

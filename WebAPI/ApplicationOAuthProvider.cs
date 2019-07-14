@@ -52,6 +52,7 @@ namespace WebAPI
                     identity.AddClaim(new Claim("LastName", user.LastName));
                     identity.AddClaim(new Claim("LoggedOn", DateTime.Now.ToString()));
                     identity.AddClaim(new Claim("PhoneNo", user.PhoneNumber == null? " " : user.PhoneNumber));
+                    identity.AddClaim(new Claim("JobType", clientDetailRepo.Jobtype.ToString()));
                     context.Validated(identity);
                 }
             }

@@ -64,7 +64,14 @@ namespace WebAPI.Controllers
                     CreatedDate = DateTime.Now
                 };
                 _clientDetailRepo.Insert(_clientDetail);
-                _emailSender.email_send(model.Email, user.FirstName+ " "+ user.LastName ,user.Id);
+                try
+                {
+                    _emailSender.email_send(model.Email, user.FirstName+ " "+ user.LastName ,user.Id);
+                }
+                catch (Exception)
+                {
+                                      
+                }
             }
             
             return "Registration has been done, And Account activation link" +
@@ -115,6 +122,7 @@ namespace WebAPI.Controllers
                 LastName = identityClaims.FindFirst("LastName").Value,
                 ClientId = identityClaims.FindFirst("UserId").Value,
                 PhoneNo = identityClaims.FindFirst("PhoneNo").Value,
+                JobType = identityClaims.FindFirst("JobType").Value,
             };
             return model;
         }
