@@ -23,6 +23,7 @@ namespace WebAPI.Models
         public string LoggedOn { get; set; }
         public bool EmailConfirmed { get; set; }
         public int CountryCode { get; set; }
+        public int FacilityId { get; set; }
     }
 
     public class ViewAccount

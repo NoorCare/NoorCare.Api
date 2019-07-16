@@ -100,6 +100,15 @@ namespace WebAPI.Entity
         public string Email { get; set; }
         public string Website { get; set; }
         public string FullName { get; set; }
+        public string HospitalId { get; set; }
+        public string EstablishYear { get; set; }
+        public int NumberofBed { get; set; }
+        public int NumberofAmbulance { get; set; }
+        public string PaymentType { get; set; }
+        public int Emergency { get; set; }
+        public int FacilityId { get; set; }
+        public int jobType { get; set; }
+        public bool EmailConfirmed { get; set; }
     }
 
     [Serializable]

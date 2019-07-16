@@ -14,6 +14,7 @@ using System.Web.Http;
 using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
@@ -21,7 +22,9 @@ namespace WebAPI.Controllers
     {
 
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
+        IHospitalDetailsRepository _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         EmailSender _emailSender = new EmailSender();
+        Registration _registration = new Registration();
         string tokenCode = "";
 
         [Route("api/account/register")]
@@ -34,8 +37,8 @@ namespace WebAPI.Controllers
 
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
-            string clientId = model.Gender == 1 ? "NCM-"+ countryCode.CountryCodes + "-" + _emailSender.Get() :
-                "NCF-"+ countryCode.CountryCodes + "-" + _emailSender.Get();
+            
+            string clientId = _registration.creatIdPrix(model) + countryCode.CountryCodes + "-" + _emailSender.Get();
             var user = new ApplicationUser() {
                 UserName = model.UserName, Email = model.Email
             };
@@ -51,19 +54,14 @@ namespace WebAPI.Controllers
             }
             else
             {
-                ClientDetail _clientDetail = new ClientDetail {
-                    ClientId = clientId,
-                    UserName = model.UserName,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Gender = model.Gender,
-                    MobileNo = Convert.ToInt32(model.PhoneNumber),
-                    EmailId = model.Email,
-                    Jobtype = model.jobType,
-                    CountryCode = model.CountryCode,
-                    CreatedDate = DateTime.Now
-                };
-                _clientDetailRepo.Insert(_clientDetail);
+                if (model.jobType == 1)
+                {
+                    _registration.AddClientDetail(clientId, model, _clientDetailRepo);
+                }
+                else if (model.jobType == 2)
+                {
+                    _registration.AddHospitalDetail(clientId, model, _hospitalDetailsRepository);
+                }
                 try
                 {
                     _emailSender.email_send(model.Email, user.FirstName+ " "+ user.LastName ,user.Id);
@@ -190,15 +188,36 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
+        [Route("api/hospital/profile/{ClientId}")]
+        public IHttpActionResult gethospitalData(string ClientId)
+        {
+            return Ok(_hospitalDetailsRepository.Find(x => x.HospitalId == ClientId));
+        }
+
+        [HttpGet]
         [Route("api/user/emailverfication/{userName}")]
         [AllowAnonymous]
         public IHttpActionResult emailVerification(string userName)
         {
-            ClientDetail clientDetail = _clientDetailRepo.Find(p => p.ClientId == userName).FirstOrDefault();
-            if (clientDetail != null) {
-                clientDetail.EmailConfirmed = true;
-                return Ok(_clientDetailRepo.Update(clientDetail));
+            if (userName.Contains("NCH"))
+            {
+                HospitalDetail hospitalDetails = _hospitalDetailsRepository.Find(x => x.HospitalId.Trim() == userName.Trim()).FirstOrDefault();
+                if (hospitalDetails != null)
+                {
+                    hospitalDetails.EmailConfirmed = true;
+                    return Ok(_hospitalDetailsRepository.Update(hospitalDetails));
+                }
             }
+            else
+            {
+                ClientDetail clientDetail = _clientDetailRepo.Find(p => p.ClientId == userName).FirstOrDefault();
+                if (clientDetail != null)
+                {
+                    clientDetail.EmailConfirmed = true;
+                    return Ok(_clientDetailRepo.Update(clientDetail));
+                }
+            }
+            
             return Ok();
         }
 

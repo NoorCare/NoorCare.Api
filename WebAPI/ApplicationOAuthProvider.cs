@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
 
@@ -16,7 +17,12 @@ namespace WebAPI
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
+        IHospitalDetailsRepository _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
 
+        ClientDetail clientDetailRepo = null;
+        HospitalDetail hospitalDetails;
+        int jobType = 1;
+        bool isEmailConfirmed = false;
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             context.Validated();
@@ -35,10 +41,16 @@ namespace WebAPI
             }
             else
             {
-                List<ClientDetail> listclientDetailRepo = _clientDetailRepo.GetAll();
-
-                var clientDetailRepo = listclientDetailRepo.Find(x => x.ClientId.Trim() == user.Id.Trim());
-                if (!clientDetailRepo.EmailConfirmed)
+                if (user.Id.Contains("NCH")) {
+                    hospitalDetails = _hospitalDetailsRepository.Find(x => x.HospitalId.Trim() == user.Id.Trim()).FirstOrDefault();
+                    jobType = hospitalDetails.jobType;
+                    isEmailConfirmed = hospitalDetails.EmailConfirmed;
+                } else {
+                    clientDetailRepo = _clientDetailRepo.Find(x => x.ClientId.Trim() == user.Id.Trim()).FirstOrDefault();
+                    jobType = hospitalDetails.jobType;
+                    isEmailConfirmed = clientDetailRepo.EmailConfirmed;
+                }
+                if (!isEmailConfirmed)
                 {
                     context.SetError("Please verify your email address");
                 }
@@ -52,7 +64,7 @@ namespace WebAPI
                     identity.AddClaim(new Claim("LastName", user.LastName));
                     identity.AddClaim(new Claim("LoggedOn", DateTime.Now.ToString()));
                     identity.AddClaim(new Claim("PhoneNo", user.PhoneNumber == null? " " : user.PhoneNumber));
-                    identity.AddClaim(new Claim("JobType", clientDetailRepo.Jobtype.ToString()));
+                    identity.AddClaim(new Claim("JobType", jobType.ToString()));
                     context.Validated(identity);
                 }
             }
