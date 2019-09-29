@@ -49,6 +49,7 @@ local.properties
 *.ide-shm
 *.ide-wal
 *.suo
+*.config
 [Dd]ebug/
 [Rr]elease/
 x64/
@@ -83,6 +84,10 @@ build/
 *.pidb
 *.log
 *.scc
+*.xml
+*.p7s
+*.nupkg
+
 
 # Visual C++ cache files
 ipch/

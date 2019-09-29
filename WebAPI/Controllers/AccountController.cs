@@ -34,18 +34,9 @@ namespace WebAPI.Controllers
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
             CountryCode countryCode = _countryCodeRepository.Find(x=>x.Id == model.CountryCode).FirstOrDefault();
-
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
-            
-            string clientId = _registration.creatIdPrix(model) + countryCode.CountryCodes + "-" + _emailSender.Get();
-            var user = new ApplicationUser() {
-                UserName = model.UserName, Email = model.Email
-            };
-            user.FirstName = model.FirstName;
-            user.PhoneNumber = model.PhoneNumber;
-            user.LastName = model.LastName;
-            user.Id = clientId;
+            ApplicationUser user = _registration.UserAcoount(model, Convert.ToInt16(countryCode.CountryCodes));
             IdentityResult result = manager.Create(user, model.Password);
             IHttpActionResult errorResult = GetErrorResult(result);
             if (errorResult != null)
@@ -56,20 +47,13 @@ namespace WebAPI.Controllers
             {
                 if (model.jobType == 1)
                 {
-                    _registration.AddClientDetail(clientId, model, _clientDetailRepo);
+                    _registration.AddClientDetail(user.Id, model, _clientDetailRepo);
                 }
                 else if (model.jobType == 2)
                 {
-                    _registration.AddHospitalDetail(clientId, model, _hospitalDetailsRepository);
+                    _registration.AddHospitalDetail(user.Id, model, _hospitalDetailsRepository);
                 }
-                try
-                {
-                    _emailSender.email_send(model.Email, user.FirstName+ " "+ user.LastName ,user.Id);
-                }
-                catch (Exception)
-                {
-                                      
-                }
+                _registration.sendRegistrationEmail(user);
             }
             
             return "Registration has been done, And Account activation link" +
@@ -77,6 +61,27 @@ namespace WebAPI.Controllers
                             model.Email;
         }
     
+        
+
+        [HttpGet]
+        [Route("api/GetUserClaims")]
+        public ViewAccount GetUserClaims()
+        {
+            var identityClaims = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identityClaims.Claims;
+            ViewAccount model = new ViewAccount()
+            {
+                UserName = identityClaims.FindFirst("Username").Value,
+                Email = identityClaims.FindFirst("Email").Value,
+                FirstName = identityClaims.FindFirst("FirstName").Value,
+                LastName = identityClaims.FindFirst("LastName").Value,
+                ClientId = identityClaims.FindFirst("UserId").Value,
+                PhoneNo = identityClaims.FindFirst("PhoneNo").Value,
+                JobType = identityClaims.FindFirst("JobType").Value,
+            };
+            return model;
+        }
+
         private IHttpActionResult GetErrorResult(IdentityResult result)
         {
             if (result == null)
@@ -105,26 +110,6 @@ namespace WebAPI.Controllers
 
             return null;
         }
-
-        [HttpGet]
-        [Route("api/GetUserClaims")]
-        public ViewAccount GetUserClaims()
-        {
-            var identityClaims = (ClaimsIdentity)User.Identity;
-            IEnumerable<Claim> claims = identityClaims.Claims;
-            ViewAccount model = new ViewAccount()
-            {
-                UserName = identityClaims.FindFirst("Username").Value,
-                Email = identityClaims.FindFirst("Email").Value,
-                FirstName = identityClaims.FindFirst("FirstName").Value,
-                LastName = identityClaims.FindFirst("LastName").Value,
-                ClientId = identityClaims.FindFirst("UserId").Value,
-                PhoneNo = identityClaims.FindFirst("PhoneNo").Value,
-                JobType = identityClaims.FindFirst("JobType").Value,
-            };
-            return model;
-        }
-
         private void createDocPath(string clientId, int desiesId)
         {
             string subPath = $"ProfilePic/{clientId}";
@@ -201,7 +186,7 @@ namespace WebAPI.Controllers
         {
             if (userName.Contains("NCH"))
             {
-                HospitalDetail hospitalDetails = _hospitalDetailsRepository.Find(x => x.HospitalId.Trim() == userName.Trim()).FirstOrDefault();
+                HospitalDetails hospitalDetails = _hospitalDetailsRepository.Find(x => x.HospitalId.Trim() == userName.Trim()).FirstOrDefault();
                 if (hospitalDetails != null)
                 {
                     hospitalDetails.EmailConfirmed = true;

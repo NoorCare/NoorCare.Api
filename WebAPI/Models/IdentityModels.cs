@@ -8,6 +8,9 @@ namespace WebAPI.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public int JobType { get; set; }
+        public int CountryCodes { get; set; }
+        public int? Gender { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
@@ -31,6 +34,9 @@ namespace WebAPI.Models
             //AspNetUserLogins -> UserLogin
             modelBuilder.Entity<IdentityUserLogin>().ToTable("UserLogin");
             modelBuilder.Entity<ClientDetail>().ToTable("ClientDetail");
+            modelBuilder.Entity<PatientPrescription>().ToTable("PatientPrescription");
+            
+
             modelBuilder.Entity<Facility>().ToTable("Facility");
             modelBuilder.Entity<Disease>().ToTable("DiseaseType");
             modelBuilder.Entity<EmergencyContact>().ToTable("EmergencyContact");
@@ -40,8 +46,20 @@ namespace WebAPI.Models
             modelBuilder.Entity<TblCountry>().ToTable("TblCountry");
             modelBuilder.Entity<InsuranceInformation>().ToTable("InsuranceInformation");
             modelBuilder.Entity<QuickHeathDetails>().ToTable("QuickHeathDetails");
-            modelBuilder.Entity<HospitalDetail>().ToTable("HospitalDetail");
+            modelBuilder.Entity<HospitalDetails>().ToTable("HospitalDetails");
             modelBuilder.Entity<QuickUpload>().ToTable("QuickUpload");
+            modelBuilder.Entity<Doctor>().ToTable("Doctor");
+            modelBuilder.Entity<Secretary>().ToTable("Secretary");
+            modelBuilder.Entity<Feedback>().ToTable("Feedback");
+            modelBuilder.Entity<Appointment>().ToTable("Appointment");
+            modelBuilder.Entity<TblHospitalAmenities>().ToTable("NoorCare.TblHospitalAmenities");
+            modelBuilder.Entity<TblHospitalServices>().ToTable("TblHospitalServices");
+            modelBuilder.Entity<TblHospitalSpecialties>().ToTable("TblHospitalSpecialties");
+            modelBuilder.Entity<DoctorAvailableTime>().ToTable("DoctorAvailableTime");
+            modelBuilder.Entity<ContactUs>().ToTable("ContactUs");
+            modelBuilder.Entity<TimeMaster>().ToTable("TimeMaster");
+            modelBuilder.Entity<NewsBlogs>().ToTable("NewsBlogs");
+            
         }
     }
 }

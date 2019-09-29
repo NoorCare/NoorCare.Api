@@ -68,9 +68,9 @@ namespace WebAPI.Controllers
         [HttpPost]
         [Route("api/user/add/hospitalDetail")]
         [AllowAnonymous]
-        public IHttpActionResult AddHospital(HospitalDetail _hospitalDetail)
+        public IHttpActionResult AddHospital(HospitalDetails _hospitalDetail)
         {
-            HospitalDetail _HospitalDetail = _hospitalDetailsRepository.Find(
+            HospitalDetails _HospitalDetail = _hospitalDetailsRepository.Find(
                 x => x.HospitalName.ToLower() == _hospitalDetail.HospitalName.ToLower()
                 || x.HospitalName.ToLower() == _hospitalDetail.HospitalName.ToLower()
                 || x.Mobile == _hospitalDetail.Mobile
@@ -79,14 +79,13 @@ namespace WebAPI.Controllers
                 ).FirstOrDefault();
             if (_HospitalDetail == null)
             {
-                HospitalDetail hospitalDetail = new HospitalDetail
+                HospitalDetails hospitalDetail = new HospitalDetails
                 {
                     HospitalName = _hospitalDetail.HospitalName,
                     Address = _hospitalDetail.Address,
                     Mobile = _hospitalDetail.Mobile,
                     Email = _hospitalDetail.Email,
                     Website = _hospitalDetail.Website,
-                    FullName = _hospitalDetail.FullName
                 };
                 return Ok(_hospitalDetailsRepository.Insert(hospitalDetail));
             }

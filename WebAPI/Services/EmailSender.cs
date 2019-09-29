@@ -9,29 +9,25 @@ namespace AngularJSAuthentication.API.Services
 {
     public class EmailSender
     {
-        public void email_send(string mailTo = "manishcs0019@gmail.com", string clientName = "Manish Sharma", 
-            string ClientId = "Test")
+        public void email_send(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care New", 
+            string ClientId = "Test", int jobType = 0, string password = null)
         {
-            string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
+            string prifix = jobType == 3 ? "Dr " : "";
+           string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
-            mail.From = new MailAddress("noorcare2019@gmail.com");
+            mail.From = new MailAddress("NoorCareNew@gmail.com");
             mail.To.Add(mailTo);
-            mail.IsBodyHtml = true; //to make message body as html  
+            mail.IsBodyHtml = true;
             mail.Subject = "Registration Successfully ";
-            //for (int i = 10; i <= ClientId.Length; i += 3)
-            //{
-            //    ClientId = i == 15 ? ClientId : ClientId.Insert(i, "-");
-            //    i++;
-            //}
-            mail.Body = html.Replace("CLIENTNAME", clientName +"("+ ClientId + ")");
-             
+            mail.Body = html.Replace("CLIENTNAME", prifix + clientName + "("+ ClientId + ")");
             mail.Body = getLogoUrl(mail.Body);
             mail.Body = getVereficationUrl(mail.Body, ClientId);
+            mail.Body = tempPassword(mail.Body, password, jobType);
             SmtpServer.Port = 587;
             SmtpServer.EnableSsl = true;
             SmtpServer.UseDefaultCredentials = false;
-            SmtpServer.Credentials = new NetworkCredential("noorcare2019@gmail.com", "NoorCare@123");
+            SmtpServer.Credentials = new NetworkCredential("NoorCareNew@gmail.com", "NoorCare@2019");
             SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
             SmtpServer.Send(mail);
 
@@ -61,6 +57,11 @@ namespace AngularJSAuthentication.API.Services
             return html.Replace("LOGOSRC", 
                "<img src='"+ constant.logoUrl +"' style = 'border:0;width:200px;max-width:100%;' alt = 'Header' title = 'Image' />"
                );
+        }
+
+        public string tempPassword(string html, string password, int jobTpye)
+        {
+            return html.Replace("PASSWORD", jobTpye == 4 || jobTpye == 3 ? $"<p>Your First Time Password is <b>{password}</b></p>" : "");
         }
 
         public string getVereficationUrl(string html, string clientId)

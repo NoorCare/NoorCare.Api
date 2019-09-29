@@ -60,6 +60,37 @@ namespace WebAPI.Entity
     }
 
     [Serializable]
+    [Table("TblHospitalServices")]
+    public class TblHospitalServices : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public string HospitalServices { get; set; }
+        public string HospitalId { get; set; }
+
+    }
+
+    [Serializable]
+    [Table("TblHospitalSpecialties")]
+    public class TblHospitalSpecialties : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public string HospitalSpecialties { get; set; }
+        public string HospitalId { get; set; }
+
+    }
+
+    [Serializable]
+    [Table("TblHospitalAmenities")]
+    public class TblHospitalAmenities : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public string HospitalAmenities { get; set; }
+    }
+
+    [Serializable]
     [Table("InsuranceInformation")]
     public class InsuranceInformation : IEntity<int>
     {
@@ -88,28 +119,28 @@ namespace WebAPI.Entity
         public string Other { get; set; }
     }
 
-    [Serializable]
-    [Table("HospitalDetail")]
-    public class HospitalDetail : IEntity<int>
-    {
-        [Key]
-        public int Id { get; set; }
-        public string HospitalName { get; set; }
-        public string Address { get; set; }
-        public int Mobile { get; set; }
-        public string Email { get; set; }
-        public string Website { get; set; }
-        public string FullName { get; set; }
-        public string HospitalId { get; set; }
-        public string EstablishYear { get; set; }
-        public int NumberofBed { get; set; }
-        public int NumberofAmbulance { get; set; }
-        public string PaymentType { get; set; }
-        public int Emergency { get; set; }
-        public int FacilityId { get; set; }
-        public int jobType { get; set; }
-        public bool EmailConfirmed { get; set; }
-    }
+    //[Serializable]
+    //[Table("HospitalDetail")]
+    //public class HospitalDetail : IEntity<int>
+    //{
+    //    [Key]
+    //    public int Id { get; set; }
+    //    public string HospitalName { get; set; }
+    //    public string Address { get; set; }
+    //    public int Mobile { get; set; }
+    //    public string Email { get; set; }
+    //    public string Website { get; set; }
+    //    public string FullName { get; set; }
+    //    public string HospitalId { get; set; }
+    //    public string EstablishYear { get; set; }
+    //    public int NumberofBed { get; set; }
+    //    public int NumberofAmbulance { get; set; }
+    //    public string PaymentType { get; set; }
+    //    public int Emergency { get; set; }
+    //    public int FacilityId { get; set; }
+    //    public int jobType { get; set; }
+    //    public bool EmailConfirmed { get; set; }
+    //}
 
     [Serializable]
     [Table("QuickUpload")]
@@ -117,9 +148,24 @@ namespace WebAPI.Entity
     {
         [Key]
         public int Id { get; set; }
+        //public string ClientId { get; set; }
+        //public int HospitalId { get; set; }
+        //public int DesiesType { get; set; }
+        //public string FilePath { get; set; }
         public string ClientId { get; set; }
-        public int HospitalId { get; set; }
-        public int DesiesType { get; set; }
+        public string HospitalId { get; set; }
+        public string DesiesType { get; set; }
         public string FilePath { get; set; }
+        public string CountryCode { get; set; }
+        public string PhoneNumber { get; set; }
+
+        public bool IsDeleted { get; set; }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
+        public string DateEntered { get; set; }
+        public string DateModified { get; set; }
     }
+
+    
+   
 }

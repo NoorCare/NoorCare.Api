@@ -18,9 +18,13 @@ namespace WebAPI
     {
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+        IDoctorRepository _doctorRepository = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+        ISecretaryRepository _secretaryRepository = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
 
         ClientDetail clientDetailRepo = null;
-        HospitalDetail hospitalDetails;
+        HospitalDetails hospitalDetails;
+        Doctor doctor;
+        Secretary  secretary;
         int jobType = 1;
         bool isEmailConfirmed = false;
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
@@ -41,14 +45,27 @@ namespace WebAPI
             }
             else
             {
-                if (user.Id.Contains("NCH")) {
+                if (user.JobType == 2) {
                     hospitalDetails = _hospitalDetailsRepository.Find(x => x.HospitalId.Trim() == user.Id.Trim()).FirstOrDefault();
                     jobType = hospitalDetails.jobType;
                     isEmailConfirmed = hospitalDetails.EmailConfirmed;
-                } else {
+                }
+                else  if (user.JobType == 1) {
                     clientDetailRepo = _clientDetailRepo.Find(x => x.ClientId.Trim() == user.Id.Trim()).FirstOrDefault();
-                    jobType = hospitalDetails.jobType;
+                    jobType = clientDetailRepo.Jobtype;
                     isEmailConfirmed = clientDetailRepo.EmailConfirmed;
+                }
+                else if (user.JobType == 3)
+                {
+                    doctor = _doctorRepository.Find(x => x.DoctorId.Trim() == user.Id.Trim()).FirstOrDefault();
+                    jobType = doctor.jobType;
+                    isEmailConfirmed =true;
+                }
+                else if (user.JobType == 4)
+                {
+                    secretary = _secretaryRepository.Find(x => x.SecretaryId.Trim() == user.Id.Trim()).FirstOrDefault();
+                    jobType = secretary.jobType;
+                    isEmailConfirmed = true;
                 }
                 if (!isEmailConfirmed)
                 {
@@ -61,10 +78,10 @@ namespace WebAPI
                     identity.AddClaim(new Claim("Username", user.UserName));
                     identity.AddClaim(new Claim("Email", user.Email));
                     identity.AddClaim(new Claim("FirstName", user.FirstName));
-                    identity.AddClaim(new Claim("LastName", user.LastName));
+                    identity.AddClaim(new Claim("LastName", user.LastName == null? "" : user.LastName));
                     identity.AddClaim(new Claim("LoggedOn", DateTime.Now.ToString()));
                     identity.AddClaim(new Claim("PhoneNo", user.PhoneNumber == null? " " : user.PhoneNumber));
-                    identity.AddClaim(new Claim("JobType", jobType.ToString()));
+                    identity.AddClaim(new Claim("JobType", user.JobType.ToString()));
                     context.Validated(identity);
                 }
             }

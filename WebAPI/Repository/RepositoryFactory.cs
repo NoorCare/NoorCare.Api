@@ -62,6 +62,63 @@ namespace NoorCare.Repository
                     {
                         return new CountryRepository() as TRepository;
                     }
+                    if(typeof(TRepository) == typeof(IDoctorRepository))
+                    {
+                        return new DoctorRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(ISecretaryRepository))
+                    {
+                        return new SecretaryRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IFeedbackRepository))
+                    {
+                        return new FeedbackRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IAppointmentRepository))
+                    {
+                        return new AppointmentRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IAppointmentRepository))
+                    {
+                        return new AppointmentRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(ITblHospitalAmenitiesRepository))
+                    {
+                        return new TblHospitalAmenitiesRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(ITblHospitalServicesRepository))
+                    {
+                        return new TblHospitalServicesRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(ITblHospitalSpecialtiesRepository))
+                    {
+                        return new TblHospitalSpecialtiesRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IQuickUploadRepository))
+                    {
+                        return new QuickUploadRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IDoctorAvailableTimeRepository))
+                    {
+                        return new DoctorAvailableTimeRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IContactUsRepository))
+                    {
+                        return new ContactUsRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(ITimeMasterRepository))
+                    {
+                        return new TimeMasterRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IPatientPrescriptionRepository))
+                    {
+                        return new PatientPrescriptionRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(INewsBlogsRepository))
+                    {
+                        return new NewsBlogsRepository() as TRepository;
+                    }
+                    
                     return null;
                 default:
                     return null;
