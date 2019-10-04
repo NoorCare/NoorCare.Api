@@ -1,9 +1,7 @@
 ﻿using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web;
@@ -15,12 +13,14 @@ namespace WebAPI.Controllers
 {
     public class FileUploadController : ApiController
     {
+        IQuickUploadRepository _quickUploadRepo = RepositoryFactory.Create<IQuickUploadRepository>(ContextTypes.EntityFramework);
+
         [HttpPost]
-        [Route("api/document/{clientId}/{desiesId}")]
-        public HttpResponseMessage Post(string clientId, int desiesId)
+        [Route("api/document/{clientId}/{diseaseId}")]
+        public HttpResponseMessage Post(string clientId, int diseaseId)
         {
             HttpResponseMessage result = null;
-            createDocPath(clientId, desiesId);
+            createDocPath(clientId, diseaseId);
             var httpRequest = HttpContext.Current.Request;
             if (httpRequest.Files.Count > 0)
             {
@@ -41,8 +41,9 @@ namespace WebAPI.Controllers
             return result;
         }
 
-        private void createDocPath(string clientId, int desiesId) {
-            string subPath = $"Documents/{clientId}/{desiesId}"; 
+        private void createDocPath(string clientId, int desiesId)
+        {
+            string subPath = $"Documents/{clientId}/{desiesId}";
             bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath(subPath));
             if (!exists)
                 System.IO.Directory.CreateDirectory(HttpContext.Current.Server.MapPath(subPath));
@@ -53,8 +54,10 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage UploadReport(QuickUpload obj)
         {
-            IQuickUploadRepository _quickUploadRepo = RepositoryFactory.Create<IQuickUploadRepository>(ContextTypes.EntityFramework);
-            var _quickUploadCreated = _quickUploadRepo.Insert(obj);           
+            obj.AddedMonth = DateTime.Now.Month.ToString();
+            obj.AddedYear = DateTime.Now.Year.ToString();
+                        
+            var _quickUploadCreated = _quickUploadRepo.Insert(obj);
 
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
         }
@@ -77,28 +80,30 @@ namespace WebAPI.Controllers
                 if (postedFile != null)
                 {
                     FileInfo fi = new FileInfo(postedFile.FileName);
-                    if(fi != null)
+                    if (fi != null)
                     {
                         PostedFileName = fi.Name;
                         PostedFileExt = fi.Extension;
                     }
-                    
-                    imageName = quickUploadId + PostedFileExt;
-                    
-                    //File Save Path --disease type / year / month / day / time
-                    string year = DateTime.Now.Year.ToString();
-                    string month =DateTime.Now.Month.ToString();
-                    string day = DateTime.Now.Day.ToString();
-                    string time = DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString();// + DateTime.Now.Second.ToString();
 
-                    var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + desiesType +"/"+ clientId + "/" + year + "/" + month + "/" + day);
-                   // bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ClientDocument/" + desiesType + "/" + year + "/" + month + "/" + day));
+                    imageName = quickUploadId + PostedFileExt;
+
+                    //File Save Path --disease type / year / month / day
+                    string year = DateTime.Now.Year.ToString();
+                    string month = DateTime.Now.Month.ToString();
+                    //string day = DateTime.Now.Day.ToString();
+                    //string time = DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString();// + DateTime.Now.Second.ToString();
+
+                    //var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + desiesType + "/" + clientId + "/" + year + "/" + month + "/" + day);
+                    var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + clientId + "/" + desiesType + "/" + year + "/"+ month);
+                    // bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ClientDocument/" + desiesType + "/" + year + "/" + month + "/" + day));
                     //if (exists)
                     //{
                     //    File.Delete(filePath);
                     //}
                     Directory.CreateDirectory(filePath);
                     filePath = filePath + "/" + imageName;
+                 
                     postedFile.SaveAs(filePath);
                 }
             }
@@ -107,6 +112,49 @@ namespace WebAPI.Controllers
             }
             return Ok(quickUploadId);
         }
+
+        #region GetDisease
+
+        [Route("api/GetUploadedDiseaseList/{clientId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetUploadedDiseaseList(string clientId)
+        {
+            var result = _quickUploadRepo.Find(x => x.ClientId == clientId);
+
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
+        [Route("api/GetUploadedYearList/{clientId}/{disease}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetUploadedYearList(string clientId, string disease)
+        {
+            var result = _quickUploadRepo.Find(x => x.ClientId == clientId && x.DesiesType==disease);
+
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
+        [Route("api/GetUploadedMonthList/{clientId}/{disease}/{year}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetUploadedMonthList(string clientId, string disease, string year)
+        {
+            var result = _quickUploadRepo.Find(x => x.ClientId == clientId && x.DesiesType == disease && x.AddedYear== year);
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
+        [Route("api/GetUploadedFilesList/{clientId}/{disease}/{year}/{month}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetUploadedFilesList(string clientId, string disease, string year, string month)
+        {
+            var result = _quickUploadRepo.Find(x => x.ClientId == clientId && x.DesiesType == disease && x.AddedYear == year && x.AddedMonth==month);
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
+
+        #endregion
 
     }
 }
