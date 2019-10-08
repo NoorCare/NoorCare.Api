@@ -267,6 +267,10 @@ namespace WebAPI.Controllers
         #region Uility
         private List<Disease> getSpecialization(string diesiesType, List<Disease> diseases)
         {
+            if (diesiesType == null || diesiesType == "")
+            {
+                return new List<Disease>();
+            }
             var diesiesTypes = diesiesType.Split(',');
             int[] myInts = Array.ConvertAll(diesiesTypes, s => int.Parse(s));
             var diseasesList = diseases.Where(x => myInts.Contains(x.Id)).ToList();
@@ -275,6 +279,10 @@ namespace WebAPI.Controllers
 
         private List<TblHospitalServices> getHospitalService(string serviceType, List<TblHospitalServices> hospitalService)
         {
+            if (serviceType == null)
+            {
+                return new List<TblHospitalServices>();
+            }
             var serviceTypes = serviceType.Split(',');
             int[] myInts = Array.ConvertAll(serviceTypes, s => int.Parse(s));
             var hospitalServiceList = hospitalService.Where(x => myInts.Contains(x.Id)).ToList();
@@ -284,6 +292,10 @@ namespace WebAPI.Controllers
 
         private List<TblHospitalAmenities> getHospitalAmenities(string amenitieType, List<TblHospitalAmenities> hospitalAmenitie)
         {
+            if (amenitieType == null)
+            {
+                return new List<TblHospitalAmenities>();
+            }
             var serviceTypes = amenitieType.Split(',');
             int[] myInts = Array.ConvertAll(serviceTypes, s => int.Parse(s));
             var hospitalAmenitieList = hospitalAmenitie.Where(x => myInts.Contains(x.Id)).ToList();
@@ -292,6 +304,10 @@ namespace WebAPI.Controllers
         }
         private List<Doctors> getDoctors(string HospitalId, string diseaseType, ref FilterDoctor _filterDoctor)
         {
+            if (diseaseType == null || diseaseType == "")
+            {
+                return new List<Doctors>();
+            }
             var diesiesTypes = diseaseType.Split(',');
 
             int[] myInts = Array.ConvertAll(diesiesTypes, s => int.Parse(s));
@@ -341,6 +357,7 @@ namespace WebAPI.Controllers
         }
         private List<Hospital> getHospital(string type, string cityId, string countryId, string diseaseType, ref FilterDoctor _filterDoctor, ref FilterHospital _filterHospital)
         {
+            int[] a = new int[0];
             var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
             var hospitalAmenitie = _hospitalAmenitieRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
             Hospital _hospital = new Hospital();
@@ -373,9 +390,9 @@ namespace WebAPI.Controllers
                     PostCode = h.PostCode,
                     Landmark = h.Landmark,
                     InsuranceCompanies = h.InsuranceCompanies,
-                    AmenitiesIds = Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
+                    AmenitiesIds = h.Amenities == null ? a : Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
                     Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
-                    ServicesIds = Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
+                    ServicesIds = h.Services == null ? a : Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
                     Services = getHospitalService(h.Services, hospitalService),
                     Doctors = type == "0" ? getDoctors(h.HospitalId, diseaseType, ref _filterDoctor) : null,
                     Likes = feedback.Where(x => x.ILike == true).Count(),
