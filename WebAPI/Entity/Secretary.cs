@@ -31,6 +31,9 @@ namespace WebAPI.Entity
         [MaxLength(50)]
         public string HospitalId { get; set; }
         public int jobType { get; set; }
+
+        public string AboutUs { get; set; }
+
         public bool IsDeleted { get; set; }
         [MaxLength(128)]
         public string CreatedBy { get; set; }
