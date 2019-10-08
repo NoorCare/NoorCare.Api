@@ -72,6 +72,7 @@ namespace WebAPI.Models
         public string BookingUrl { get; set; }
         public string ProfileDetailUrl { get; set; }
         public string ImgUrl { get; set; }
+        public string AboutUs { get; set; }
     }
 
     public class Doctors

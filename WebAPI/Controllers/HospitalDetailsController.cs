@@ -79,6 +79,7 @@ namespace WebAPI.Controllers
                     PostCode = h.PostCode,
                     Landmark = h.Landmark,
                     InsuranceCompanies = h.InsuranceCompanies,
+                    AboutUs = h.AboutUs,
                    // AmenitiesIds = Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
                     Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
                    // ServicesIds = Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
@@ -210,6 +211,8 @@ namespace WebAPI.Controllers
                         File.Delete(filePath);
                     }
                     postedFile.SaveAs(filePath);
+
+                    // Save ProfilePath in table HospitalDetails
                 }
             }
             catch (Exception)

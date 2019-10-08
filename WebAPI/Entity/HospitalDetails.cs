@@ -67,6 +67,8 @@ public partial class HospitalDetails : IEntity<int>
     public bool Friday { get; set; }
     public bool Saturday { get; set; }
     public bool Sunday { get; set; }
+    
+    public string AboutUs { get; set; }
 
     public bool IsDeleted { get; set; }
     [MaxLength(50)]
