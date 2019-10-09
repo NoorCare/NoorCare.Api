@@ -1,8 +1,11 @@
 ﻿using NoorCare.Repository;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebAPI.Entity;
 using WebAPI.Repository;
 
 namespace WebAPI.Controllers
@@ -20,7 +23,7 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
-      
+
     }
 }
 
