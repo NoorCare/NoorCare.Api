@@ -1,4 +1,6 @@
 ﻿using NoorCare.Repository;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,6 +16,7 @@ namespace WebAPI.Controllers
         Registration _registration = new Registration();
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _getAppointmentList = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
+        ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
 
         [Route("api/appointment/getall")]
         [HttpGet]
@@ -71,6 +74,28 @@ namespace WebAPI.Controllers
 
             var result = _appointmentRepo.Delete(tbleId);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
+        [Route("api/GetAppointmentTimebyTimeId/{TimeId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetAppointmentTimebyTimeId(string TimeId)
+        {
+            var TimeMaster = _timeMasterRepo.GetAll().ToList();
+            var result = getTimeList(TimeId, TimeMaster);
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
+        private List<TimeMaster> getTimeList(string TimeList, List<TimeMaster> timeMstr)
+        {
+            if (TimeList == null || TimeList == "")
+            {
+                return new List<TimeMaster>();
+            }
+            var lst = TimeList.Split(',');
+            int[] myInts = Array.ConvertAll(lst, s => int.Parse(s));
+            var TimeLst = timeMstr.Where(x => myInts.Contains(x.Id)).ToList();
+            return TimeLst;
         }
     }
 }

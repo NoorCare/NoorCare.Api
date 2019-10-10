@@ -125,11 +125,5 @@ namespace WebAPI.Controllers
             var result = _secretaryRepo.Delete(tbleId);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-
-        //private int getTableId(string secretaryId)
-        //{
-        //    var result = _secretaryRepo.Find(x => x.SecretaryId == secretaryId).FirstOrDefault();
-        //    return result.Id;
-        //}
     }
 }
