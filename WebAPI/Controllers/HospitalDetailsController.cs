@@ -56,7 +56,6 @@ namespace WebAPI.Controllers
             foreach (var h in hospitals ?? new List<HospitalDetails>())
             {
                 var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
-                
 
                 _hospital = new Hospital
                 {
@@ -78,8 +77,9 @@ namespace WebAPI.Controllers
                     City = h.City,
                     PostCode = h.PostCode,
                     Landmark = h.Landmark,
-                    InsuranceCompanies = h.InsuranceCompanies,
                     AboutUs = h.AboutUs,
+                    InsuranceCompanies = h.InsuranceCompanies,
+                    
                    // AmenitiesIds = Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
                     Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
                    // ServicesIds = Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),

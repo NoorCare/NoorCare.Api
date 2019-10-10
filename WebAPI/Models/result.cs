@@ -56,6 +56,7 @@ namespace WebAPI.Models
         public string City { get; set; }
         public string PostCode { get; set; }
         public string Landmark { get; set; }
+        public string AboutUs { get; set; }
         public string InsuranceCompanies { get; set; }
         public int[] AmenitiesIds { get; set; }
         public List<TblHospitalAmenities> Amenities { get; set; }
@@ -72,7 +73,7 @@ namespace WebAPI.Models
         public string BookingUrl { get; set; }
         public string ProfileDetailUrl { get; set; }
         public string ImgUrl { get; set; }
-        public string AboutUs { get; set; }
+        
     }
 
     public class Doctors
