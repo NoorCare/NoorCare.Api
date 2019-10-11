@@ -67,6 +67,8 @@ namespace WebAPI.Models
         public List<Disease> Specialization { get; set; }
 
         public List<Doctors> Doctors { get; set; }
+        public List<Secretary> Secretary { get; set; }
+        
         public FilterHospital FilterHospital { get; set; }
         public int Likes { get; set; }
         public int Feedbacks { get; set; }
