@@ -150,10 +150,10 @@ namespace WebAPI.Entity
         public int Id { get; set; }      
         public string ClientId { get; set; }
         public string HospitalId { get; set; }
-        public string DesiesType { get; set; }
+        public Int32 DesiesType { get; set; }
         public string FilePath { get; set; }
-        public string AddedYear{ get; set; }
-        public string AddedMonth { get; set; }
+        public Int32? AddedYear { get; set; }
+        public Int32? AddedMonth { get; set; }
         public string CountryCode { get; set; }
         public string PhoneNumber { get; set; }
 
