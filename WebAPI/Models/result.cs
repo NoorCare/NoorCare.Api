@@ -67,6 +67,8 @@ namespace WebAPI.Models
         public List<Disease> Specialization { get; set; }
 
         public List<Doctors> Doctors { get; set; }
+        public List<Secretary> Secretary { get; set; }
+        
         public FilterHospital FilterHospital { get; set; }
         public int Likes { get; set; }
         public int Feedbacks { get; set; }
@@ -110,5 +112,38 @@ namespace WebAPI.Models
         public List<TblHospitalAmenities> Amenities { get; set; }
         public List<TblHospitalServices> Services { get; set; }
         
+    }
+
+
+
+    public class DesiesTypeResult
+    {
+        public Int32 DiseaseType { get; set; }
+        public string DesiesName { get; set; }
+        public List<Int32?> Years { get; set; }
+        public List<YearList> YearList { get; set; }
+       
+    }
+
+
+
+    public class YearList
+    {
+        public Int32? Year { get; set; }
+        public List<Int32?> Month { get; set; }
+        public List<MonthList> MonthList { get; set; }
+        
+    }
+
+    public class MonthList
+    {
+        public Int32? Month { get; set; }
+        public List<FileName> FileList { get; set; }
+    }
+
+    public class FileName
+    {
+        public string DocName { get; set; }
+        public string DocUrl { get; set; }
     }
 }

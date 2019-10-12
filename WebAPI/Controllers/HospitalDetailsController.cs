@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
         ITblHospitalServicesRepository _hospitalServicesRepository = RepositoryFactory.Create<ITblHospitalServicesRepository>(ContextTypes.EntityFramework);
         ITblHospitalAmenitiesRepository _hospitalAmenitieRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
         IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
-
+        ISecretaryRepository _secretaryRepo = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
 
         [Route("api/hospitaldetails/getall")]
         [HttpGet]
@@ -86,6 +86,7 @@ namespace WebAPI.Controllers
                     Services = getHospitalService(h.Services, hospitalService),
                     Specialization = getSpecialization(h.Specialization, disease),
                     Doctors = getDoctors(h.HospitalId),
+                    Secretary = getSecretary(h.HospitalId),
                     Likes = feedback.Where(x => x.ILike == true).Count(),
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{h.HospitalId}",
@@ -139,6 +140,41 @@ namespace WebAPI.Controllers
                 _doctors.Add(_doctor);
             }
             return _doctors;
+        }
+
+        private List<Secretary> getSecretary(string HospitalId)
+        {
+            Secretary _secretarys = new Secretary();
+            List<Secretary> secretary = new List<Secretary>();
+            List<Secretary> secretaries = _secretaryRepo.Find(x => x.HospitalId == HospitalId);
+
+            foreach (var s in secretaries ?? new List<Secretary>())
+            {
+                _secretarys = new Secretary
+                {
+                    FirstName = s.FirstName,
+                    LastName = s.LastName,
+                    Email = s.Email,
+                    CountryCode = s.CountryCode,
+                    PhoneNumber = s.PhoneNumber,
+                    AlternatePhoneNumber = s.AlternatePhoneNumber,
+                    Gender = s.Gender,
+                    YearOfExperience = s.YearOfExperience,
+                    SecretaryId = s.SecretaryId,
+                    HospitalId = s.HospitalId,
+                    jobType = s.jobType,
+                    AboutUs = s.AboutUs,
+                    IsDeleted = s.IsDeleted,
+                    CreatedBy = s.CreatedBy,
+                    ModifiedBy = s.ModifiedBy,
+                    DateEntered = s.DateEntered,
+                    DateModified = s.DateModified
+                    //ImgUrl = $"{constant.imgUrl}/Secretary/{d.DoctorId}.Jpeg"
+                };
+
+                secretary.Add(_secretarys);
+            }
+            return secretary;
         }
 
         private List<Disease> getSpecialization(string diesiesType, List<Disease> diseases)

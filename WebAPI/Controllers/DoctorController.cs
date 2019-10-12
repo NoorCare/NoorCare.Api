@@ -389,7 +389,7 @@ namespace WebAPI.Controllers
                     City = h.City,
                     PostCode = h.PostCode,
                     Landmark = h.Landmark,
-                    InsuranceCompanies = h.InsuranceCompanies,
+                    InsuranceCompanies = h.InsuranceCompanies??"",
                     AmenitiesIds = h.Amenities == null ? a : Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
                     Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
                     ServicesIds = h.Services == null ? a : Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
