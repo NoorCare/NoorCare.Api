@@ -72,60 +72,51 @@ namespace WebAPI.Controllers
         {
             string imageName = null;
             var httpRequest = HttpContext.Current.Request;
-            string quickUploadId = httpRequest.Form["Id"];
+            string hospitalId = httpRequest.Form["HospitalId"];
             string clientId = httpRequest.Form["ClientId"];
             string diseaseType = httpRequest.Form["diseaseType"];
             var postedFile = httpRequest.Files["Image"];
             string PostedFileName = string.Empty;
             string PostedFileExt = string.Empty;
+            ////File Information Save in Database
+            QuickUpload quickHeathDetails = new QuickUpload
+            {
+                ClientId = clientId,
+                HospitalId = hospitalId,
+                DesiesType = Convert.ToInt32(diseaseType),
+                AddedYear = DateTime.Now.Year,
+                AddedMonth = DateTime.Now.Month,
+                FilePath = postedFile.FileName,
+            };
+           var objId = _quickUploadRepo.Insert(quickHeathDetails);
             try
             {
                 if (postedFile != null)
                 {
-                    FileInfo fi = new FileInfo(postedFile.FileName);
+                    FileInfo fi = new FileInfo(postedFile.FileName.Replace(" ", "_"));
                     if (fi != null)
                     {
                         PostedFileName = fi.Name;
                         PostedFileExt = fi.Extension;
                     }
 
-                    imageName = quickUploadId + PostedFileExt;
+                    imageName = objId + PostedFileExt;
 
-                    //File Save Path --disease type / year / month / day
                     string year = DateTime.Now.Year.ToString();
                     string month = DateTime.Now.Month.ToString();
-                    //string day = DateTime.Now.Day.ToString();
-                    //string time = DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString();// + DateTime.Now.Second.ToString();
-
-                    //var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + diseaseType + "/" + clientId + "/" + year + "/" + month + "/" + day);
                     var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + clientId + "/" + diseaseType + "/" + year + "/" + month);
-                    // bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ClientDocument/" + diseaseType + "/" + year + "/" + month + "/" + day));
-                    //if (exists)
-                    //{
-                    //    File.Delete(filePath);
-                    //}
                     Directory.CreateDirectory(filePath);
                     filePath = filePath + "/" + imageName;
 
                     postedFile.SaveAs(filePath);
-                    ////File Information Save in Database
-                    //QuickUpload quickHeathDetails = new QuickUpload
-                    //{
-                    //    ClientId = clientId,
-                    //    HospitalId = hospitalId,
-                    //    diseaseType = diseaseType,
-                    //    AddedYear= year,
-                    //    AddedMonth = month,
-                    //    FilePath = imageName,
-                    //};
-                    //_quickUploadRepo.Insert(quickHeathDetails);
+                   
 
                 }
             }
             catch (Exception ex)
             {
             }
-            return Ok(quickUploadId);
+            return Ok(objId);
         }
 
         #region GetDisease
@@ -151,9 +142,12 @@ namespace WebAPI.Controllers
                     Select(group => new { AddedYear = group.Key, Items = group.ToList() })
                .ToList();
                 desiesTypeResult.Years = new List<int?>();
-                desiesTypeResult.DiseaseType = x.diseaseType;
-                desiesTypeResult.DesiesName = disease.Where(c => c.Id == x.diseaseType).FirstOrDefault().DiseaseType;
-                desiesTypeResult.YearList = new List<YearList>();
+                if (x.diseaseType != 0)
+                {
+                    desiesTypeResult.DiseaseType = x.diseaseType;
+                    desiesTypeResult.DesiesName = disease.Where(c => c.Id == x.diseaseType).FirstOrDefault().DiseaseType;
+                }
+                    desiesTypeResult.YearList = new List<YearList>();
                 foreach (var it in listYear)
                 {
 
@@ -191,43 +185,10 @@ namespace WebAPI.Controllers
                 }
 
                 desiesTypeResultList.Add(desiesTypeResult);
-                //desiesTypeResult.Years.AddRange(listYear);
-
             }
 
             return Request.CreateResponse(HttpStatusCode.Accepted, desiesTypeResultList);
         }
-
-        //[Route("api/GetUploadedYearList/{clientId}/{disease}")]
-        //[HttpGet]
-        //[AllowAnonymous]
-        //public HttpResponseMessage GetUploadedYearList(string clientId, string disease)
-        //{
-        //    var result = _quickUploadRepo.Find(x => x.ClientId == clientId && x.diseaseType==disease);
-
-        //    return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        //}
-
-        //[Route("api/GetUploadedMonthList/{clientId}/{disease}/{year}")]
-        //[HttpGet]
-        //[AllowAnonymous]
-        //public HttpResponseMessage GetUploadedMonthList(string clientId, string disease, string year)
-        //{
-        //    var result = _quickUploadRepo.Find(x => x.ClientId == clientId && x.diseaseType == disease && x.AddedYear== year);
-        //    return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        //}
-
-        //[Route("api/GetUploadedFilesList/{clientId}/{disease}/{year}/{month}")]
-        //[HttpGet]
-        //[AllowAnonymous]
-        //public HttpResponseMessage GetUploadedFilesList(string clientId, string disease, string year, string month)
-        //{
-        //    var result = _quickUploadRepo.Find(x => x.ClientId == clientId && x.diseaseType == disease && x.AddedYear == year && x.AddedMonth==month);
-        //    return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        //}
-
-
-
         #endregion
 
     }

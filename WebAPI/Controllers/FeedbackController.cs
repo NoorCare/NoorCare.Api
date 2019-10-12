@@ -48,6 +48,8 @@ namespace WebAPI.Controllers
                 Random rd = new Random(987612345);
                 var _feedbackId ="F_"+ rd.Next();
                 obj.FeedbackID = _feedbackId;
+                obj.DateEntered = DateTime.Now;
+                obj.DateModified = DateTime.Now;
                 var _feedbackCreated = _feedbackRepo.Insert(obj);
                 return Request.CreateResponse(HttpStatusCode.Accepted, obj.FeedbackID);
             }
