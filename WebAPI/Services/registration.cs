@@ -133,6 +133,8 @@ namespace WebAPI.Services
             try
             {
                 _emailSender.email_send(model.Email, model.FirstName + " "+ model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
+
+                _emailSender.SendSMS(model.PhoneNumber);
             }
             catch (Exception ex)
             {

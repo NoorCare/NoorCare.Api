@@ -21,9 +21,10 @@ namespace AngularJSAuthentication.API.Services
         string SMSUserId = ConfigurationManager.AppSettings.Get("SMSUserId");
         string SMSPassword = ConfigurationManager.AppSettings.Get("SMSPassword");
         string SMSSid = ConfigurationManager.AppSettings.Get("SMSSid");
+        string customMessage = ConfigurationManager.AppSettings.Get("customSMSMessage");
 
         public void email_send(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care New", 
-            string ClientId = "Test", int jobType = 0, string password = null, string PhoneNumber="", string CustomMessage="")
+            string ClientId = "Test", int jobType = 0, string password = null)
         {
             string prifix = jobType == 3 ? "Dr " : "";
             string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
@@ -43,12 +44,15 @@ namespace AngularJSAuthentication.API.Services
             SmtpServer.UseDefaultCredentials = false;
             SmtpServer.Credentials = new NetworkCredential(From, SMTPPassword);
             SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
-            SmtpServer.Send(mail);
+            SmtpServer.Send(mail);        
+        }
 
-            // Sent SMS
+        public void SendSMS(string PhoneNumber = "")
+        {
+            //SMS
             try
             {
-                SendSMS(SMSUserId, SMSPassword, PhoneNumber, CustomMessage + DateTime.Now, "N", "Y", SMSSid);
+                SendSMS(SMSUserId, SMSPassword, PhoneNumber, customMessage + DateTime.Now, "N", "Y", SMSSid);
             }
             catch (Exception ex)
             {
