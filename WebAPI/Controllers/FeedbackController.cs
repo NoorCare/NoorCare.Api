@@ -122,6 +122,15 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
+        [Route("api/GetContactUsByPageId/{PageId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetContactUsByPageId(string PageId)
+        {
+            var result = _contactUsRepo.Find(x => x.PageId == PageId).FirstOrDefault();
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
         [Route("api/DeleteContactUs/{Id}")]
         [HttpPost]
         [AllowAnonymous]
