@@ -127,7 +127,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetContactUsByPageId(string PageId)
         {
-            var result = _contactUsRepo.Find(x => x.PageId == PageId).FirstOrDefault();
+            var result = _contactUsRepo.Find(x => x.PageId == PageId);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
