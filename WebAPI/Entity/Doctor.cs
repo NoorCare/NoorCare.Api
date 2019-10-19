@@ -22,7 +22,7 @@ namespace WebAPI.Entity
         public string PhoneNumber { get; set; }
         [MaxLength(50)]
         public string AlternatePhoneNumber { get; set; }
-
+        public bool EmailConfirmed { get; set; }
         public int Gender { get; set; }
 
         [MaxLength(50)]     
@@ -52,7 +52,7 @@ namespace WebAPI.Entity
         public string CreatedBy { get; set; }
         [MaxLength(128)]
         public string ModifiedBy { get; set; }
-        public DateTime? DateEntered { get; set; }
+        public DateTime? DateEntered { get; set; } 
         public DateTime? DateModified { get; set; }
 
         [MaxLength(1000)]

@@ -66,13 +66,13 @@ namespace WebAPI.Controllers
 
                     DashboardTypeModel.TotalDoctor = _doctorRepo.Find(d => d.HospitalId == HospitalId).ToList().Count();
 
-                    DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "booked").ToList().Count();
+                    DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "1").ToList().Count();
 
-                    DashboardTypeModel.CancelAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "cancel").ToList().Count();
+                    DashboardTypeModel.CancelAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "2").ToList().Count();
 
-                    DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "pending").ToList().Count();
+                    DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "0").ToList().Count();
 
-                    DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "booked" && a.AppointmentDate == searchDate).ToList().Count();
+                    DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "1" && a.AppointmentDate == searchDate).ToList().Count();
                 }
                 foreach (var item in _appointmentRepo.Find(a => a.HospitalId == HospitalId).ToList())
                 {

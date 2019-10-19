@@ -64,6 +64,21 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
+        [Route("api/appointment/updateStatus")]
+        [HttpPost]
+        [AllowAnonymous]
+        // PUT: api/Appointment/5
+        public HttpResponseMessage UpdateStatus(string AppointmentId, string status)
+        {
+            Appointment obj = _getAppointmentList.Find(x => x.AppointmentId == AppointmentId).FirstOrDefault();
+            if(obj != null)
+            {
+                obj.Status = status;
+            }
+            var result = _appointmentRepo.Update(obj);
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
         [Route("api/appointment/delete/{appointmentid}")]
         [HttpDelete]
         [AllowAnonymous]
