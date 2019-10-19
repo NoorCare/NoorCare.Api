@@ -17,6 +17,10 @@ namespace WebAPI.Entity
         public int FacilityId { get; set; }
         [MaxLength(300)]
         public string ProviderName { get; set; }
+        [MaxLength(200)]
+        public string FirstName { get; set; }
+        [MaxLength(200)]
+        public string LastName { get; set; }
         public int CountryCode { get; set; }
 
         [MaxLength(256)]
@@ -25,10 +29,11 @@ namespace WebAPI.Entity
         [MaxLength(50)]
         public string PhoneNumber { get; set; }
 
-        public int JobType { get; set; }
+        public int jobType { get; set; }
 
         [MaxLength(1000)]
         public string AboutUs { get; set; }
+
         [MaxLength(250)]
         public string PhotoPath { get; set; }
         [MaxLength(100)]
