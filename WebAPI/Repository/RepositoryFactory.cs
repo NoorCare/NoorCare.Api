@@ -118,7 +118,12 @@ namespace NoorCare.Repository
                     {
                         return new NewsBlogsRepository() as TRepository;
                     }
-                    
+                    if (typeof(TRepository) == typeof(IFacilityDetailRepository))
+                    {
+                        return new FacilityDetailRepository() as TRepository;
+                    }
+
+
                     return null;
                 default:
                     return null;

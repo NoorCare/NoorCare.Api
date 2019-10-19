@@ -59,7 +59,8 @@ namespace WebAPI.Models
             modelBuilder.Entity<ContactUs>().ToTable("ContactUs");
             modelBuilder.Entity<TimeMaster>().ToTable("TimeMaster");
             modelBuilder.Entity<NewsBlogs>().ToTable("NewsBlogs");
-            
+            modelBuilder.Entity<FacilityDetail>().ToTable("FacilityDetail");
+
         }
     }
 }

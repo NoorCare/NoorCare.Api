@@ -1,5 +1,4 @@
-﻿using System.Web.UI.WebControls;
-using WebAPI.Entity;
+﻿using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
 
@@ -30,8 +29,7 @@ namespace NoorCare.Repository
     public class TimeMasterRepository : EFRepositoryBase<ApplicationDbContext, TimeMaster, int>, ITimeMasterRepository { }
     public class PatientPrescriptionRepository : EFRepositoryBase<ApplicationDbContext, PatientPrescription, int>, IPatientPrescriptionRepository { }
     public class NewsBlogsRepository : EFRepositoryBase<ApplicationDbContext, NewsBlogs, int>, INewsBlogsRepository { }
-    
-
+    public class FacilityDetailRepository : EFRepositoryBase<ApplicationDbContext, FacilityDetail, int>, IFacilityDetailRepository { } 
 }
 
 
