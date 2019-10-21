@@ -108,6 +108,7 @@ namespace WebAPI.Models
         public List<DoctorAvailableTime> DoctorAvilability { get; set; }
         public FilterDoctor FilterDoctor { get; set; }
         public List<Disease> Specialization { get; set; }
+        public List<TimeMaster> TimeAvailability { get; set; }
         public List<Feedback> Feedback { get; set; }
         public List<TblHospitalAmenities> Amenities { get; set; }
         public List<TblHospitalServices> Services { get; set; }

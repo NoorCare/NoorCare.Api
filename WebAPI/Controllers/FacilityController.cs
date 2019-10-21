@@ -1,12 +1,8 @@
-﻿using AngularJSAuthentication.API.Services;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using NoorCare.Repository;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using WebAPI.Entity;
 using WebAPI.Models;
@@ -17,39 +13,65 @@ namespace WebAPI.Controllers
 {
     public class FacilityController : ApiController
     {
-
         Registration _registration = new Registration();
         IFacilityDetailRepository _facilityDetailRepo = RepositoryFactory.Create<IFacilityDetailRepository>(ContextTypes.EntityFramework);
 
-        [Route("api/Facility/register")]
+        [Route("api/Facility/register/{UserId}/{Password}")]
         [HttpPost]
         [AllowAnonymous]
-
-        public HttpResponseMessage Register(FacilityDetail obj)
+        public string Register(WebAPI.Entity.FacilityDetail obj,string UserId, string Password)
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
             CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
-            if (countryCode != null)
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var manager = new UserManager<ApplicationUser>(userStore);
+            ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(countryCode.CountryCodes));
+            IdentityResult result = manager.Create(user, Password);
+            IHttpActionResult errorResult = GetErrorResult(result);
+            if (errorResult != null)
             {
-                EmailSender _emailSender = new EmailSender();
-                var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
-                var manager = new UserManager<ApplicationUser>(userStore);
-                string password = _registration.RandomPassword(6);              
-
-                ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(countryCode.CountryCodes));
-                IdentityResult result = manager.Create(user, password);
-                user.PasswordHash = password;
-                _registration.sendRegistrationEmail(user);
-                obj.FacilityDetailId = user.Id;
-
-                _facilityDetailRepo.Insert(obj);
-
-                return Request.CreateResponse(HttpStatusCode.Accepted, obj.FacilityDetailId);
+                return "Registration has been Faild";
             }
             else
             {
-                return Request.CreateResponse(HttpStatusCode.Accepted, "Wrong country code");
+                 obj.FacilityDetailId = user.Id;
+                 _facilityDetailRepo.Insert(obj);
+
+                _registration.sendRegistrationEmail(user);
             }
+
+            return "Registration has been done, And Account activation link" +
+                        "has been sent your eamil id: " +
+                            obj.Email;
+        }
+
+        private IHttpActionResult GetErrorResult(IdentityResult result)
+        {
+            if (result == null)
+            {
+                return InternalServerError();
+            }
+
+            if (!result.Succeeded)
+            {
+                if (result.Errors != null)
+                {
+                    foreach (string error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
+                }
+
+                if (ModelState.IsValid)
+                {
+                    // No ModelState errors are available to send, so just return an empty BadRequest.
+                    return BadRequest();
+                }
+
+                return BadRequest(ModelState);
+            }
+
+            return null;
         }
     }
 }

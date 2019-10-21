@@ -19,65 +19,6 @@ namespace WebAPI.Controllers
         Registration _registration = new Registration();
         IFacilityDetailRepository _facilityDetailRepo = RepositoryFactory.Create<IFacilityDetailRepository>(ContextTypes.EntityFramework);
 
-
-        //[Route("api/FacilityDetail/getall")]
-        //[HttpGet]
-        //[AllowAnonymous]
-       
-        //public HttpResponseMessage GetAllFacilityDetail()
-        //{
-        //    var result = _facilityDetailRepo.GetAll().ToList();
-        //    return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        //}
-
-        //[Route("api/doctor/{country?}/{city?}/{diseaseType?}")]
-        //[HttpGet]
-        //[AllowAnonymous]
-        //// GET: api/Doctor
-        //public HttpResponseMessage Getdoctor(string country = null, string city = null, string diseaseType = null)
-        //{
-        //    IHospitalDetailsRepository _hospitalRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
-        //    List<HospitalDetails> hospitalDetails = _hospitalRepo.Find(
-        //        x => country != null ? x.Country == country : x.Country == x.Country &&
-        //        city != null ? x.City == city : x.City == x.City);
-        //    List<string> _hospitalid = new List<string>();
-        //    foreach (var hospitalDetail in hospitalDetails ?? new List<HospitalDetails>())
-        //    {
-        //        _hospitalid.Add(hospitalDetail.HospitalId);
-        //    }
-        //    string _hospitalId = string.Join(",", _hospitalid);
-        //    IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
-        //    var result = _doctorRepo.Find(x =>
-        //    x.HospitalId.Contains(_hospitalId) &&
-        //    diseaseType != null ? x.Specialization.Contains(diseaseType) : x.Specialization == x.Specialization
-        //    );
-
-
-        //    return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        //}
-
-        //[Route("api/doctorDetails/{doctorid}")]
-        //[HttpGet]
-        //[AllowAnonymous]
-        //// GET: api/Doctor/5
-        //public HttpResponseMessage DoctorDetails(string doctorid)
-        //{
-        //    var result = _facilityDetailRepo.Find(x => x.DoctorId == doctorid).FirstOrDefault();
-
-        //    return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        //}
-
-        //[Route("api/doctor/getdetail/{doctorid}")]
-        //[HttpGet]
-        //[AllowAnonymous]
-        //// GET: api/Doctor/5
-        //public HttpResponseMessage GetDetail(string doctorid)
-        //{
-        //    var result = _facilityDetailRepo.Find(x => x.DoctorId == doctorid).FirstOrDefault();
-
-        //    return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        //}
-
         [Route("api/FacilityDetail/register")]
         [HttpPost]
         [AllowAnonymous]

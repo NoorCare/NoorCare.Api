@@ -21,7 +21,8 @@ namespace WebAPI.Controllers
         IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _getHospitaldetailsList = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
-       // Registration _registration = new Registration();
+        IDoctorAvailableTimeRepository _doctorAvailabilityRepo = RepositoryFactory.Create<IDoctorAvailableTimeRepository>(ContextTypes.EntityFramework);
+        ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
         ITblHospitalServicesRepository _hospitalServicesRepository = RepositoryFactory.Create<ITblHospitalServicesRepository>(ContextTypes.EntityFramework);
@@ -99,10 +100,14 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, _hospitals);
         }
 
-        #region Uility
+        #region Uility      
        
         private List<Doctors> getDoctors(string HospitalId)
         {
+            List<TimeMaster> _timeMaster = new List<TimeMaster>();
+            var timeMaster = _timeMasterRepo.GetAll().OrderBy(x => x.Id).ToList();
+
+
             List<Disease> _disease = new List<Disease>();
             List<decimal> _priceses = new List<decimal>();
             Doctors _doctor = new Doctors();
@@ -130,6 +135,8 @@ namespace WebAPI.Controllers
                     SpecializationIds = Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
                     Specialization = getSpecialization(d.Specialization, disease),
                     AboutUs = d.AboutUs,
+                    //DoctorAvilability=  _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
+                    TimeAvailability = getDoctorAvilability(_doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId).FirstOrDefault().TimeId, timeMaster),
                     Likes = feedback.Where(x => x.ILike == true).Count(),
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{d.DoctorId}",
@@ -141,7 +148,7 @@ namespace WebAPI.Controllers
             }
             return _doctors;
         }
-
+      
         private List<Secretary> getSecretary(string HospitalId)
         {
             Secretary _secretarys = new Secretary();
@@ -175,6 +182,21 @@ namespace WebAPI.Controllers
                 secretary.Add(_secretarys);
             }
             return secretary;
+        }
+
+        private List<TimeMaster> getDoctorAvilability(string TimeId, List<TimeMaster> TimeMaster)
+        {
+            if (!string.IsNullOrEmpty(TimeId))
+            {
+                var TimeIds = TimeId.TrimEnd(',').Split(',');
+                int[] TimeInts = Array.ConvertAll(TimeIds, s => int.Parse(s));
+                var timeList = TimeMaster.Where(x => TimeInts.Contains(x.Id)).ToList();
+                return timeList;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private List<Disease> getSpecialization(string diesiesType, List<Disease> diseases)
