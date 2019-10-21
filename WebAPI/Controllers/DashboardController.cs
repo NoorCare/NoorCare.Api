@@ -79,6 +79,7 @@ namespace WebAPI.Controllers
                     DashboardAppointmentListModel DashboardAppointmentListModel = new DashboardAppointmentListModel();
 
                     DashboardAppointmentListModel.AppointmentDate = item.AppointmentDate;
+                    DashboardAppointmentListModel.AppointmentId = item.AppointmentId;
                     DashboardAppointmentListModel.Status = item.Status;
                     DashboardAppointmentListModel.TimeId = item.TimingId;
                     int appointmentTimeId = Convert.ToInt32(item.TimingId);

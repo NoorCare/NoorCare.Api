@@ -1,94 +1,77 @@
-﻿using NoorCare.Repository;
-using System.Collections.Generic;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using NoorCare.Repository;
+using System;
 using System.Linq;
 using System.Web.Http;
 using WebAPI.Entity;
+using WebAPI.Models;
 using WebAPI.Repository;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
     public class FacilityController : ApiController
     {
-        [Route("api/facility")]
-        [HttpGet]
-        [AllowAnonymous]
-        public List<Facility> GetFacility()
-        {
-            IFacilityRepository _facilityDetailRepo = RepositoryFactory.Create<IFacilityRepository>(ContextTypes.EntityFramework);
-            return _facilityDetailRepo.GetAll().OrderBy(x=>x.facility).ToList();
-        }
+        Registration _registration = new Registration();
+        IFacilityDetailRepository _facilityDetailRepo = RepositoryFactory.Create<IFacilityDetailRepository>(ContextTypes.EntityFramework);
 
-        [Route("api/diseaseType")]
-        [HttpGet]
+        [Route("api/Facility/register/{UserId}/{Password}")]
+        [HttpPost]
         [AllowAnonymous]
-        public List<Disease> GetDisease()
-        {
-            IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
-            return _diseaseDetailRepo.GetAll().OrderBy(x=>x.DiseaseType).ToList();
-        }
-
-        [Route("api/countryCode")]
-        [HttpGet]
-        [AllowAnonymous]
-        public List<CountryCode> GetCountryCode()
+        public string Register(WebAPI.Entity.FacilityDetail obj,string UserId, string Password)
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
-            return _countryCodeRepository.GetAll().ToList();
+            CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var manager = new UserManager<ApplicationUser>(userStore);
+            ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(countryCode.CountryCodes));
+            IdentityResult result = manager.Create(user, Password);
+            IHttpActionResult errorResult = GetErrorResult(result);
+            if (errorResult != null)
+            {
+                return "Registration has been Faild";
+            }
+            else
+            {
+                 obj.FacilityDetailId = user.Id;
+                 _facilityDetailRepo.Insert(obj);
+
+                _registration.sendRegistrationEmail(user);
+            }
+
+            return "Registration has been done, And Account activation link" +
+                        "has been sent your eamil id: " +
+                            obj.Email;
         }
 
-        [Route("api/city/{countryId}")]
-        [HttpGet]
-        [AllowAnonymous]
-        public List<TblCity> GetCity(int countryId)
+        private IHttpActionResult GetErrorResult(IdentityResult result)
         {
-            ICityRepository _cityRepository = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
-            return _cityRepository.Find(x=>x.CountryId == countryId).OrderBy(x => x.City).ToList();
-        }
+            if (result == null)
+            {
+                return InternalServerError();
+            }
 
-        [Route("api/countries")]
-        [HttpGet]
-        [AllowAnonymous]
-        public List<TblCountry> GetCountries()
-        {
-            ICountryRepository _cityRepository = RepositoryFactory.Create<ICountryRepository>(ContextTypes.EntityFramework);
-            return _cityRepository.GetAll().OrderBy(x => x.CountryName).ToList();
-        }
+            if (!result.Succeeded)
+            {
+                if (result.Errors != null)
+                {
+                    foreach (string error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
+                }
 
-        [Route("api/state")]
-        [HttpGet]
-        [AllowAnonymous]
-        public List<State> GetState()
-        {
-            IStateRepository _stateRepository = RepositoryFactory.Create<IStateRepository>(ContextTypes.EntityFramework);
-            return _stateRepository.GetAll().OrderBy(x => x.state).ToList();
-        }
+                if (ModelState.IsValid)
+                {
+                    // No ModelState errors are available to send, so just return an empty BadRequest.
+                    return BadRequest();
+                }
 
-        [Route("api/hospitalServices")]
-        [HttpGet]
-        [AllowAnonymous]
-        public List<TblHospitalServices> HospitalServices()
-        {
-            ITblHospitalServicesRepository _stateRepository = RepositoryFactory.Create<ITblHospitalServicesRepository>(ContextTypes.EntityFramework);
-            return _stateRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
-        }
+                return BadRequest(ModelState);
+            }
 
-        [Route("api/hospitalSpecialization")]
-        [HttpGet]
-        [AllowAnonymous]
-        public List<TblHospitalSpecialties> HospitalSpecialization()
-        {
-            ITblHospitalSpecialtiesRepository _stateRepository = RepositoryFactory.Create<ITblHospitalSpecialtiesRepository>(ContextTypes.EntityFramework);
-            return _stateRepository.GetAll().OrderBy(x => x.HospitalSpecialties).ToList();
+            return null;
         }
-
-        [Route("api/hospitalAmenities")]
-        [HttpGet]
-        [AllowAnonymous]
-        public List<TblHospitalAmenities> HospitalAmenities()
-        {
-            ITblHospitalAmenitiesRepository _stateRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
-            return _stateRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
-        }
-
     }
 }

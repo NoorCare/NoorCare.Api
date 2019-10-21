@@ -1,11 +1,6 @@
 ﻿using AngularJSAuthentication.API.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Web;
-using System.Web.Http;
-using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
 
@@ -73,9 +68,17 @@ namespace WebAPI.Services
             {
                 priFix = "NCF-";
             }
+            else if (jobType == 6)
+            {
+                priFix = "NCH-";
+            }
             string clientId = priFix + CountryCodes + "-" + _emailSender.Get();
             return clientId;
         }
+
+
+
+
 
         // Generate a random password of a given length (optional)  
         public string RandomPassword(int size = 0)

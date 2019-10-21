@@ -20,8 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>true</Use64BitIISExpress>
     <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -216,6 +215,7 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Entity\Appointment.cs" />
+    <Compile Include="Entity\FacilityDetail.cs" />
     <Compile Include="Entity\NewsBlogs.cs" />
     <Compile Include="Entity\TimeMaster.cs" />
     <Compile Include="Entity\Feedback.cs" />

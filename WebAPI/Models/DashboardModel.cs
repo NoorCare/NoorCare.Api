@@ -26,6 +26,7 @@ namespace WebAPI.Models
     {
         public string AppointmentDate { get; set; }
         public string AppointmentTime { get; set; }
+        public string AppointmentId { get; set; }
         public string TimeId { get; set; }
         public string Status { get; set; }
         public string PatientName { get; set; }
