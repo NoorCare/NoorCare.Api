@@ -115,16 +115,10 @@ namespace WebAPI.Services
             return clientId;
         }
 
-        //enum JobTypeEnum
-        //{
-        //    Monday = 0,
-        //    Tuesday = 1,
-        //    Wednesday = 2,
-        //    Thursday = 3,
-        //    Friday = 4,
-        //    Saturday = 5,
-        //    Sunday = 6
-        //}
+ 
+
+
+
 
         // Generate a random password of a given length (optional)  
         public string RandomPassword(int size = 0)

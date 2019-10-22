@@ -315,8 +315,8 @@ namespace WebAPI.Controllers
             List<decimal> _priceses = new List<decimal>();
             Doctors _doctor = new Doctors();
             List<Doctors> _doctors = new List<Doctors>();
-            List<Doctor> doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId)
-             .Where(x=> x.Specialization.Where(s=> diesiesTypes.Contains(x.Specialization)).ToList().Count() > 0).ToList();
+            List<Doctor> doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId);
+             //.Where(x=> x.Specialization.Where(s=> diesiesTypes.Contains(x.Specialization)).ToList().Count() > 0).ToList();
             //.Where(x => x.Specialization.Where(c => myInts.Contains(c)).ToList().Count() > 0).ToList();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
             foreach (var d in doctors ?? new List<Doctor>())

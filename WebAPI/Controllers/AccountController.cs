@@ -23,6 +23,9 @@ namespace WebAPI.Controllers
 
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+        ISecretaryRepository _secretaryRepository = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
+        IDoctorRepository _doctorRepository = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+
         EmailSender _emailSender = new EmailSender();
         Registration _registration = new Registration();
         string tokenCode = "";
@@ -193,6 +196,24 @@ namespace WebAPI.Controllers
                     return Ok(_hospitalDetailsRepository.Update(hospitalDetails));
                 }
             }
+            else if (userName.Contains("NCS"))
+            {
+                Secretary secretaryDetail = _secretaryRepository.Find(p => p.SecretaryId == userName).FirstOrDefault();
+                if (secretaryDetail != null)
+                {
+                    secretaryDetail.EmailConfirmed = true;
+                    return Ok(_secretaryRepository.Update(secretaryDetail));
+                }
+            }
+            else if (userName.Contains("NCD"))
+            {
+                Doctor doctorDetail = _doctorRepository.Find(p => p.DoctorId == userName).FirstOrDefault();
+                if (doctorDetail != null)
+                {
+                    doctorDetail.EmailConfirmed = true;
+                    return Ok(_doctorRepository.Update(doctorDetail));
+                }
+            }
             else
             {
                 ClientDetail clientDetail = _clientDetailRepo.Find(p => p.ClientId == userName).FirstOrDefault();
@@ -202,7 +223,7 @@ namespace WebAPI.Controllers
                     return Ok(_clientDetailRepo.Update(clientDetail));
                 }
             }
-            
+
             return Ok();
         }
 
