@@ -16,17 +16,17 @@ namespace WebAPI.Controllers
         Registration _registration = new Registration();
         IFacilityDetailRepository _facilityDetailRepo = RepositoryFactory.Create<IFacilityDetailRepository>(ContextTypes.EntityFramework);
 
-        [Route("api/Facility/register/{UserId}/{Password}")]
+        [Route("api/Facility/register")]
         [HttpPost]
         [AllowAnonymous]
-        public string Register(WebAPI.Entity.FacilityDetail obj,string UserId, string Password)
+        public string Register(FacilityModel obj)
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
             CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(countryCode.CountryCodes));
-            IdentityResult result = manager.Create(user, Password);
+            IdentityResult result = manager.Create(user,obj.Password);
             IHttpActionResult errorResult = GetErrorResult(result);
             if (errorResult != null)
             {
@@ -34,8 +34,7 @@ namespace WebAPI.Controllers
             }
             else
             {
-                 obj.FacilityDetailId = user.Id;
-                 _facilityDetailRepo.Insert(obj);
+                _registration.AddFacilityDetail(user.Id, obj, _facilityDetailRepo);
 
                 _registration.sendRegistrationEmail(user);
             }

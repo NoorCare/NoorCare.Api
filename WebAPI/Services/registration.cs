@@ -1,6 +1,7 @@
 ﻿using AngularJSAuthentication.API.Services;
 using System;
 using System.Text;
+using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
 
@@ -41,6 +42,44 @@ namespace WebAPI.Services
             return _hospitalDetailsRepository.Insert(_hospitalDetail);
         }
 
+        public int AddFacilityDetail(string clientId, FacilityModel model, IFacilityDetailRepository _facilityDetailsRepository)
+        {
+            FacilityDetail _facilityDetail = new FacilityDetail
+            {
+                FacilityDetailId = clientId,
+                Email = model.Email,
+                jobType = model.jobType,
+                FacilityId = model.FacilityId,
+                ProviderName = model.ProviderName,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                CountryCode = model.CountryCode,
+                EmailConfirmed = model.EmailConfirmed,
+                PhoneNumber = model.PhoneNumber,
+                AboutUs = model.AboutUs,
+                PhotoPath = model.PhotoPath,
+                Website = model.Website,
+                EstablishYear = model.EstablishYear,
+                Address = model.Address,
+                Street = model.Street,
+                Country = model.Country,
+                City = model.City,
+                PostCode = model.PostCode,
+                Landmark = model.Landmark,
+                MapLocation = model.MapLocation,
+                Specialization = model.Specialization,
+                Amenities = model.Amenities,
+                Services = model.Services,
+                Timing = model.Timing,
+                CreatedBy = model.CreatedBy,
+                ModifiedBy = model.ModifiedBy,
+                DateEntered = model.DateEntered,
+                DateModified = model.DateModified
+
+            };
+            return _facilityDetailsRepository.Insert(_facilityDetail);
+        }
+
         public string creatId(int jobType, int CountryCodes, int? gender)
         {
             string priFix = "NCM-";
@@ -76,9 +115,16 @@ namespace WebAPI.Services
             return clientId;
         }
 
-
-
-
+        //enum JobTypeEnum
+        //{
+        //    Monday = 0,
+        //    Tuesday = 1,
+        //    Wednesday = 2,
+        //    Thursday = 3,
+        //    Friday = 4,
+        //    Saturday = 5,
+        //    Sunday = 6
+        //}
 
         // Generate a random password of a given length (optional)  
         public string RandomPassword(int size = 0)
