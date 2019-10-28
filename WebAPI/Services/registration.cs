@@ -107,18 +107,54 @@ namespace WebAPI.Services
             {
                 priFix = "NCF-";
             }
-            else if (jobType == 6)
+
+            else if (jobType == 6)//6   Medical Center
             {
-                priFix = "NCH-";
+                priFix = "NCMC-";
+            }
+            else if (jobType == 7) //7   Nursing Home
+            {
+                priFix = "NCNH-";
+            }
+            else if (jobType == 8) //8   Urgent Care Clinic
+            {
+                priFix = "NCC-";
+            }
+            else if (jobType == 9)//9   Dental Care
+            {
+                priFix = "NCDC-";
+            }
+            else if (jobType == 9) //10  Medical Lab
+            {
+                priFix = "NCML-";
+            }
+            else if (jobType == 11)//11  Pharmacy
+            {
+                priFix = "NCP-";
+            }
+            else if (jobType == 12)//12  Blood Bank 
+            {
+                priFix = "NCBB-";
+            }
+            else if (jobType == 13)//13  Insurance Company
+            {
+                priFix = "NCIC-";
+            }
+            else if (jobType == 14)//14  X - Ray
+            {
+                priFix = "NCX-";
+            }
+            else if (jobType == 15) //15  Optics
+            {
+                priFix = "NCO-";
             }
             string clientId = priFix + CountryCodes + "-" + _emailSender.Get();
             return clientId;
+
+            //new Job Type
+            //2   Hospital
+            //5   Clinic
         }
-
- 
-
-
-
 
         // Generate a random password of a given length (optional)  
         public string RandomPassword(int size = 0)
@@ -178,6 +214,12 @@ namespace WebAPI.Services
                 _emailSender.email_send(model.Email, model.FirstName + " "+ model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
 
                 _emailSender.SendSMS(model.PhoneNumber);
+
+               // Welcome to NoorCare family(user name) this is your NoorCare number save it for further communication
+               // (NoorCare number)
+
+                //http://api.smscountry.com/SMSCwebservice_bulk.aspx?User=NoorCare&passwd=NoorCare@123&mobilenumber=97433977547&message=Hi Aslam This is test by Veerendra if you received this message plz let men know on whatsapp
+                // &sid = Noorcare & mtype = N & DR = Y
             }
             catch (Exception ex)
             {
