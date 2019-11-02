@@ -64,7 +64,7 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
-        [Route("api/appointment/updateStatus")]
+        [Route("api/appointment/updateStatus/{AppointmentId}/{status}")]
         [HttpPost]
         [AllowAnonymous]
         // PUT: api/Appointment/5
