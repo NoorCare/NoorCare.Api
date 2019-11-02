@@ -115,6 +115,44 @@ namespace WebAPI.Models
         
     }
 
+    public class Facilities
+    {
+        public int Id { get; set; }
+        public string FacilityDetailId { get; set; }
+        public int FacilityId { get; set; }
+        public string ProviderName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int CountryCode { get; set; }
+        public string Email { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public string PhoneNumber { get; set; }
+        public int jobType { get; set; }
+        public string AboutUs { get; set; }
+        public string PhotoPath { get; set; }
+        public string Website { get; set; }
+        public string EstablishYear { get; set; }
+        public string Address { get; set; }
+        public string Street { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
+        public string PostCode { get; set; }
+        public string Landmark { get; set; }
+        public string MapLocation { get; set; }
+        //public string Specialization { get; set; }
+        public int[] SpecializationIds { get; set; }
+        public List<Disease> Specialization { get; set; }
+        //public string Amenities { get; set; }
+        //public string Services { get; set; }
+        public List<TblHospitalAmenities> Amenities { get; set; }
+        public List<TblHospitalServices> Services { get; set; }
+        public string Timing { get; set; }
+        public bool IsDeleted { get; set; }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
+        public string DateEntered { get; set; }
+        public string DateModified { get; set; }
+    }
 
 
     public class DesiesTypeResult
