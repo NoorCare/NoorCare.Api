@@ -25,6 +25,7 @@ namespace WebAPI.Controllers
         IHospitalDetailsRepository _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         ISecretaryRepository _secretaryRepository = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _doctorRepository = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+        IFacilityDetailRepository _facilityDetailRepo = RepositoryFactory.Create<IFacilityDetailRepository>(ContextTypes.EntityFramework);
 
         EmailSender _emailSender = new EmailSender();
         Registration _registration = new Registration();
@@ -52,10 +53,11 @@ namespace WebAPI.Controllers
                 {
                     _registration.AddClientDetail(user.Id, model, _clientDetailRepo);
                 }
-                else if (model.jobType == 2)
+                else
                 {
                     _registration.AddHospitalDetail(user.Id, model, _hospitalDetailsRepository);
                 }
+
                 _registration.sendRegistrationEmail(user);
             }
             

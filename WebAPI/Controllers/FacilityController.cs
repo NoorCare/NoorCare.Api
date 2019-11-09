@@ -43,8 +43,7 @@ namespace WebAPI.Controllers
             }
             else
             {
-                _registration.AddFacilityDetail(user.Id, obj, _facilityDetailRepo);
-
+               
                 _registration.sendRegistrationEmail(user);
             }
 
