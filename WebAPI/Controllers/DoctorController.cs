@@ -106,6 +106,7 @@ namespace WebAPI.Controllers
                 IdentityResult result = manager.Create(user, password);
                 user.PasswordHash = password;
                 _registration.sendRegistrationEmail(user);
+                _registration.sendRegistrationMessage(user);
                 obj.DoctorId = user.Id;
                 IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
                 var _doctorCreated = _doctorRepo.Insert(obj);
