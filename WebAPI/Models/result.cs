@@ -101,6 +101,7 @@ namespace WebAPI.Models
         public string ProfileDetailUrl { get; set; }
         public string ImgUrl { get; set; }
         public string HospitalName { get; set; }
+        public string HospitalId { get; set; }
         public string location { get; set; }
         public string aboutMe { get; set; }
         public string website { get; set; }

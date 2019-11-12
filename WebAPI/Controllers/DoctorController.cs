@@ -231,6 +231,7 @@ namespace WebAPI.Controllers
                     Degree = d.Degree,
                     AboutUs = d.AboutUs,
                     HospitalName = hospitals.HospitalName,
+                    HospitalId=hospitals.HospitalId,
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),
