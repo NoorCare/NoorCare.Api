@@ -198,7 +198,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage getDoctorAvailablity(string doctorid)
         {
-            var result = _doctorAvailabilityRepo.Find(x => x.DoctorId == doctorid).FirstOrDefault();
+            var result = _doctorAvailabilityRepo.Find(x => x.DoctorId == doctorid);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
