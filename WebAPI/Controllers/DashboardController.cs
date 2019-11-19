@@ -30,8 +30,6 @@ namespace WebAPI.Controllers
         IPatientPrescriptionRepository _patientPrescriptionRepo = RepositoryFactory.Create<IPatientPrescriptionRepository>(ContextTypes.EntityFramework);
         IQuickUploadRepository _quickUploadRepo = RepositoryFactory.Create<IQuickUploadRepository>(ContextTypes.EntityFramework);
         IMedicalInformationRepository _medicalInformationRepo = RepositoryFactory.Create<IMedicalInformationRepository>(ContextTypes.EntityFramework);
-        //IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
-
 
         [HttpGet]
         [Route("api/GetDashboardDetails/{Type}/{pageId}/{searchDate?}")] //Type= Doctor/secretary, page Id is secratoryId
@@ -140,13 +138,70 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
-        //[Route("api/GetAllAppointmentList/{Id}")]
-        //[HttpGet]
-        //[AllowAnonymous]
-        //public HttpResponseMessage GetAllAppointmentList(string Id)
-        //{
-        //    var result = _medicalInformationRepo.Find(m => m.clientId == Id).ToList();
-        //    return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        //}
+        [HttpPost]
+        [Route("api/UploadBanner/{RequestFrom}")]
+        [AllowAnonymous]
+        public IHttpActionResult UploadBanner(string RequestFrom)
+        {
+            string imageName = null;
+            string RequestID = string.Empty;
+            var httpRequest = HttpContext.Current.Request;
+            // string doctorId = httpRequest.Form["DoctorId"];
+            string NoorCareId = string.Empty;
+
+            if (RequestFrom.ToLower() == "secretary")
+            {
+                RequestID = httpRequest.Form["secretaryid"];
+                RequestFrom = "Secretary";
+            }
+            else if (RequestFrom.ToLower() == "doctor")
+            {
+                RequestID = httpRequest.Form["doctorid"];
+                RequestFrom = "Doctor";
+            }
+            else if (RequestFrom.ToLower() == "hospital")
+            {
+                RequestID = httpRequest.Form["hospitalid"];
+                RequestFrom = "Hospital";
+            }
+
+            NoorCareId = httpRequest.Form["noorcareid"];
+
+            try
+            {
+                var postedFile = httpRequest.Files["Image"];
+                if (postedFile != null)
+                {
+                    imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).
+                        Take(10).ToArray()).
+                        Replace(" ", "-");
+                    imageName = RequestID + "." + ImageFormat.Jpeg;
+
+                    var filePath = HttpContext.Current.Server.MapPath("~/ProfilePic/" + RequestFrom + "/" + NoorCareId + "/" + imageName);
+
+                    var DirPath = HttpContext.Current.Server.MapPath("~/ProfilePic/" + RequestFrom + "/" + NoorCareId);
+
+                    bool IfDirectoryNotExists = System.IO.Directory.Exists(DirPath);
+                    if (!IfDirectoryNotExists)
+                    {
+                        System.IO.Directory.CreateDirectory(DirPath);
+                    }
+                    
+                    bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ProfilePic/" + RequestFrom + "/" + NoorCareId + "/" + imageName));
+                    if (exists)
+                    {
+                        File.Delete(filePath);
+                    }
+
+                    postedFile.SaveAs(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return Ok(RequestID);
+        }
+
+ 
     }
 }
