@@ -42,7 +42,7 @@ namespace WebAPI.Services
             return _hospitalDetailsRepository.Insert(_hospitalDetail);
         }
 
-        public int AddFacilityDetail(string clientId, FacilityModel model, IFacilityDetailRepository _facilityDetailsRepository)
+        public int AddFacilityDetail(string clientId, AccountModel model, IFacilityDetailRepository _facilityDetailsRepository)
         {
             FacilityDetail _facilityDetail = new FacilityDetail
             {
@@ -50,31 +50,15 @@ namespace WebAPI.Services
                 Email = model.Email,
                 jobType = model.jobType,
                 FacilityId = model.FacilityId,
-                ProviderName = model.ProviderName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 CountryCode = model.CountryCode,
                 EmailConfirmed = model.EmailConfirmed,
                 PhoneNumber = model.PhoneNumber,
-                AboutUs = model.AboutUs,
-                PhotoPath = model.PhotoPath,
-                Website = model.Website,
-                EstablishYear = model.EstablishYear,
-                Address = model.Address,
-                Street = model.Street,
-                Country = model.Country,
-                City = model.City,
-                PostCode = model.PostCode,
-                Landmark = model.Landmark,
-                MapLocation = model.MapLocation,
-                Specialization = model.Specialization,
-                Amenities = model.Amenities,
-                Services = model.Services,
-                Timing = model.Timing,
-                CreatedBy = model.CreatedBy,
-                ModifiedBy = model.ModifiedBy,
-                DateEntered = model.DateEntered,
-                DateModified = model.DateModified
+                CreatedBy = "Self",
+                ModifiedBy = "Self",
+                DateEntered = DateTime.Now.ToString(),
+                DateModified = DateTime.Now.ToString()
 
             };
             return _facilityDetailsRepository.Insert(_facilityDetail);
@@ -218,6 +202,11 @@ namespace WebAPI.Services
                 string sMessage = "Welcome to NoorCare family(" + model.FirstName + ") this is your NoorCare number save it for further communication (" + model.NoorCareNumber + ") ";
 
                 _emailSender.SendSMS(model.PhoneNumber, sMessage);
+
+                _emailSender.SendSMS(model.PhoneNumber);
+
+               // Welcome to NoorCare family(user name) this is your NoorCare number save it for further communication
+               // (NoorCare number)
 
                 //http://api.smscountry.com/SMSCwebservice_bulk.aspx?User=NoorCare&passwd=NoorCare@123&mobilenumber=97433977547&message=Hi Aslam This is test by Veerendra if you received this message plz let men know on whatsapp
                 // &sid = Noorcare & mtype = N & DR = Y
