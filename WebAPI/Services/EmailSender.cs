@@ -11,7 +11,7 @@ namespace AngularJSAuthentication.API.Services
     public class EmailSender
     {
         private WebProxy objProxy1 = null;
-
+        private int _InternalCounter = 0;
         string SMTP = ConfigurationManager.AppSettings.Get("SMTP");
         string SMTPUserId = ConfigurationManager.AppSettings.Get("SMTPUserId");
         string SMTPPassword = ConfigurationManager.AppSettings.Get("SMTPPassword");
@@ -23,7 +23,7 @@ namespace AngularJSAuthentication.API.Services
         string SMSSid = ConfigurationManager.AppSettings.Get("SMSSid");
         string customMessage = ConfigurationManager.AppSettings.Get("customSMSMessage");
 
-        public void email_send(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care New", 
+        public void email_send(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care New",
             string ClientId = "Test", int jobType = 0, string password = null)
         {
             string prifix = jobType == 3 ? "Dr " : "";
@@ -35,7 +35,7 @@ namespace AngularJSAuthentication.API.Services
             mail.To.Add(mailTo);
             mail.IsBodyHtml = true;
             mail.Subject = "Registration Successfully ";
-            mail.Body = html.Replace("CLIENTNAME", prifix + clientName + "("+ ClientId + ")");
+            mail.Body = html.Replace("CLIENTNAME", prifix + clientName + "(" + ClientId + ")");
             mail.Body = getLogoUrl(mail.Body);
             mail.Body = getVereficationUrl(mail.Body, ClientId);
             mail.Body = tempPassword(mail.Body, password, jobType);
@@ -44,7 +44,7 @@ namespace AngularJSAuthentication.API.Services
             SmtpServer.UseDefaultCredentials = false;
             SmtpServer.Credentials = new NetworkCredential(From, SMTPPassword);
             SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
-            SmtpServer.Send(mail);        
+            SmtpServer.Send(mail);
         }
 
         public void SendSMS(string sCustomerPhoneNum, string sMessage)
@@ -52,7 +52,7 @@ namespace AngularJSAuthentication.API.Services
             //SMS
             try
             {
-                string uri = "http://api.smscountry.com/SMSCwebservice_bulk.aspx?User=NoorCare&passwd=NoorCare@123&mobilenumber="+ sCustomerPhoneNum + "&message="+ sMessage + "&sid=Noorcare&mtype=N&DR=Y";
+                string uri = "http://api.smscountry.com/SMSCwebservice_bulk.aspx?User=NoorCare&passwd=NoorCare@123&mobilenumber=" + sCustomerPhoneNum + "&message=" + sMessage + "&sid=Noorcare&mtype=N&DR=Y";
                 sendSMS(uri);
                 //  SendSMS(SMSUserId, SMSPassword, PhoneNumber, customMessage + DateTime.Now, "N", "Y", SMSSid);
             }
@@ -60,8 +60,7 @@ namespace AngularJSAuthentication.API.Services
             {
             }
         }
-
-        private int _InternalCounter = 0;
+        
 
         public string Get()
         {
@@ -82,8 +81,8 @@ namespace AngularJSAuthentication.API.Services
 
         public string getLogoUrl(string html)
         {
-            return html.Replace("LOGOSRC", 
-               "<img src='"+ constant.logoUrl +"' style = 'border:0;width:200px;max-width:100%;' alt = 'Header' title = 'Image' />"
+            return html.Replace("LOGOSRC",
+               "<img src='" + constant.logoUrl + "' style = 'border:0;width:200px;max-width:100%;' alt = 'Header' title = 'Image' />"
                );
         }
 
@@ -95,7 +94,7 @@ namespace AngularJSAuthentication.API.Services
         public string getVereficationUrl(string html, string clientId)
         {
             return html.Replace("VERFICATIONSRC",
-               "<a href='"+ constant.emailidVerefactionUrl.Replace("CLIENTID", clientId) + "' VERFICATIONSRC style = 'display:inline-block;text-decoration:none;color:#ffffff;font-size:15px;font-family:ArialMT, Arial, sans-serif;font-weight:bold;text-align:center;width:100%;' >Confirm Account </ a > "
+               "<a href='" + constant.emailidVerefactionUrl.Replace("CLIENTID", clientId) + "' VERFICATIONSRC style = 'display:inline-block;text-decoration:none;color:#ffffff;font-size:15px;font-family:ArialMT, Arial, sans-serif;font-weight:bold;text-align:center;width:100%;' >Confirm Account </ a > "
                );
         }
 
@@ -122,6 +121,32 @@ namespace AngularJSAuthentication.API.Services
             {
                 //throw ex;
             }
+        }
+        #endregion
+
+        #region Email
+        public void emailSend(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care",
+        string ClientId = "Test", int jobType = 0, string password = null, string sSubject = "", string html = "" )
+        {
+            string prifix = jobType == 3 ? "Dr " : "";
+          
+
+            MailMessage mail = new MailMessage();
+            SmtpClient SmtpServer = new SmtpClient(SMTP);
+            mail.From = new MailAddress(From);
+            mail.To.Add(mailTo);
+            mail.IsBodyHtml = true;
+            mail.Subject = sSubject;
+            mail.Body = html.Replace("CLIENTNAME", prifix + clientName + "(" + ClientId + ")");
+            mail.Body = getLogoUrl(mail.Body);
+            mail.Body = getVereficationUrl(mail.Body, ClientId);
+            mail.Body = tempPassword(mail.Body, password, jobType);
+            SmtpServer.Port = 587;
+            SmtpServer.EnableSsl = true;
+            SmtpServer.UseDefaultCredentials = false;
+            SmtpServer.Credentials = new NetworkCredential(From, SMTPPassword);
+            SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
+            SmtpServer.Send(mail);
         }
 
         #endregion

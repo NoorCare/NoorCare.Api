@@ -1,9 +1,11 @@
-﻿using NoorCare.Repository;
+﻿using AngularJSAuthentication.API.Services;
+using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using WebAPI.Entity;
 using WebAPI.Repository;
@@ -13,6 +15,7 @@ namespace WebAPI.Controllers
 {
     public class AppointmentController : ApiController
     {
+        EmailSender _emailSender = new EmailSender();
         Registration _registration = new Registration();
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _getAppointmentList = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
@@ -76,6 +79,11 @@ namespace WebAPI.Controllers
                 obj.Status = status;
             }
             var result = _appointmentRepo.Update(obj);
+
+            //Email sent on status change
+            string html =System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
+           // _emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
+
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 

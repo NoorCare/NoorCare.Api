@@ -29,5 +29,6 @@ namespace WebAPI.Repository
     public interface ITimeMasterRepository : IRepository<TimeMaster, int> { }
     public interface IPatientPrescriptionRepository : IRepository<PatientPrescription, int> { }
     public interface INewsBlogsRepository : IRepository<NewsBlogs, int> { }
+    public interface IReadLikeRepository : IRepository<ReadLike, int> { }
     public interface IFacilityDetailRepository : IRepository<FacilityDetail, int> { }
 }
