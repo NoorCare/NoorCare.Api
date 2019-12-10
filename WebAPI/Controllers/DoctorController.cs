@@ -106,6 +106,7 @@ namespace WebAPI.Controllers
                 IdentityResult result = manager.Create(user, password);
                 user.PasswordHash = password;
                 _registration.sendRegistrationEmail(user);
+                _registration.sendRegistrationMessage(user);
                 obj.DoctorId = user.Id;
                 IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
                 var _doctorCreated = _doctorRepo.Insert(obj);
@@ -197,7 +198,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage getDoctorAvailablity(string doctorid)
         {
-            var result = _doctorAvailabilityRepo.Find(x => x.DoctorId == doctorid).FirstOrDefault();
+            var result = _doctorAvailabilityRepo.Find(x => x.DoctorId == doctorid);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -230,6 +231,7 @@ namespace WebAPI.Controllers
                     Degree = d.Degree,
                     AboutUs = d.AboutUs,
                     HospitalName = hospitals.HospitalName,
+                    HospitalId=hospitals.HospitalId,
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),

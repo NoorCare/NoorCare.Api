@@ -59,6 +59,7 @@ namespace WebAPI.Controllers
                 }
 
                 _registration.sendRegistrationEmail(user);
+                _registration.sendRegistrationMessage(user);
             }
             
             return "Registration has been done, And Account activation link" +

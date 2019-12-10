@@ -58,6 +58,7 @@ namespace WebAPI.Controllers
             IdentityResult result = manager.Create(user, password);
             user.PasswordHash = password;
             _registration.sendRegistrationEmail(user);
+            _registration.sendRegistrationMessage(user);
             obj.SecretaryId = user.Id;
             var _sectiryCreated = _secretaryRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.SecretaryId);

@@ -26,7 +26,7 @@ namespace WebAPI.Controllers
         [Route("api/Facility/register")]
         [HttpPost]
         [AllowAnonymous]
-        public string Register(FacilityModel obj)
+        public string Register(AccountModel obj)
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
             CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
@@ -43,8 +43,11 @@ namespace WebAPI.Controllers
             }
             else
             {
-               
+                _registration.AddFacilityDetail(user.Id, obj, _facilityDetailRepo);
+
                 _registration.sendRegistrationEmail(user);
+
+                _registration.sendRegistrationMessage(user);
             }
 
             return "Registration has been done, And Account activation link" +

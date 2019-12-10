@@ -25,7 +25,7 @@ namespace WebAPI.Services
                 CountryCode = model.CountryCode,
                 CreatedDate = DateTime.Now,
             };
-           return _clientDetailRepo.Insert(_clientDetail);
+            return _clientDetailRepo.Insert(_clientDetail);
         }
 
         public int AddHospitalDetail(string clientId, AccountModel model, IHospitalDetailsRepository _hospitalDetailsRepository)
@@ -182,12 +182,14 @@ namespace WebAPI.Services
                 Email = model.Email,
                 JobType = model.jobType,
                 CountryCodes = countrycodevalue,
-                Gender = model.jobType == 1 ? model.Gender : 0
+                Gender = model.jobType == 1 ? model.Gender : 0,
+                NoorCareNumber = model.NoorCareNumber
             };
             user.FirstName = model.FirstName;
             user.PhoneNumber = model.PhoneNumber;
             user.LastName = model.LastName;
             user.Id = creatId(user.JobType, user.CountryCodes, user.Gender);
+            user.NoorCareNumber = user.Id;
             return user;
         }
 
@@ -195,9 +197,11 @@ namespace WebAPI.Services
         {
             try
             {
-                _emailSender.email_send(model.Email, model.FirstName + " "+ model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
+                _emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
 
-                _emailSender.SendSMS(model.PhoneNumber);
+               // string sMessage = "Welcome to NoorCare family(" + model.FirstName + ") this is your NoorCare number save it for further communication (" + model.NoorCareNumber + ") ";
+
+              //  _emailSender.SendSMS(model.PhoneNumber, sMessage);
 
                // Welcome to NoorCare family(user name) this is your NoorCare number save it for further communication
                // (NoorCare number)
@@ -207,7 +211,18 @@ namespace WebAPI.Services
             }
             catch (Exception ex)
             {
+            }
+        }
 
+        public void sendRegistrationMessage(ApplicationUser model)
+        {
+            try
+            {
+                string sMessage = "Welcome to NoorCare family(" + model.FirstName + ") this is your NoorCare number save it for further communication (" + model.NoorCareNumber + ") ";
+                _emailSender.SendSMS(model.PhoneNumber, sMessage);
+            }
+            catch (Exception ex)
+            {
             }
         }
     }
