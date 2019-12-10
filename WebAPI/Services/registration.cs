@@ -199,11 +199,9 @@ namespace WebAPI.Services
             {
                 _emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
 
-                string sMessage = "Welcome to NoorCare family(" + model.FirstName + ") this is your NoorCare number save it for further communication (" + model.NoorCareNumber + ") ";
+               // string sMessage = "Welcome to NoorCare family(" + model.FirstName + ") this is your NoorCare number save it for further communication (" + model.NoorCareNumber + ") ";
 
-                _emailSender.SendSMS(model.PhoneNumber, sMessage);
-
-                _emailSender.SendSMS(model.PhoneNumber);
+              //  _emailSender.SendSMS(model.PhoneNumber, sMessage);
 
                // Welcome to NoorCare family(user name) this is your NoorCare number save it for further communication
                // (NoorCare number)
