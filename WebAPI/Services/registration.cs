@@ -183,13 +183,11 @@ namespace WebAPI.Services
                 JobType = model.jobType,
                 CountryCodes = countrycodevalue,
                 Gender = model.jobType == 1 ? model.Gender : 0,
-                NoorCareNumber = model.NoorCareNumber
             };
             user.FirstName = model.FirstName;
             user.PhoneNumber = model.PhoneNumber;
             user.LastName = model.LastName;
             user.Id = creatId(user.JobType, user.CountryCodes, user.Gender);
-            user.NoorCareNumber = user.Id;
             return user;
         }
 
@@ -218,7 +216,7 @@ namespace WebAPI.Services
         {
             try
             {
-                string sMessage = "Welcome to NoorCare family(" + model.FirstName + ") this is your NoorCare number save it for further communication (" + model.NoorCareNumber + ") ";
+                string sMessage = "Welcome to NoorCare family(" + model.FirstName + ") this is your NoorCare number save it for further communication (" + model.Id + ") ";
                 _emailSender.SendSMS(model.PhoneNumber, sMessage);
             }
             catch (Exception ex)
