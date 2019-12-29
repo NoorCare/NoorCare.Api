@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,6 +19,11 @@ namespace WebAPI
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            //using (var logs = new LoggerConfiguration().ReadFrom.AppSettings().CreateLogger())
+            //{
+            //    logs.Information("Application_Start: the SLLInvoices application has started");
+            //}
         }
     }
 }

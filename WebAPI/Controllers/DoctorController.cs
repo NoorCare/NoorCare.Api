@@ -36,6 +36,8 @@ namespace WebAPI.Controllers
         // GET: api/Doctor
         public HttpResponseMessage GetAll()
         {
+            //int b = 2; int c = 0;
+            //int a = (int)(b / c);
             var result = _doctorRepo.GetAll().ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
