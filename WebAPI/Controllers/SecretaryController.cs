@@ -131,7 +131,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Delete(string secretaryId)
         {
-            var secretary = _getSecretaryList.Find(s => s.SecretaryId == obj.SecretaryId).FirstOrDefault();
+            var secretary = _getSecretaryList.Find(s => s.SecretaryId == secretaryId).FirstOrDefault();
             int tbleId = 0;
             if (secretary != null)
             {
