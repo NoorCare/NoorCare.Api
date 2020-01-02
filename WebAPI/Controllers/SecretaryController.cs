@@ -50,11 +50,16 @@ namespace WebAPI.Controllers
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
             CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
+            int country_Code = 0;
+            if (countryCode!=null)
+            {
+                country_Code = Convert.ToInt16(countryCode.CountryCodes);
+            }
             EmailSender _emailSender = new EmailSender();
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             string password = _registration.RandomPassword(6);
-            ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(countryCode.CountryCodes));
+            ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(country_Code));
             IdentityResult result = manager.Create(user, password);
             user.PasswordHash = password;
             _registration.sendRegistrationEmail(user);
@@ -112,7 +117,11 @@ namespace WebAPI.Controllers
         // PUT: api/Secretary/5
         public HttpResponseMessage Update(Secretary obj)
         {
-            obj.Id = _getSecretaryList.Find(s=>s.SecretaryId==obj.SecretaryId).FirstOrDefault().Id;
+            var secretary = _getSecretaryList.Find(s => s.SecretaryId == obj.SecretaryId).FirstOrDefault();
+            if (secretary!=null)
+            {
+                obj.Id = secretary.Id;
+            }
             var result = _secretaryRepo.Update(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
@@ -122,7 +131,12 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage Delete(string secretaryId)
         {
-            int tbleId = _getSecretaryList.Find(s => s.SecretaryId == secretaryId).FirstOrDefault().Id;
+            var secretary = _getSecretaryList.Find(s => s.SecretaryId == obj.SecretaryId).FirstOrDefault();
+            int tbleId = 0;
+            if (secretary != null)
+            {
+                tbleId = secretary.Id;
+            }
             var result = _secretaryRepo.Delete(tbleId);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
