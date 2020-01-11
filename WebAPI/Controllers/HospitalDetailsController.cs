@@ -118,6 +118,7 @@ namespace WebAPI.Controllers
             foreach (var d in doctors ?? new List<Doctor>())
             {
                 var feedback = _feedbackRepo.Find(x => x.PageId == d.DoctorId);
+                var doctorAvailability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId).FirstOrDefault();
                 _doctor = new Doctors
                 {
                     DoctorId = d.DoctorId,
@@ -135,8 +136,7 @@ namespace WebAPI.Controllers
                     SpecializationIds = Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
                     Specialization = getSpecialization(d.Specialization, disease),
                     AboutUs = d.AboutUs,
-                    //DoctorAvilability=  _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
-                    TimeAvailability = getDoctorAvilability(_doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId).FirstOrDefault().TimeId, timeMaster),
+                    TimeAvailability = doctorAvailability!=null?getDoctorAvilability(doctorAvailability.TimeId, timeMaster):null,
                     Likes = feedback.Where(x => x.ILike == true).Count(),
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{d.DoctorId}",
@@ -294,7 +294,12 @@ namespace WebAPI.Controllers
         // DELETE: api/HospitalDetails/5
         public HttpResponseMessage Delete(string hospitalid)
         {
-            int tblId = _getHospitaldetailsList.Find(h => h.HospitalId == hospitalid).FirstOrDefault().Id; // getTableId(hospitalid);
+            var hospital= _getHospitaldetailsList.Find(h => h.HospitalId == hospitalid).FirstOrDefault();
+            int tblId = 0;
+            if (hospital!=null)
+            {
+                tblId = hospital.Id;
+            }
             var result = _hospitaldetailsRepo.Delete(tblId);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }

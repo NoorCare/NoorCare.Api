@@ -62,7 +62,11 @@ namespace WebAPI.Controllers
         // PUT: api/Appointment/5
         public HttpResponseMessage Update(Appointment obj)
         {
-            obj.Id = _getAppointmentList.Find(x => x.AppointmentId == obj.AppointmentId).FirstOrDefault().Id;
+           var  appointmentList = _getAppointmentList.Find(x => x.AppointmentId == obj.AppointmentId).FirstOrDefault();
+            if (appointmentList!=null)
+            {
+                obj.Id = appointmentList.Id;
+            }
             var result = _appointmentRepo.Update(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
@@ -93,8 +97,12 @@ namespace WebAPI.Controllers
         // DELETE: api/Appointment/5
         public HttpResponseMessage Delete(string appointmentid)
         {
-            int tbleId= _getAppointmentList.Find(x => x.AppointmentId == appointmentid).FirstOrDefault().Id;
-
+            int tbleId= 0;
+            var appointmentList = _getAppointmentList.Find(x => x.AppointmentId == appointmentid).FirstOrDefault();
+            if (appointmentList != null)
+            {
+                tbleId = appointmentList.Id;
+            }
             var result = _appointmentRepo.Delete(tbleId);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
