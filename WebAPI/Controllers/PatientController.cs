@@ -69,6 +69,22 @@ namespace WebAPI.Controllers
             var _prescriptionCreated = _prescriptionRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
         }
+
+        [Route("api/patient/IsValidNoorCare/{patientId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage IsValidNoorCare(string patientId)
+        {
+            var result = _clientDetailRepo.Find(x => x.ClientId == patientId);
+            if (result.Count > 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, true);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, false);
+            }
+        }
     }
 }
 
