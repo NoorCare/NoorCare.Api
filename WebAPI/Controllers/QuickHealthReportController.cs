@@ -26,7 +26,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult getQuickHealth(string ClientId)
         {
-            QuickHeathDetails _quickHeathDetails = _quickHealthRepository.Find(x => x.ClientId == ClientId).FirstOrDefault();
+            QuickHeathDetails _quickHeathDetails = _quickHealthRepository.Find(x => x.ClientId == ClientId).LastOrDefault();
             return Ok(_quickHeathDetails);
         }
 
