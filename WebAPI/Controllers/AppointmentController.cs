@@ -31,6 +31,30 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
+        [Route("api/appointment/getUpcommingAppointment/{ClientId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        // GET: api/Appointment
+        public HttpResponseMessage getUpcommingAppointment(string ClientId)
+        {
+            var result = _appointmentRepo.GetAll().ToList();
+            var resultTime = _timeMasterRepo.GetAll().ToList();
+            var appointDetail = from a in result
+                                join t in resultTime on a.TimingId equals t.Id.ToString() 
+                                where a.ClientId==ClientId
+                                select new
+                                {
+                                    Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
+                                    Date = Convert.ToDateTime(a.AppointmentDate),
+                                    ClientId = a.ClientId,
+                                    DateEntered = a.DateEntered,
+                                    DoctorId = a.DoctorId
+                                };
+            var date = DateTime.Now;
+            var appintmentresult = appointDetail.Where(x => x.Date > date);
+            return Request.CreateResponse(HttpStatusCode.Accepted, appointDetail);
+        }
+
         [Route("api/appointment/getdetail/{appointmentid}")]
         [HttpGet]
         [AllowAnonymous]
