@@ -366,8 +366,16 @@ namespace WebAPI.Controllers
             var hospitalAmenitie = _hospitalAmenitieRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
             Hospital _hospital = new Hospital();
             List<Hospital> _hospitals = new List<Hospital>();
-            List<HospitalDetails> hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
+            List<HospitalDetails> hospitals = new List<HospitalDetails>();
+            if (cityId!="null")
+            {
+                hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
              (countryId != "0" && x.Country == countryId));
+            }
+            else
+            {
+                hospitals = _hospitaldetailsRepo.Find(x =>countryId != "0" && x.Country == countryId);
+            }
             List<TblHospitalServices> _hospitalServices = new List<TblHospitalServices>();
             List<TblHospitalAmenities> _hospitalAmenities = new List<TblHospitalAmenities>();
 

@@ -45,14 +45,14 @@ namespace WebAPI.Controllers
                                 select new
                                 {
                                     Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
-                                    Date = Convert.ToDateTime(a.AppointmentDate),
+                                    Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate).ToString("dd/MM/yyyy")),
                                     ClientId = a.ClientId,
                                     DateEntered = a.DateEntered,
                                     DoctorId = a.DoctorId
                                 };
-            var date = DateTime.Now;
-            var appintmentresult = appointDetail.Where(x => x.Date > date);
-            return Request.CreateResponse(HttpStatusCode.Accepted, appointDetail);
+            var todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy")); ;
+            var appintmentresult = appointDetail.Where(x => x.Date >= todaydate);
+            return Request.CreateResponse(HttpStatusCode.Accepted, appintmentresult);
         }
 
         [Route("api/appointment/getdetail/{appointmentid}")]
