@@ -8,6 +8,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -245,14 +247,17 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult ForgetPassword(ForgetPassword model)
         {
+            string password = _registration.RandomPassword(6);
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             ApplicationUser cUser = manager.FindByName(model.UserName);
-            string hashedNewPassword = manager.PasswordHasher.HashPassword(model.NewPassword);
-            userStore.SetPasswordHashAsync(cUser, hashedNewPassword);
+            string hashedNewPassword = manager.PasswordHasher.HashPassword(password);
+            cUser.PasswordHash = hashedNewPassword;
+            IdentityResult result = manager.Update(cUser);
+           _registration.sendForgotPassword(cUser, password);
             return Ok();
         }
-
+       
         [HttpPost]
         [Route("api/userNameExist")]
         [AllowAnonymous]

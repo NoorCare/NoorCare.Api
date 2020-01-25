@@ -223,5 +223,28 @@ namespace WebAPI.Services
             {
             }
         }
+
+        public void sendForgotPassword(ApplicationUser model,string password)
+        {
+            try
+            {
+
+                string ClientName = "";//model.FirstName + " " + model.LastName == null ? "" : model.LastName;
+                if (model.LastName==null)
+                {
+                    ClientName = model.FirstName;
+                }
+                else
+                {
+                    ClientName = model.FirstName + " "+ model.LastName;
+                }
+                _emailSender.email_sendforgotpassword(model.Email, ClientName, model.Id, password);
+            }
+            catch (Exception ex)
+            {
+                
+            }
+               
+        }
     }
 }

@@ -47,6 +47,26 @@ namespace AngularJSAuthentication.API.Services
             SmtpServer.Send(mail);
         }
 
+        public void email_sendforgotpassword(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care New",
+            string ClientId = "Test", string password = null)
+        {
+            string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templatforgot.html"));
+            html = html.Replace("PASSWORD", password).Replace("USERNAME",mailTo).Replace("CLIENTNAME", clientName+" " + "(" + ClientId + ")");
+            MailMessage mail = new MailMessage();
+            SmtpClient SmtpServer = new SmtpClient(SMTP);
+            mail.From = new MailAddress(From);
+            mail.To.Add(mailTo);
+            mail.IsBodyHtml = true;
+            mail.Subject = "Forgot password recovery";
+            mail.Body = html;
+            SmtpServer.Port = 587;
+            SmtpServer.EnableSsl = true;
+            SmtpServer.UseDefaultCredentials = false;
+            SmtpServer.Credentials = new NetworkCredential(From, SMTPPassword);
+            SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
+            SmtpServer.Send(mail);
+        }
+
         public void SendSMS(string sCustomerPhoneNum, string sMessage)
         {
             //SMS
@@ -91,6 +111,10 @@ namespace AngularJSAuthentication.API.Services
             return html.Replace("PASSWORD", jobTpye == 4 || jobTpye == 3 ? $"<p>Your First Time Password is <b>{password}</b></p>" : "");
         }
 
+        public string tempForgotPassword(string html, string password, int jobTpye)
+        {
+            return html.Replace("PASSWORD", jobTpye == 4 || jobTpye == 3 ? $"<p>Your Password is <b>{password}</b></p>" : "");
+        }
         public string getVereficationUrl(string html, string clientId)
         {
             return html.Replace("VERFICATIONSRC",
