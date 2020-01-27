@@ -160,7 +160,7 @@ namespace WebAPI.Controllers
             ClientDetail clientDetail = _clientDetailRepo.Find(p => p.ClientId == clientId).FirstOrDefault();
             clientDetail.FirstName = httpRequest.Form["FirstName"] == null ? clientDetail.FirstName: httpRequest.Form["FirstName"];
             clientDetail.LastName = httpRequest.Form["LastName"] == null ? clientDetail.LastName : httpRequest.Form["LastName"];
-            clientDetail.PinCode = httpRequest.Form["PinCode"] == null ? clientDetail.PinCode : Convert.ToInt16(httpRequest.Form["PinCode"]);
+            clientDetail.PinCode = httpRequest.Form["PinCode"] == null ? clientDetail.PinCode : Convert.ToInt32(httpRequest.Form["PinCode"]);
             clientDetail.Gender = httpRequest.Form["Gender"] == null ? clientDetail.Gender : Convert.ToInt16(httpRequest.Form["Gender"]);
             clientDetail.Address = httpRequest.Form["Address"] == null ? clientDetail.Address : httpRequest.Form["Address"];
             clientDetail.City = httpRequest.Form["City"] == null ? clientDetail.City : httpRequest.Form["City"];
