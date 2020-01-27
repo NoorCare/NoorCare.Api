@@ -125,8 +125,8 @@ namespace WebAPI.Controllers
         [Route("api/user/get/medicalinfo/{ClientId}")]
         public IHttpActionResult getMedicalInformationt(string ClientId)
         {
-            MedicalInformation _miContact = _medicalInformationRepository.Find(x => x.clientId == ClientId).FirstOrDefault();
-            return Ok(_miContact);
+           List<MedicalInformation> _miInformations = _medicalInformationRepository.Find(x => x.clientId == ClientId).OrderByDescending(x=>x.Id).Take(2).ToList();
+            return Ok(_miInformations);
         }
 
 

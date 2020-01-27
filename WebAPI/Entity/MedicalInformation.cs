@@ -22,5 +22,15 @@ namespace WebAPI.Entity
         public int Smoke { get; set; }
         public int Drink { get; set; }
         public string OtherDetails { get; set; }
+        public int? Pressure { get; set; }
+        public int? Heartbeats { get; set; }
+        public int? Temprature { get; set; }
+        public int? Sugar { get; set; }
+        public int? Cholesterol { get; set; }
+
+        
+            
+            
+            
     }
 }
