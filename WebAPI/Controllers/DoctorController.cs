@@ -29,7 +29,7 @@ namespace WebAPI.Controllers
         ITblHospitalServicesRepository _hospitalServicesRepository = RepositoryFactory.Create<ITblHospitalServicesRepository>(ContextTypes.EntityFramework);
         ITblHospitalAmenitiesRepository _hospitalAmenitieRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
         IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
-
+        IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         [Route("api/doctor/getall")]
         [HttpGet]
         [AllowAnonymous]
@@ -67,6 +67,26 @@ namespace WebAPI.Controllers
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
+        
+        [Route("api/doctorbypatient/{ClientID}")]
+        [HttpGet]
+        [AllowAnonymous]
+        // GET: api/Doctor
+        public HttpResponseMessage doctorbypatient(string ClientID)
+        {
+            var appointmentList = _appointmentRepo.Find(x => x.ClientId == ClientID);
+            var doctorList = _getDoctorList.GetAll();
+            var result = from a in appointmentList
+                         join
+            d in doctorList on a.DoctorId equals d.DoctorId
+                         select new
+                         {
+                             Name = d.FirstName + " " + d.FirstName + "_" + d.Specialization,
+                             Value = d.DoctorId
+                         };
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
 
         [Route("api/doctorDetails/{doctorid}")]
         [HttpGet]

@@ -15,14 +15,38 @@ namespace WebAPI.Controllers
         IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
         IFeedbackRepository _feedbackList = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
         IContactUsRepository _contactUsRepo = RepositoryFactory.Create<IContactUsRepository>(ContextTypes.EntityFramework);
-
+        IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
         [Route("api/feedback/getAllFeedback")]
         [HttpGet]
         [AllowAnonymous]
         // GET: api/Feedback
         public HttpResponseMessage GetAllFeedback()
-        {            
-            var result = _feedbackRepo.GetAll().ToList();
+        {
+            var feedbacks = _feedbackRepo.GetAll().ToList();
+            var users = _clientDetailRepo.GetAll().ToList();
+            var result = from f in feedbacks
+                         join
+     u in users on f.ClientID equals u.ClientId
+                         select new
+                         {
+                             PatientName= u.FirstName + ' ' + u.LastName,
+                             ClientId = f.ClientID,
+                             FeedbackID = f.FeedbackID,
+                             FeedbackDetails = f.FeedbackDetails,
+                             Recommended = f.Recommended,
+                             DateEntered = f.DateEntered,
+                         };
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
+        [Route("api/feedback/getAllFeedback/{ClientId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        // GET: api/Feedback
+        public HttpResponseMessage GetAllFeedback(string ClientId)
+        {
+            var result = _feedbackRepo.GetAll().Where(x => x.ClientID == ClientId).ToList();
+
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
@@ -33,8 +57,8 @@ namespace WebAPI.Controllers
         // GET: api/feedback/5
         public HttpResponseMessage GetDetail(string feedbackId, string pageId)
         {
-            var result = _feedbackRepo.Find(x => x.FeedbackID == feedbackId && x.PageId== pageId).FirstOrDefault();
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);            
+            var result = _feedbackRepo.Find(x => x.FeedbackID == feedbackId && x.PageId == pageId).FirstOrDefault();
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
         [Route("api/feedback/register")]
@@ -43,17 +67,17 @@ namespace WebAPI.Controllers
         // POST: api/feedback
         public HttpResponseMessage Register(Feedback obj)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 Random rd = new Random(987612345);
-                var _feedbackId ="F_"+ rd.Next();
+                var _feedbackId = "F_" + rd.Next();
                 obj.FeedbackID = _feedbackId;
                 obj.DateEntered = DateTime.Now;
                 obj.DateModified = DateTime.Now;
                 var _feedbackCreated = _feedbackRepo.Insert(obj);
                 return Request.CreateResponse(HttpStatusCode.Accepted, obj.FeedbackID);
             }
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest,"");
+            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "");
         }
 
 
@@ -75,7 +99,7 @@ namespace WebAPI.Controllers
         // DELETE: api/Feedback/5
         public HttpResponseMessage Delete(string feedbackid)
         {
-            int tbleId= getTableId(feedbackid);
+            int tbleId = getTableId(feedbackid);
 
             var result = _feedbackRepo.Delete(tbleId);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
@@ -95,7 +119,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         // POST: api/feedback
         public HttpResponseMessage SaveContactUs(ContactUs obj)
-        {          
+        {
             var _contactUsCreated = _contactUsRepo.Insert(obj);
             //var msg = "Thank You for contacting NoorCare. Our representative will get back to you within 24 hours.";
             //string uri = "";
@@ -118,7 +142,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetContactUs(int Id)
         {
-            var result = _contactUsRepo.Find(x =>x.Id == Id).FirstOrDefault();
+            var result = _contactUsRepo.Find(x => x.Id == Id).FirstOrDefault();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -136,8 +160,8 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage DeleteContactUs(int Id)
         {
-            var result = _contactUsRepo.Find(x => x.Id == Id).FirstOrDefault().IsDeleted= true;
-            
+            var result = _contactUsRepo.Find(x => x.Id == Id).FirstOrDefault().IsDeleted = true;
+
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
