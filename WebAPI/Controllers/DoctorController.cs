@@ -74,17 +74,15 @@ namespace WebAPI.Controllers
         // GET: api/Doctor
         public HttpResponseMessage doctorbypatient(string ClientID)
         {
-            var appointmentList = _appointmentRepo.Find(x => x.ClientId == ClientID);
-            var doctorList = _getDoctorList.GetAll();
-            var result = from a in appointmentList
+            var result = from a in _appointmentRepo.GetAll()
                          join
-            d in doctorList on a.DoctorId equals d.DoctorId
+            d in _getDoctorList.GetAll() on a.DoctorId equals d.DoctorId where a.ClientId == ClientID
                          select new
                          {
-                             Name = d.FirstName + " " + d.FirstName + "_" + d.Specialization,
+                             Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,
                              Value = d.DoctorId
                          };
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+            return Request.CreateResponse(HttpStatusCode.Accepted, result.Distinct());
         }
 
 

@@ -45,10 +45,22 @@ namespace WebAPI.Controllers
         // GET: api/Feedback
         public HttpResponseMessage GetAllFeedback(string ClientId)
         {
-            var result = _feedbackRepo.GetAll().Where(x => x.ClientID == ClientId).ToList();
-
-
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+            //var result = _feedbackRepo.GetAll().Where(x => x.ClientID == ClientId).ToList();
+            var feedbacks = _feedbackRepo.GetAll().ToList();
+            var users = _clientDetailRepo.GetAll().ToList();
+            var result = from f in feedbacks
+                         join
+     u in users on f.ClientID equals u.ClientId where f.ClientID== ClientId
+                         select new
+                         {
+                             PatientName = u.FirstName + ' ' + u.LastName,
+                             ClientId = f.ClientID,
+                             FeedbackID = f.FeedbackID,
+                             FeedbackDetails = f.FeedbackDetails,
+                             Recommended = f.Recommended,
+                             DateEntered = f.DateEntered,
+                         };
+            return Request.CreateResponse(HttpStatusCode.Accepted, result.OrderByDescending(x=>x.DateEntered));
         }
 
         [Route("api/feedback/getdetail/{feedbackId}/{pageId}")]

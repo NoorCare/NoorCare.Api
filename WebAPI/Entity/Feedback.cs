@@ -16,6 +16,8 @@ namespace WebAPI.Entity
         
         public string ClientID { get; set; }
 
+        public string DoctorID { get; set; }
+
         public string FeedbackDetails { get; set; }
 
         public bool RecommendedDoctor { get; set; }
