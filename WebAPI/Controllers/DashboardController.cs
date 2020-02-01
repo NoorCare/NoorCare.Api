@@ -109,7 +109,7 @@ namespace WebAPI.Controllers
             }
             else if (Type.ToLower() == "patient")
             {
-                DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.ClientId == pageId && a.Status == "booked").ToList().Count();
+                DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.ClientId == pageId).ToList().Count();
                 DashboardTypeModel.TotalFeedback = _feedbackRepo.Find(x => x.ClientID == pageId).ToList().Count();
                 DashboardTypeModel.TotalDoctorPrescription = _patientPrescriptionRepo.Find(p => p.PatientId == pageId).ToList().Count();
                 DashboardTypeModel.TotalMedicalFile = _quickUploadRepo.Find(q => q.ClientId == pageId).ToList().Count();

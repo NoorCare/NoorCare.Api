@@ -252,10 +252,19 @@ namespace WebAPI.Controllers
             var manager = new UserManager<ApplicationUser>(userStore);
             ApplicationUser cUser = manager.FindByName(model.UserName);
             string hashedNewPassword = manager.PasswordHasher.HashPassword(password);
-            cUser.PasswordHash = hashedNewPassword;
-            IdentityResult result = manager.Update(cUser);
-           _registration.sendForgotPassword(cUser, password);
-            return Ok();
+            if (cUser!=null)
+            {
+                cUser.PasswordHash = hashedNewPassword;
+                IdentityResult result = manager.Update(cUser);
+                _registration.sendForgotPassword(cUser, password);
+                return Ok("success");
+            }
+            else
+            {
+                return Ok("fail");
+            }
+           
+           
         }
        
         [HttpPost]

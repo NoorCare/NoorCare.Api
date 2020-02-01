@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
         // GET: api/Appointment
         public HttpResponseMessage GetAll()
         {
-            var result =  _appointmentRepo.GetAll().ToList();
+            var result = _appointmentRepo.GetAll().ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -40,17 +40,18 @@ namespace WebAPI.Controllers
             var result = _appointmentRepo.GetAll().ToList();
             var resultTime = _timeMasterRepo.GetAll().ToList();
             var appointDetail = from a in result
-                                join t in resultTime on a.TimingId equals t.Id.ToString() 
-                                where a.ClientId==ClientId
+                                join t in resultTime on a.TimingId equals t.Id.ToString()
+                                where a.ClientId == ClientId
                                 select new
                                 {
                                     Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
-                                    Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate).ToString("dd/MM/yyyy")),
+                                    Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate + " " + t.TimeTo + t.AM_PM).ToString("dd/MM/yyyy hh:mm")),
                                     ClientId = a.ClientId,
                                     DateEntered = a.DateEntered,
                                     DoctorId = a.DoctorId
                                 };
-            var todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy")); ;
+            //var abc = Convert.ToDateTime(Convert.ToDateTime("2020-01-21" + " " + "1:30" + "PM").ToString("dd/MM/yyyy hh:mm"));
+            var todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm"));
             var appintmentresult = appointDetail.Where(x => x.Date >= todaydate);
             return Request.CreateResponse(HttpStatusCode.Accepted, appintmentresult);
         }
@@ -61,7 +62,7 @@ namespace WebAPI.Controllers
         public HttpResponseMessage GetDetail(string appointmentid)
         {
             var result = _appointmentRepo.Find(x => x.DoctorId == appointmentid).FirstOrDefault();
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);            
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
         [Route("api/appointment/register")]
@@ -72,13 +73,13 @@ namespace WebAPI.Controllers
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
             CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
-            string AppointmentId= _registration.creatId(5, obj.CountryCode, 0);
+            string AppointmentId = _registration.creatId(5, obj.CountryCode, 0);
             obj.AppointmentId = AppointmentId;
 
             var _appointmentCreated = _appointmentRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.AppointmentId);
         }
- 
+
 
         [Route("api/appointment/update")]
         [HttpPut]
@@ -86,8 +87,8 @@ namespace WebAPI.Controllers
         // PUT: api/Appointment/5
         public HttpResponseMessage Update(Appointment obj)
         {
-           var  appointmentList = _getAppointmentList.Find(x => x.AppointmentId == obj.AppointmentId).FirstOrDefault();
-            if (appointmentList!=null)
+            var appointmentList = _getAppointmentList.Find(x => x.AppointmentId == obj.AppointmentId).FirstOrDefault();
+            if (appointmentList != null)
             {
                 obj.Id = appointmentList.Id;
             }
@@ -102,15 +103,15 @@ namespace WebAPI.Controllers
         public HttpResponseMessage UpdateStatus(string AppointmentId, string status)
         {
             Appointment obj = _getAppointmentList.Find(x => x.AppointmentId == AppointmentId).FirstOrDefault();
-            if(obj != null)
+            if (obj != null)
             {
                 obj.Status = status;
             }
             var result = _appointmentRepo.Update(obj);
 
             //Email sent on status change
-            string html =System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
-           // _emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
+            string html = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
+            // _emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
@@ -121,7 +122,7 @@ namespace WebAPI.Controllers
         // DELETE: api/Appointment/5
         public HttpResponseMessage Delete(string appointmentid)
         {
-            int tbleId= 0;
+            int tbleId = 0;
             var appointmentList = _getAppointmentList.Find(x => x.AppointmentId == appointmentid).FirstOrDefault();
             if (appointmentList != null)
             {
@@ -131,6 +132,14 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
+        [Route("api/GetAppointmentTime")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetAppointmentTime()
+        {
+            var TimeMasterList = _timeMasterRepo.GetAll().ToList();
+            return Request.CreateResponse(HttpStatusCode.Accepted, TimeMasterList);
+        }
         [Route("api/GetAppointmentTimebyTimeId/{TimeId}")]
         [HttpGet]
         [AllowAnonymous]

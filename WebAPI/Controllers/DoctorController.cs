@@ -21,6 +21,9 @@ namespace WebAPI.Controllers
     public class DoctorController : ApiController
     {
         Registration _registration = new Registration();
+
+        ICountryRepository _countryRepo = RepositoryFactory.Create<ICountryRepository>(ContextTypes.EntityFramework);
+            ICityRepository _cityRepo = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _getDoctorList = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
@@ -227,6 +230,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage doctorDetails(string doctorid)
         {
+            List<Feedback> feedbacks = new List<Feedback>();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
             Doctor d = _doctorRepo.Find(x => x.DoctorId == doctorid).FirstOrDefault();
             var feedback = _feedbackRepo.Find(x => x.PageId == doctorid);
@@ -326,7 +330,7 @@ namespace WebAPI.Controllers
         }
         private List<Doctors> getDoctors(string HospitalId, string diseaseType, ref FilterDoctor _filterDoctor)
         {
-            if (diseaseType == null || diseaseType == "")
+            if (diseaseType == null || diseaseType == "" || diseaseType == "null")
             {
                 return new List<Doctors>();
             }
@@ -400,6 +404,7 @@ namespace WebAPI.Controllers
             foreach (var h in hospitals ?? new List<HospitalDetails>())
             {
                var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
+                
                 _hospital = new Hospital
                 {
                     HospitalId = h.HospitalId,
@@ -415,8 +420,8 @@ namespace WebAPI.Controllers
                     FacilityId = h.FacilityId,
                     Address = h.Address,
                     Street = h.Street,
-                    Country = h.Country,
-                    City = h.City,
+                    Country = GetCountryName(Convert.ToInt16(h.Country)),
+                    City = GetCityName(Convert.ToInt16(h.City)),
                     PostCode = h.PostCode,
                     Landmark = h.Landmark,
                     InsuranceCompanies = h.InsuranceCompanies??"",
@@ -441,6 +446,26 @@ namespace WebAPI.Controllers
             _filterHospital.Amenities = _hospitalAmenities.Select(x => new FilterData { Id = x.Id, Name = x.HospitalAmenities }).Distinct().ToList();
            // _filterHospital.Specialization = _filterDoctor.Specialization;
             return _hospitals;
+        }
+        private string GetCountryName(Int32 id)
+        {
+            string countryName = "N/A";
+            var country= _countryRepo.Find(x => x.Id == id).FirstOrDefault();
+            if (country!=null)
+            {
+                countryName = country.CountryName;
+            }
+            return countryName;
+        }
+        private string GetCityName(int id)
+        {
+            string cityName = "N/A";
+            var city = _cityRepo.Find(x => x.Id == id).FirstOrDefault();
+            if (city != null)
+            {
+                cityName = city.City;
+            }
+            return cityName;
         }
         #endregion
     }
