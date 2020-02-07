@@ -10,6 +10,8 @@ using System.Web.Http;
 using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
+using System.Web.Configuration;
+using System.Configuration;
 
 namespace WebAPI.Controllers
 {
@@ -88,7 +90,7 @@ namespace WebAPI.Controllers
                 AddedMonth = DateTime.Now.Month,
                 FilePath = postedFile.FileName,
             };
-           var objId = _quickUploadRepo.Insert(quickHeathDetails);
+            var objId = _quickUploadRepo.Insert(quickHeathDetails);
             try
             {
                 if (postedFile != null)
@@ -109,7 +111,7 @@ namespace WebAPI.Controllers
                     filePath = filePath + "/" + imageName;
 
                     postedFile.SaveAs(filePath);
-                   
+
 
                 }
             }
@@ -119,6 +121,117 @@ namespace WebAPI.Controllers
             return Ok(objId);
         }
 
+        [HttpPost]
+        [Route("api/document/uploadreportfile1")]
+        [AllowAnonymous]
+        public IHttpActionResult UploadReportFile1()
+        {
+            string imageName = null;
+            var httpRequest = HttpContext.Current.Request;
+            string hospitalId = httpRequest.Form["HospitalId"];
+            string clientId = httpRequest.Form["ClientId"];
+            string diseaseType = httpRequest.Form["diseaseType"];
+            //var postedFile = httpRequest.Files["Image"];
+            string PostedFileName = string.Empty;
+            string PostedFileExt = string.Empty;
+            string fileName = "";
+            //for (int i = 0; i < httpRequest.Files.Count; i++)
+            //{
+            //    fileName = fileName + "," + httpRequest.Files[i].FileName;
+            //}
+            ////File Information Save in Database
+            int objId = 0;
+            try
+            {
+                
+                string year = DateTime.Now.Year.ToString();
+                string month = DateTime.Now.Month.ToString();
+                var directoryPath= Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/ClientDocument/" + clientId + "/" + diseaseType + "/" + year + "/" + month));
+                for (int i = 0; i < httpRequest.Files.Count; i++)
+                {
+                    QuickUpload quickHeathDetails = new QuickUpload
+                    {
+                        ClientId = clientId,
+                        HospitalId = hospitalId,
+                        DesiesType = Convert.ToInt32(diseaseType),
+                        AddedYear = DateTime.Now.Year,
+                        AddedMonth = DateTime.Now.Month,
+                        FilePath = httpRequest.Files[i].FileName,
+                    };
+                    objId = _quickUploadRepo.Insert(quickHeathDetails);
+                    FileInfo fi = new FileInfo(httpRequest.Files[i].FileName.Replace(" ", "_"));
+                        if (fi != null)
+                        {
+                            PostedFileName = fi.Name;
+                            PostedFileExt = fi.Extension;
+                        }
+                        imageName = objId+i + PostedFileExt;
+                        var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + clientId + "/" + diseaseType + "/" + year + "/" + month);
+                         filePath = filePath + "/" + httpRequest.Files[i].FileName;
+                        httpRequest.Files[i].SaveAs(filePath);
+
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return Ok(objId);
+        }
+
+
+        [HttpPost]
+        [Route("api/document/uploadreport")]
+        [AllowAnonymous]
+        public IHttpActionResult UploadReport()
+        {
+            string imageName = null;
+            var httpRequest = HttpContext.Current.Request;
+            string hospitalId = httpRequest.Form["HospitalId"];
+            string clientId = httpRequest.Form["ClientId"];
+            string diseaseType = httpRequest.Form["diseaseType"];
+            var postedFile = httpRequest.Files["Image"];
+            string PostedFileName = string.Empty;
+            string PostedFileExt = string.Empty;
+            ////File Information Save in Database
+            QuickUpload quickHeathDetails = new QuickUpload
+            {
+                ClientId = clientId,
+                //HospitalId = hospitalId,
+                DesiesType = Convert.ToInt32(diseaseType),
+                AddedYear = DateTime.Now.Year,
+                AddedMonth = DateTime.Now.Month,
+                FilePath = postedFile.FileName,
+            };
+            var objId = _quickUploadRepo.Insert(quickHeathDetails);
+            try
+            {
+                if (postedFile != null)
+                {
+                    FileInfo fi = new FileInfo(postedFile.FileName.Replace(" ", "_"));
+                    if (fi != null)
+                    {
+                        PostedFileName = fi.Name;
+                        PostedFileExt = fi.Extension;
+                    }
+
+                    imageName = objId + PostedFileExt;
+
+                    string year = DateTime.Now.Year.ToString();
+                    string month = DateTime.Now.Month.ToString();
+                    var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + clientId + "/" + diseaseType + "/" + year + "/" + month);
+                    Directory.CreateDirectory(filePath);
+                    filePath = filePath + "/" + imageName;
+
+                    postedFile.SaveAs(filePath);
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return Ok(objId);
+        }
         #region GetDisease
 
         [Route("api/GetUploadedDocInfo/{clientId}")]
@@ -128,7 +241,7 @@ namespace WebAPI.Controllers
         {
             var desiesTypeResultList = new List<DesiesTypeResult>();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
-            string host = HttpContext.Current.Request.Url.Host;
+            string host = ConfigurationManager.AppSettings.Get("ImageBaseUrl");//HttpContext.Current.Request.Url.Host;
             var result = _quickUploadRepo.Find(x => x.ClientId == clientId);
             var list = result.ToList();
             var data = list.GroupBy(item => item.DesiesType)
@@ -147,7 +260,7 @@ namespace WebAPI.Controllers
                     desiesTypeResult.DiseaseType = x.diseaseType;
                     desiesTypeResult.DesiesName = disease.Where(c => c.Id == x.diseaseType).FirstOrDefault().DiseaseType;
                 }
-                    desiesTypeResult.YearList = new List<YearList>();
+                desiesTypeResult.YearList = new List<YearList>();
                 foreach (var it in listYear)
                 {
 

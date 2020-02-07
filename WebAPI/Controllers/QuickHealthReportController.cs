@@ -1,9 +1,11 @@
 ﻿using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using WebAPI.Entity;
 using WebAPI.Repository;
@@ -31,10 +33,62 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
+        [Route("api/user/add/quickHealth")]
+        [AllowAnonymous]
+        public IHttpActionResult UploadReportFile()
+        {
+            string imageName = null;
+            var httpRequest = HttpContext.Current.Request;
+            string clientId = httpRequest.Form["ClientId"];
+            string diseaseType = httpRequest.Form["diseaseType"];
+             var postedFile = httpRequest.Files["Image"];
+            string PostedFileName = string.Empty;
+            string PostedFileExt = string.Empty;
+            ////File Information Save in Database
+            QuickHeathDetails quickHeathDetails = new QuickHeathDetails
+            {
+                ClientId = httpRequest.Form["ClientId"],
+                Pressure = httpRequest.Form["Pressure"],
+                Heartbeats = httpRequest.Form["Heartbeats"],
+                Temprature = httpRequest.Form["Temprature"],
+                Sugar = httpRequest.Form["Sugar"],
+                Length = httpRequest.Form["Length"],
+                Weight = httpRequest.Form["Weight"],
+                Cholesterol = httpRequest.Form["Cholesterol"],
+                Other = httpRequest.Form["Other"],
+            };
+            var objId = _quickHealthRepository.Insert(quickHeathDetails);
+            try
+            {
+                if (postedFile != null)
+                {
+                    FileInfo fi = new FileInfo(postedFile.FileName.Replace(" ", "_"));
+                    if (fi != null)
+                    {
+                        PostedFileName = fi.Name;
+                        PostedFileExt = fi.Extension;
+                    }
+                    imageName = objId + PostedFileExt;
+                    string year = DateTime.Now.Year.ToString();
+                    string month = DateTime.Now.Month.ToString();
+                    var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + httpRequest.Form["ClientId"] + "/" + diseaseType + "/" + year + "/" + month);
+                    Directory.CreateDirectory(filePath);
+                    filePath = filePath + "/" + imageName;
+                    postedFile.SaveAs(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return Ok(objId);
+        }
+
+        [HttpPost]
         [Route("api/user/add/quickHealth/{ClientId}")]
         [AllowAnonymous]
         public IHttpActionResult AddQuickHeathDetails(string ClientId, QuickHeathDetails _quickHeathDetails)
         {
+
             QuickHeathDetails quickHeathDetails = new QuickHeathDetails
             {
                 ClientId = ClientId,
@@ -48,7 +102,16 @@ namespace WebAPI.Controllers
                 Cholesterol = _quickHeathDetails.Cholesterol,
                 Other = _quickHeathDetails.Other,
             };
+           // _quickHealthRepository.Insert(quickHeathDetails);
             return Ok(_quickHealthRepository.Insert(quickHeathDetails));
+        }
+
+        private void createDocPath(string clientId, int desiesId)
+        {
+            string subPath = $"Documents/{clientId}/{desiesId}";
+            bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath(subPath));
+            if (!exists)
+                System.IO.Directory.CreateDirectory(HttpContext.Current.Server.MapPath(subPath));
         }
 
         [HttpPost]
