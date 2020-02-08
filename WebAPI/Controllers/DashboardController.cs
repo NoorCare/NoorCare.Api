@@ -39,11 +39,18 @@ namespace WebAPI.Controllers
             var HospitalId = "";
             if (Type.ToLower() == "secretary")
             {
-                HospitalId = _secretaryRepo.Find(s => s.SecretaryId == pageId).FirstOrDefault().HospitalId;
+                if (_secretaryRepo.Find(s => s.SecretaryId == pageId).FirstOrDefault()!=null)
+                {
+                    HospitalId = _secretaryRepo.Find(s => s.SecretaryId == pageId).FirstOrDefault().HospitalId;
+                }
+                
             }
             else if(Type.ToLower() == "doctor")
             {
-                HospitalId = _doctorRepo.Find(d => d.DoctorId == pageId).FirstOrDefault().HospitalId;
+                if (_doctorRepo.Find(d => d.DoctorId == pageId).FirstOrDefault()!=null)
+                {
+                    HospitalId = _doctorRepo.Find(d => d.DoctorId == pageId).FirstOrDefault().HospitalId;
+                }
             }
             else if (Type.ToLower() == "hospital")
             {
