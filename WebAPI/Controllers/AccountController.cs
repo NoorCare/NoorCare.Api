@@ -177,7 +177,29 @@ namespace WebAPI.Controllers
         [Route("api/user/profile/{ClientId}")]
         public IHttpActionResult getProfileData(string ClientId)
         {
-            return Ok(_clientDetailRepo.Find(x =>x.ClientId == ClientId));
+            var clientType = ClientId.Split('-')[0];
+            
+            if (clientType== "NCH")
+            {
+                var user = _hospitalDetailsRepository.Find(x => x.HospitalId == ClientId);
+                return Ok(user);
+            }
+            else if (clientType == "NCD")
+            {
+                var user = _doctorRepository.Find(x => x.DoctorId == ClientId);
+                return Ok(user);
+            }
+            else if (clientType == "NCS")
+            {
+                var user = _secretaryRepository.Find(x => x.SecretaryId == ClientId);
+                return Ok(user);
+            }
+            else 
+            {
+                var user = _clientDetailRepo.Find(x => x.ClientId == ClientId);
+                return Ok(user);
+            }
+
         }
 
         [HttpGet]
