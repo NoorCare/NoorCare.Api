@@ -468,6 +468,21 @@ namespace WebAPI.Controllers
             return cityName;
         }
         #endregion
+        [Route("api/doctorbyhospital/{HospitalID}")]
+        [HttpGet]
+        [AllowAnonymous]
+        // GET: api/Doctor
+        public HttpResponseMessage doctorbyhospital(string HospitalID)
+        {
+            var doctors = _getDoctorList.GetAll().Where(x => x.HospitalId == HospitalID && x.IsDeleted == false).ToList();
+            var docList = from d in doctors
+                    select new
+                    {
+                        Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,
+                        DoctorId = d.DoctorId
+                    };
+            return Request.CreateResponse(HttpStatusCode.Accepted, docList.ToList().Distinct());
+        }
     }
 }
 

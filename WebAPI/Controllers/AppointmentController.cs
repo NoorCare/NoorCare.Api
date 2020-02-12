@@ -61,7 +61,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetDetail(string appointmentid)
         {
-            var result = _appointmentRepo.Find(x => x.DoctorId == appointmentid).FirstOrDefault();
+            var result = _appointmentRepo.Find(x => x.AppointmentId == appointmentid).FirstOrDefault();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -111,11 +111,30 @@ namespace WebAPI.Controllers
 
             //Email sent on status change
             string html = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
-            // _emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
+             //_emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
+        [Route("api/appointmentconfirmorreject/updatestatus")]
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage AppointmentConfirmorReject(Appointment appointment)
+        {
+            Appointment obj = _getAppointmentList.Find(x => x.AppointmentId == appointment.AppointmentId).FirstOrDefault();
+            if (obj != null)
+            {
+                obj.Status = appointment.Status;
+                obj.Comment = appointment.Comment;
+                obj.DoctorId = appointment.DoctorId;
+            }
+            var result = _appointmentRepo.Update(obj);
+            //Email sent on status change
+            string html = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
+            //_emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
+
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
         [Route("api/appointment/delete/{appointmentid}")]
         [HttpDelete]
         [AllowAnonymous]
