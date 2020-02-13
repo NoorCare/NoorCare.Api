@@ -1,5 +1,6 @@
 ﻿using NoorCare.Repository;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -16,6 +17,10 @@ namespace WebAPI.Controllers
         IFeedbackRepository _feedbackList = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
         IContactUsRepository _contactUsRepo = RepositoryFactory.Create<IContactUsRepository>(ContextTypes.EntityFramework);
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
+        IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
+        IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+        IPatientPrescriptionRepository _patientPrescriptionRepo = RepositoryFactory.Create<IPatientPrescriptionRepository>(ContextTypes.EntityFramework);
+
         [Route("api/feedback/getAllFeedback")]
         [HttpGet]
         [AllowAnonymous]
@@ -29,7 +34,7 @@ namespace WebAPI.Controllers
      u in users on f.ClientID equals u.ClientId
                          select new
                          {
-                             PatientName= u.FirstName + ' ' + u.LastName,
+                             PatientName = u.FirstName + ' ' + u.LastName,
                              ClientId = f.ClientID,
                              FeedbackID = f.FeedbackID,
                              FeedbackDetails = f.FeedbackDetails,
@@ -50,7 +55,8 @@ namespace WebAPI.Controllers
             var users = _clientDetailRepo.GetAll().ToList();
             var result = from f in feedbacks
                          join
-     u in users on f.ClientID equals u.ClientId where f.ClientID== ClientId
+     u in users on f.ClientID equals u.ClientId
+                         where f.ClientID == ClientId
                          select new
                          {
                              PatientName = u.FirstName + ' ' + u.LastName,
@@ -60,7 +66,7 @@ namespace WebAPI.Controllers
                              Recommended = f.Recommended,
                              DateEntered = f.DateEntered,
                          };
-            return Request.CreateResponse(HttpStatusCode.Accepted, result.OrderByDescending(x=>x.DateEntered));
+            return Request.CreateResponse(HttpStatusCode.Accepted, result.OrderByDescending(x => x.DateEntered));
         }
 
         [Route("api/feedback/getdetail/{feedbackId}/{pageId}")]
@@ -176,7 +182,24 @@ namespace WebAPI.Controllers
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-
+        [Route("api/feedback/PatientPrescription/{ClientId}/{DoctorId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage PatientPrescription(string ClientId,string DoctorId)
+        {
+            Dictionary<string, int> PrescriptionFeedbackCount = new Dictionary<string, int>();
+            var feedbackCount = _feedbackRepo.GetAll().Where(x => x.ClientID == ClientId && x.PageId == DoctorId).ToList();
+            PrescriptionFeedbackCount.Add("FeedBackCount", feedbackCount.Count);
+            
+            var result = from a in _appointmentRepo.GetAll()
+                         join
+                        d in _doctorRepo.GetAll() on a.DoctorId equals d.DoctorId
+                         join pp in _patientPrescriptionRepo.GetAll() on a.ClientId equals pp.PatientId
+                         where a.ClientId == ClientId && a.Status == "Booked" && a.DoctorId==DoctorId
+                         select pp;
+            PrescriptionFeedbackCount.Add("PrescriptionCount", result.ToList().Count);
+            return Request.CreateResponse(HttpStatusCode.Accepted, PrescriptionFeedbackCount);
+        }
         private void sendSMS(string uri)
         {
             string response = string.Empty;
@@ -200,6 +223,7 @@ namespace WebAPI.Controllers
                 //throw ex;
             }
         }
+
 
     }
 }

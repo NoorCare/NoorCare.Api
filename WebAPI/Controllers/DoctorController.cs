@@ -79,7 +79,7 @@ namespace WebAPI.Controllers
         {
             var result = from a in _appointmentRepo.GetAll()
                          join
-            d in _getDoctorList.GetAll() on a.DoctorId equals d.DoctorId where a.ClientId == ClientID
+            d in _getDoctorList.GetAll() on a.DoctorId equals d.DoctorId where a.ClientId == ClientID && a.Status.ToLower()=="booked"
                          select new
                          {
                              Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,

@@ -127,6 +127,7 @@ namespace WebAPI.Controllers
                 obj.Status = appointment.Status;
                 obj.Comment = appointment.Comment;
                 obj.DoctorId = appointment.DoctorId;
+                obj.DateModified = DateTime.Now.ToString();
             }
             var result = _appointmentRepo.Update(obj);
             //Email sent on status change
