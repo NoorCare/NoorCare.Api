@@ -11,7 +11,7 @@ namespace WebAPI.Entity
     {
         [Key]
         public int Id { get; set; }
-       
+
         public string ContentText { get; set; }
 
         public string Category { get; set; }
@@ -20,6 +20,12 @@ namespace WebAPI.Entity
         public string UserId { get; set; }
         [MaxLength(50)]
         public string PageId { get; set; }
+
+        [MaxLength(1000)]
+        public string NewsTitle { get; set; }
+
+        [MaxLength(500)]
+        public string ImageURL { get; set; }
 
         public bool IsDeleted { get; set; }
         [MaxLength(128)]
