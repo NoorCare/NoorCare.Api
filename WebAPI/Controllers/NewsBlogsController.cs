@@ -24,17 +24,17 @@ namespace WebAPI.Controllers
         }
 
 
-	[Route("api/NewsBlogs/GetNewsBlog/{id}")]
-	[HttpGet]
-	[AllowAnonymous]
-	public HttpResponseMessage GetNewsBlog(int id)
-	{
-	    var result = _newsBlogsRepo.Get(id);
+        [Route("api/NewsBlogs/GetNewsBlog/{id}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetNewsBlog(int id)
+        {
+            var result = _newsBlogsRepo.Get(id);
 
-	    return Request.CreateResponse(HttpStatusCode.OK, result);
-	}
+            return Request.CreateResponse(HttpStatusCode.OK, result);
+        }
 
-	[Route("api/NewsBlogs/SaveNewBlog")]
+        [Route("api/NewsBlogs/SaveNewBlog")]
         [HttpPost]
         [AllowAnonymous]
         public HttpResponseMessage SaveNewsBlog(NewsBlogs obj)
