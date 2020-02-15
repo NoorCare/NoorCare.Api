@@ -23,7 +23,18 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
-        [Route("api/NewsBlogs/SaveNewBlog")]
+
+		[Route("api/NewsBlogs/getNewsBlog/{id}")]
+		[HttpGet]
+		[AllowAnonymous]
+		public HttpResponseMessage GetNewsBlog(int id)
+		{
+			var result = _newsBlogsRepo.Get(id);
+
+			return Request.CreateResponse(HttpStatusCode.Accepted, result);
+		}
+
+		[Route("api/NewsBlogs/SaveNewBlog")]
         [HttpPost]
         [AllowAnonymous]
         public HttpResponseMessage SaveNewsBlog(NewsBlogs obj)

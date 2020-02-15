@@ -16,7 +16,15 @@ namespace WebAPI.Entity
 
         public string Category { get; set; }
 
-        [MaxLength(50)]
+		public string NewsTitle { get; set; }
+
+		public string ImageURL { get; set; }
+
+		public long  NoOfRead { get; set; }
+
+		public long NoOfLikes { get; set; }
+
+		[MaxLength(50)]
         public string UserId { get; set; }
         [MaxLength(50)]
         public string PageId { get; set; }
