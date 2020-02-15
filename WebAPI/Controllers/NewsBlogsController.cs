@@ -1,7 +1,11 @@
 ﻿using NoorCare.Repository;
+using System;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using WebAPI.Entity;
 using WebAPI.Repository;
@@ -39,10 +43,37 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage SaveNewsBlog(NewsBlogs obj)
         {
-            var _newsBlogCreated = _newsBlogsRepo.Insert(obj);
+            _newsBlogsRepo.Insert(obj);
+            //---------------Image Upload------------
+            string imageName = null;
+            var httpRequest = HttpContext.Current.Request;
+            Int32 NewsBlogID = obj.Id;
+            try
+            {
+                var postedFile = httpRequest.Files["Image"];
+                if (postedFile != null)
+                {
+                    imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).
+                        Take(10).ToArray()).
+                        Replace(" ", "-");
+                    imageName = NewsBlogID + "." + ImageFormat.Jpeg;
+                    var filePath = HttpContext.Current.Server.MapPath("~/ImgNewsBlog/" + imageName);
+                    bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ImgNewsBlog/" + imageName));
+                    if (exists)
+                    {
+                        File.Delete(filePath);
+                    }
+                    postedFile.SaveAs(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            //---------------------------------------
+
             return Request.CreateResponse(HttpStatusCode.Accepted, "Saved");
         }
-
+              
         [Route("api/NewsBlogs/UpdateNewsBlog/{userid}/{id}")]
         [HttpGet]
         [AllowAnonymous]
@@ -80,6 +111,8 @@ namespace WebAPI.Controllers
                     _newsBlog.PageId = obj.PageId;
                     _newsBlog.Category = obj.Category;
                     _newsBlog.ContentText = obj.ContentText;
+                    _newsBlog.NewsTitle = obj.NewsTitle;
+                    _newsBlog.ImageURL = obj.ImageURL;
                     _newsBlog.ModifiedBy = obj.UserId;
                     _newsBlog.ModifiedDate = System.DateTime.Now.ToString();
                     _newsBlogsRepo.Update(_newsBlog);

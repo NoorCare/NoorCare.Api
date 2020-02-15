@@ -1,4 +1,5 @@
 ﻿using NoorCare.Repository;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -56,9 +57,9 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage getPrescription(string patientId)
         {
-            var result = _prescriptionRepo.Find(x => x.PatientId == patientId).FirstOrDefault();
+           List<PatientPrescription> lstPrescription = _prescriptionRepo.GetAll().ToList<PatientPrescription>().OrderByDescending(x=>x.Id).ToList();
 
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+            return Request.CreateResponse(HttpStatusCode.Accepted, lstPrescription);
         }
 
         [Route("api/patient/SavePatientPrescription")]
