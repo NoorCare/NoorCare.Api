@@ -31,7 +31,15 @@ namespace WebAPI.Controllers
             QuickHeathDetails _quickHeathDetails = _quickHealthRepository.Find(x => x.ClientId == ClientId).LastOrDefault();
             return Ok(_quickHeathDetails);
         }
-
+        [HttpGet]
+        [Route("api/doctor/get/quickHealth/{ClientId}")]
+        [AllowAnonymous]
+        public IHttpActionResult getDoctorQuickHealth(string ClientId)
+        {
+            QuickHeathDetails _quickHeathDetails = _quickHealthRepository.Find(x => x.ClientId == ClientId).LastOrDefault();
+            
+            return Ok(_quickHeathDetails);
+        }
         [HttpPost]
         [Route("api/user/add/quickHealth")]
         [AllowAnonymous]

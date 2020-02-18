@@ -20,7 +20,7 @@ namespace WebAPI.Controllers
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _getAppointmentList = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
-
+        IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
         [Route("api/appointment/getall")]
         [HttpGet]
         [AllowAnonymous]
@@ -30,7 +30,40 @@ namespace WebAPI.Controllers
             var result = _appointmentRepo.GetAll().ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
+        [Route("api/appointment/getallbookedAppointmentbydoctor/{doctorid}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetAllConfirmAppointmentByDoctor(string doctorid)
+        {
+            var result = _appointmentRepo.GetAll().ToList();
+            var resultTime = _timeMasterRepo.GetAll().ToList();
+            var appointDetail = from a in result
+                                join t in resultTime on a.TimingId equals t.Id.ToString()
+                                join c in _clientDetailRepo.GetAll() on a.ClientId equals c.ClientId
+                                where a.DoctorId == doctorid && a.Status == "Booked"
+                                select new
+                                {
+                                    Id=a.Id,
+                                    Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
+                                    Date = Convert.ToDateTime(a.AppointmentDate).ToShortDateString(),
+                                    ClientId = a.ClientId,
+                                    DateEntered = a.DateEntered,
+                                    DoctorId = a.DoctorId,
+                                    Name=c.FirstName+" "+c.LastName,
+                                    Gender=c.Gender,
+                                    Age= CalculateAge(Convert.ToDateTime(c.DOB)),
+                                };
+            return Request.CreateResponse(HttpStatusCode.Accepted, appointDetail.OrderByDescending(x=>x.Id));
+        }
+        private static int CalculateAge(DateTime dateOfBirth)
+        {
+            int age = 0;
+            age = DateTime.Now.Year - dateOfBirth.Year;
+            if (DateTime.Now.DayOfYear < dateOfBirth.DayOfYear)
+                age = age - 1;
 
+            return age;
+        }
         [Route("api/appointment/getUpcommingAppointment/{ClientId}")]
         [HttpGet]
         [AllowAnonymous]
