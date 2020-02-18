@@ -21,11 +21,17 @@ namespace WebAPI.Controllers
         [Route("api/NewsBlogs/getAllNewsBlogs/{Type}")]
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage GetAllNewsBlogs(string Type)
+        public HttpResponseMessage GetAllNewsBlogs([FromUri] NewsBlogs newsBlogs, string Type)
         {
-            var result = _newsBlogsRepo.Find(x => x.Category == Type);
+			var result = _newsBlogsRepo
+			.Find(x => (x.Category == Type));
+			// && (x.NewsCategory == newsBlogs.NewsCategory || x.NewsCategory == x.NewsCategory));
+			//&& (x.NewsCategory == null ? x.NewsCategory == x.NewsCategory : x.NewsCategory == newsBlogs.NewsCategory));
+			  //&& (x.NewsTitle == newsBlogs.NewsTitle || x.NewsTitle == x.NewsTitle)
+			  //&& (x.UserId == newsBlogs.UserId || x.UserId == x.UserId));
 
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+
+			return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
 
@@ -192,6 +198,8 @@ namespace WebAPI.Controllers
             var result = new { LikeCount= likeCount, ReadCount= readCount };
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-    }
+
+
+	}
 }
 

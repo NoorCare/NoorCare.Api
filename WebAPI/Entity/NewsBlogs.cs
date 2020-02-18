@@ -31,7 +31,10 @@ namespace WebAPI.Entity
         [MaxLength(50)]
         public string ModifiedDate { get; set; }
 
-    }
+		public string NewsCategory { get; set; }
+
+
+	}
 
     [Serializable]
     [Table("ReadLike")]
