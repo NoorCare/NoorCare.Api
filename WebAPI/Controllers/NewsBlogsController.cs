@@ -24,11 +24,12 @@ namespace WebAPI.Controllers
         public HttpResponseMessage GetAllNewsBlogs([FromUri] NewsBlogs newsBlogs, string Type)
         {
 			var result = _newsBlogsRepo
-			.Find(x => (x.Category == Type));
-			// && (x.NewsCategory == newsBlogs.NewsCategory || x.NewsCategory == x.NewsCategory));
+			.Find(x => (x.Category == Type)).OrderByDescending(x => x.Id).Take(15).ToList(); 
+			
+			//&& (x.NewsCategory == newsBlogs.NewsCategory || x.NewsCategory == x.NewsCategory));
 			//&& (x.NewsCategory == null ? x.NewsCategory == x.NewsCategory : x.NewsCategory == newsBlogs.NewsCategory));
-			  //&& (x.NewsTitle == newsBlogs.NewsTitle || x.NewsTitle == x.NewsTitle)
-			  //&& (x.UserId == newsBlogs.UserId || x.UserId == x.UserId));
+			//&& (x.NewsTitle == newsBlogs.NewsTitle || x.NewsTitle == x.NewsTitle)
+			//&& (x.UserId == newsBlogs.UserId || x.UserId == x.UserId));
 
 
 			return Request.CreateResponse(HttpStatusCode.Accepted, result);
