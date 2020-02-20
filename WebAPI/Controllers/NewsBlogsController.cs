@@ -1,10 +1,12 @@
 ﻿using NoorCare.Repository;
 using System;
+using System.Data.Entity.SqlServer;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Http;
 using WebAPI.Entity;
@@ -20,13 +22,15 @@ namespace WebAPI.Controllers
         [Route("api/NewsBlogs/getAllNewsBlogs/{Type}")]
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage GetAllNewsBlogs(string Type)
+        public HttpResponseMessage GetAllNewsBlogs([FromUri] NewsBlogs newsBlogs, string Type)
         {
-            var result = _newsBlogsRepo.Find(x => x.Category == Type);
-
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+			var result =  _newsBlogsRepo.Find(
+				 x => x.Category == Type
+				 && (newsBlogs.UserId == null || newsBlogs.UserId.Contains(x.UserId))
+				 && (newsBlogs.NewsCategory == null || x.NewsCategory.ToUpper().Contains(newsBlogs.NewsCategory.ToUpper()))
+				 && (newsBlogs.NewsTitle == null || x.NewsTitle.ToUpper().Contains(newsBlogs.NewsTitle.ToUpper()))).OrderByDescending(x => x.Id).Take(15).ToList(); 
+			return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-
 
         [Route("api/NewsBlogs/GetNewsBlog/{id}")]
         [HttpGet]
@@ -38,43 +42,41 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
-        [Route("api/NewsBlogs/SaveNewBlog")]
-        [HttpPost]
-        [AllowAnonymous]
-        public HttpResponseMessage SaveNewsBlog(NewsBlogs obj)
-        {
-            _newsBlogsRepo.Insert(obj);
-            //---------------Image Upload------------
-            string imageName = null;
-            var httpRequest = HttpContext.Current.Request;
-            Int32 NewsBlogID = obj.Id;
-            try
-            {
-                var postedFile = httpRequest.Files["Image"];
-                if (postedFile != null)
-                {
-                    imageName = new String(Path.GetFileNameWithoutExtension(postedFile.FileName).
-                        Take(10).ToArray()).
-                        Replace(" ", "-");
-                    imageName = NewsBlogID + "." + ImageFormat.Jpeg;
-                    var filePath = HttpContext.Current.Server.MapPath("~/ImgNewsBlog/" + imageName);
-                    bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ImgNewsBlog/" + imageName));
-                    if (exists)
-                    {
-                        File.Delete(filePath);
-                    }
-                    postedFile.SaveAs(filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-            //---------------------------------------
+		[HttpPost]
+		[Route("api/NewsBlogs/UploadNewsImage")]
+		[AllowAnonymous]
+		public HttpResponseMessage AddNews()
+		{
+			string imageName = null;
+			var httpRequest = HttpContext.Current.Request;
+			string clientId = httpRequest.Form["ClientId"];
+			var postedFile = httpRequest.Files["Image"];
+			try
+			{
+				if (postedFile != null)
+				{
+					imageName = clientId + DateTime.Now.ToFileTime() + "_" +postedFile.FileName;
+					var filePath = HttpContext.Current.Server.MapPath("~/ImgNewsBlog/" + imageName);
+					postedFile.SaveAs(filePath);
+				}
+			}
+			catch (Exception ex)
+			{
+				return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
+			}
+			return Request.CreateResponse(HttpStatusCode.Accepted, imageName);
+		}
 
-            return Request.CreateResponse(HttpStatusCode.Accepted, "Saved");
-        }
-              
-        [Route("api/NewsBlogs/UpdateNewsBlog/{userid}/{id}")]
+		[Route("api/NewsBlogs/SaveNewsBlog")]
+		[HttpPost]
+		[AllowAnonymous]
+		public HttpResponseMessage SavePatientPrescription(NewsBlogs obj)
+		{
+			var _prescriptionCreated = _newsBlogsRepo.Insert(obj);
+			return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
+		}
+
+		[Route("api/NewsBlogs/UpdateNewsBlog/{userid}/{id}")]
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage UpdateNewsBlog(string userid, int id)
@@ -193,6 +195,8 @@ namespace WebAPI.Controllers
             var result = new { LikeCount= likeCount, ReadCount= readCount };
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-    }
+
+
+	}
 }
 
