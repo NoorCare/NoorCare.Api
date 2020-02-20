@@ -1,5 +1,6 @@
 ﻿using NoorCare.Repository;
 using System;
+using System.Data.Entity.SqlServer;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -23,18 +24,13 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetAllNewsBlogs([FromUri] NewsBlogs newsBlogs, string Type)
         {
-			var result = _newsBlogsRepo
-			.Find(x => (x.Category == Type)).OrderByDescending(x => x.Id).Take(15).ToList(); 
-			
-			//&& (x.NewsCategory == newsBlogs.NewsCategory || x.NewsCategory == x.NewsCategory));
-			//&& (x.NewsCategory == null ? x.NewsCategory == x.NewsCategory : x.NewsCategory == newsBlogs.NewsCategory));
-			//&& (x.NewsTitle == newsBlogs.NewsTitle || x.NewsTitle == x.NewsTitle)
-			//&& (x.UserId == newsBlogs.UserId || x.UserId == x.UserId));
-
-
+			var result =  _newsBlogsRepo.Find(
+				 x => x.Category == Type
+				 && (newsBlogs.UserId == null || newsBlogs.UserId.Contains(x.UserId))
+				 && (newsBlogs.NewsCategory == null || x.NewsCategory.ToUpper().Contains(newsBlogs.NewsCategory.ToUpper()))
+				 && (newsBlogs.NewsTitle == null || x.NewsTitle.ToUpper().Contains(newsBlogs.NewsTitle.ToUpper()))).OrderByDescending(x => x.Id).Take(15).ToList(); 
 			return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-
 
         [Route("api/NewsBlogs/GetNewsBlog/{id}")]
         [HttpGet]
