@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
         IPatientPrescriptionRepository _prescriptionRepo = RepositoryFactory.Create<IPatientPrescriptionRepository>(ContextTypes.EntityFramework);
         IMedicalInformationRepository _medicalInformationRepo = RepositoryFactory.Create<IMedicalInformationRepository>(ContextTypes.EntityFramework);
         IInsuranceInformationRepository _insuranceInformationRepo = RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
-
+        IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         [Route("api/patient/GetAllPatient")]
         [HttpGet]
         [AllowAnonymous]
@@ -22,6 +22,19 @@ namespace WebAPI.Controllers
         {
             var result = _clientDetailRepo.GetAll().ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
+        [Route("api/patient/GetAllPatient/{DoctorId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetAllPatientByDoctor(string DoctorId)
+        {
+            var appointments = _appointmentRepo.GetAll().Where(x => x.DoctorId == DoctorId).ToList();
+            var patients = _clientDetailRepo.GetAll().ToList();
+            var result = from a in appointments
+                         join p in patients on a.ClientId equals p.ClientId
+                         select p;
+            return Request.CreateResponse(HttpStatusCode.Accepted, result.Distinct());
         }
 
         [Route("api/patient/GetPatient/{patientId}")]
