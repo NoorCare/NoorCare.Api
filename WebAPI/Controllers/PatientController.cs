@@ -1,9 +1,11 @@
 ﻿using NoorCare.Repository;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebAPI.Models;
 using WebAPI.Repository;
 
 namespace WebAPI.Controllers
@@ -15,6 +17,7 @@ namespace WebAPI.Controllers
         IMedicalInformationRepository _medicalInformationRepo = RepositoryFactory.Create<IMedicalInformationRepository>(ContextTypes.EntityFramework);
         IInsuranceInformationRepository _insuranceInformationRepo = RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
+        ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
         [Route("api/patient/GetAllPatient")]
         [HttpGet]
         [AllowAnonymous]
@@ -29,12 +32,39 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetAllPatientByDoctor(string DoctorId)
         {
-            var appointments = _appointmentRepo.GetAll().Where(x => x.DoctorId == DoctorId).ToList();
-            var patients = _clientDetailRepo.GetAll().ToList();
-            var result = from a in appointments
-                         join p in patients on a.ClientId equals p.ClientId
-                         select p;
-            return Request.CreateResponse(HttpStatusCode.Accepted, result.Distinct());
+            var result = _appointmentRepo.GetAll().ToList();
+            var resultTime = _timeMasterRepo.GetAll().ToList();
+            var appointDetail = from a in result
+                                join t in resultTime on a.TimingId equals t.Id.ToString()
+                                join c in _clientDetailRepo.GetAll() on a.ClientId equals c.ClientId
+                                where a.DoctorId == DoctorId
+                                select new
+                                {
+                                    Id = a.Id,
+                                    Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
+                                    Date = Convert.ToDateTime(a.AppointmentDate).ToShortDateString(),
+                                    ClientId = a.ClientId,
+                                    DateEntered = a.DateEntered,
+                                    DoctorId = a.DoctorId,
+                                    Name = c.FirstName + " " + c.LastName,
+                                };
+            List<Patient> _patientList = new List<Patient>();
+            foreach (var item in appointDetail.Distinct().ToList())
+            {
+                var patinet = _patientList.Where(x => x.ClientId != item.ClientId).ToList();
+                if (patinet.Count==0)
+                {
+                    Patient patient = new Patient();
+                    patient.Name = item.Name;
+                    patient.ClientId = item.ClientId;
+                    patient.TotalVisit = appointDetail.Where(x => x.ClientId == item.ClientId).ToList().Count.ToString();
+                    patient.LastVisitDate = appointDetail.Where(x => x.ClientId == item.ClientId).OrderByDescending(x => x.Id).FirstOrDefault().Date;
+                    patient.LastVisitTime = appointDetail.Where(x => x.ClientId == item.ClientId).OrderByDescending(x => x.Id).FirstOrDefault().Time;
+                    _patientList.Add(patient);
+                }
+                
+            }
+            return Request.CreateResponse(HttpStatusCode.Accepted, _patientList.Distinct());
         }
 
         [Route("api/patient/GetPatient/{patientId}")]

@@ -34,20 +34,20 @@ namespace WebAPI.Controllers
         [HttpGet]
         [Route("api/GetDashboardDetails/{Type}/{pageId}/{searchDate?}")] //Type= Doctor/secretary, page Id is secratoryId
         [AllowAnonymous]
-        public HttpResponseMessage GetDashboardDetails(string Type,string pageId, string searchDate = null)
+        public HttpResponseMessage GetDashboardDetails(string Type, string pageId, string searchDate = null)
         {
             var HospitalId = "";
             if (Type.ToLower() == "secretary")
             {
-                if (_secretaryRepo.Find(s => s.SecretaryId == pageId).FirstOrDefault()!=null)
+                if (_secretaryRepo.Find(s => s.SecretaryId == pageId).FirstOrDefault() != null)
                 {
                     HospitalId = _secretaryRepo.Find(s => s.SecretaryId == pageId).FirstOrDefault().HospitalId;
                 }
-                
+
             }
-            else if(Type.ToLower() == "doctor")
+            else if (Type.ToLower() == "doctor")
             {
-                if (_doctorRepo.Find(d => d.DoctorId == pageId).FirstOrDefault()!=null)
+                if (_doctorRepo.Find(d => d.DoctorId == pageId).FirstOrDefault() != null)
                 {
                     HospitalId = _doctorRepo.Find(d => d.DoctorId == pageId).FirstOrDefault().HospitalId;
                 }
@@ -127,6 +127,68 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, dashboardModel);
         }
 
+        [HttpGet]
+        [Route("api/GetDoctorDashboardDetails/{pageId}")] //Type= Doctor/secretary, page Id is secratoryId
+        [AllowAnonymous]
+        public HttpResponseMessage GetDoctorDashboardDetails(string pageId)
+        {
+            var HospitalId = "";
+            if (_doctorRepo.Find(d => d.DoctorId == pageId).FirstOrDefault() != null)
+            {
+                HospitalId = _doctorRepo.Find(d => d.DoctorId == pageId).FirstOrDefault().HospitalId;
+            }
+            DashboardTypeModel DashboardTypeModel = new DashboardTypeModel();
+            DashboardModel dashboardModel = new DashboardModel();
+            List<DashboardAppointmentListModel> lstDashboardAppointmentListModel = new List<DashboardAppointmentListModel>();
+            DashboardTypeModel.HospitalId = HospitalId;
+            DashboardTypeModel.TotalFeedback = _feedbackRepo.Find(x => x.PageId == pageId).ToList().Count();
+            DashboardTypeModel.TotalDoctor = _doctorRepo.Find(d => d.HospitalId == pageId).ToList().Count();
+            DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "Booked").ToList().Count();
+            DashboardTypeModel.CancelAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "Cancel").ToList().Count();
+            DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.AppointmentDate == DateTime.Today.ToShortDateString()).ToList().Count();
+            DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "0").ToList().Count();
+
+            foreach (var item in _appointmentRepo.Find(a => a.HospitalId == HospitalId).ToList())
+            {
+                DashboardAppointmentListModel DashboardAppointmentListModel = new DashboardAppointmentListModel();
+
+                DashboardAppointmentListModel.AppointmentDate = item.AppointmentDate;
+                DashboardAppointmentListModel.AppointmentId = item.AppointmentId;
+                DashboardAppointmentListModel.Status = item.Status;
+                DashboardAppointmentListModel.TimeId = item.TimingId;
+                int appointmentTimeId = Convert.ToInt32(item.TimingId);
+                if (_timeMasterRepo != null)
+                {
+                    var timeDetails = _timeMasterRepo.Find(t => t.Id == appointmentTimeId && t.IsActive == true).FirstOrDefault();
+                    if (timeDetails != null)
+                    {
+                        DashboardAppointmentListModel.AppointmentTime = timeDetails.TimeFrom.Trim() + "-" + timeDetails.TimeTo.Trim() + " " + timeDetails.AM_PM.Trim();
+                    }
+                }
+                var clientDetail = _clientDetailRepo.Find(x => x.ClientId == item.ClientId).FirstOrDefault();
+                if (clientDetail != null)
+                {
+                    DashboardAppointmentListModel.DOB = clientDetail.DOB;
+                    DashboardAppointmentListModel.PatientName = clientDetail.FirstName;
+
+                    DashboardAppointmentListModel.NoorCareNumber = clientDetail.ClientId;
+                    DashboardAppointmentListModel.Gender = clientDetail.Gender.ToString();
+                }
+
+                var doctorDetails = _doctorRepo.Find(d => d.DoctorId == item.DoctorId).FirstOrDefault();
+                if (doctorDetails != null)
+                {
+                    DashboardAppointmentListModel.DoctorName = doctorDetails.FirstName;
+                }
+                lstDashboardAppointmentListModel.Add(DashboardAppointmentListModel);
+            }
+
+            dashboardModel.DashboardTypeModel = DashboardTypeModel;
+            dashboardModel.DashboardAppointmentListModel = lstDashboardAppointmentListModel;
+            return Request.CreateResponse(HttpStatusCode.Accepted, dashboardModel);
+        }
+
+
         [Route("api/GetUpcomingAppointment/{Id}")]
         [HttpGet]
         [AllowAnonymous]
@@ -141,7 +203,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetMedicalInformation(string Id)
         {
-            var result = _medicalInformationRepo.Find(m =>m.clientId == Id).ToList();
+            var result = _medicalInformationRepo.Find(m => m.clientId == Id).ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -193,7 +255,7 @@ namespace WebAPI.Controllers
                     {
                         System.IO.Directory.CreateDirectory(DirPath);
                     }
-                    
+
                     bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ProfilePic/" + RequestFrom + "/" + NoorCareId + "/" + imageName));
                     if (exists)
                     {
@@ -209,6 +271,6 @@ namespace WebAPI.Controllers
             return Ok(RequestID);
         }
 
- 
+
     }
 }
