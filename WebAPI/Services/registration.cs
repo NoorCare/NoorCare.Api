@@ -94,43 +94,43 @@ namespace WebAPI.Services
 
             else if (jobType == 6)//6   Medical Center
             {
-                priFix = "NCMC-";
+                priFix = "NCH-";
             }
             else if (jobType == 7) //7   Nursing Home
             {
-                priFix = "NCNH-";
+                priFix = "NCH-";
             }
             else if (jobType == 8) //8   Urgent Care Clinic
             {
-                priFix = "NCC-";
+                priFix = "NCH-";
             }
             else if (jobType == 9)//9   Dental Care
             {
-                priFix = "NCDC-";
+                priFix = "NCH-";
             }
             else if (jobType == 9) //10  Medical Lab
             {
-                priFix = "NCML-";
+                priFix = "NCH-";
             }
             else if (jobType == 11)//11  Pharmacy
             {
-                priFix = "NCP-";
+                priFix = "NCH-";
             }
             else if (jobType == 12)//12  Blood Bank 
             {
-                priFix = "NCBB-";
+                priFix = "NCH-";
             }
             else if (jobType == 13)//13  Insurance Company
             {
-                priFix = "NCIC-";
+                priFix = "NCH-";
             }
             else if (jobType == 14)//14  X - Ray
             {
-                priFix = "NCX-";
+                priFix = "NCH-";
             }
             else if (jobType == 15) //15  Optics
             {
-                priFix = "NCO-";
+                priFix = "NCH-";
             }
             string clientId = priFix + CountryCodes + "-" + _emailSender.Get();
             return clientId;
