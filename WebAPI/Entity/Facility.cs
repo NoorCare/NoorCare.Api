@@ -16,6 +16,8 @@ namespace WebAPI.Entity
         public int Id { get; set; }
         public string facility { get; set; }
 
+		public int JobType { get; set; }
+
     }
 
     [Serializable]
