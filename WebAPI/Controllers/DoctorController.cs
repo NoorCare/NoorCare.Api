@@ -276,15 +276,15 @@ namespace WebAPI.Controllers
         }
 
 
-        [Route("api/result/{type?}/{cityId?}/{countryId?}/{diseaseType?}")]
+        [Route("api/result/{type?}/{cityId?}/{countryId?}/{diseaseType?}/{hospitalType?}")]
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage getDoctorDetail(string type = "0",string cityId = "0", string countryId = "0", string diseaseType = "0")
+        public HttpResponseMessage getDoctorDetail(string type = "0",string cityId = "0", string countryId = "0", string diseaseType = "0",string hospitalType="0")
         {
             FilterDoctor _filterDoctor = new FilterDoctor();
             FilterHospital _filterHospital = new FilterHospital();
             result _result = new result();
-            _result.Hospitals = getHospital(type, cityId, countryId, diseaseType, ref _filterDoctor, ref _filterHospital);
+            _result.Hospitals = getHospital(type, cityId, countryId, diseaseType, hospitalType, ref _filterDoctor, ref _filterHospital);
             _result.FilterDoctor = type == "0"? _filterDoctor : null;
             _result.FilterHospital = _filterHospital;
             return Request.CreateResponse(HttpStatusCode.Accepted, _result);
@@ -381,7 +381,7 @@ namespace WebAPI.Controllers
             _filterDoctor.Specialization = _disease.Select(x => new FilterData { Id = x.Id, Name = x.DiseaseType }).Distinct().ToList();
             return _doctors;
         }
-        private List<Hospital> getHospital(string type, string cityId, string countryId, string diseaseType, ref FilterDoctor _filterDoctor, ref FilterHospital _filterHospital)
+        private List<Hospital> getHospital(string type, string cityId, string countryId, string diseaseType,string hospitalType, ref FilterDoctor _filterDoctor, ref FilterHospital _filterHospital)
         {
             int[] a = new int[0];
             var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
@@ -391,12 +391,28 @@ namespace WebAPI.Controllers
             List<HospitalDetails> hospitals = new List<HospitalDetails>();
             if (cityId!="null")
             {
-                hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
+                if (type == "1")
+                {
+                    hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
+             (countryId != "0" && x.Country == countryId) && x.Type == hospitalType);
+                }
+                else
+                {
+                    hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
              (countryId != "0" && x.Country == countryId));
+                }
+                
             }
             else
             {
-                hospitals = _hospitaldetailsRepo.Find(x =>countryId != "0" && x.Country == countryId);
+                if (type=="1")
+                {
+                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType);
+                }
+                else
+                {
+                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId);
+                }
             }
             List<TblHospitalServices> _hospitalServices = new List<TblHospitalServices>();
             List<TblHospitalAmenities> _hospitalAmenities = new List<TblHospitalAmenities>();
