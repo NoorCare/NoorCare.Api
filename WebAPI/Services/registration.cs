@@ -35,6 +35,7 @@ namespace WebAPI.Services
                 HospitalId = clientId,
                 HospitalName = model.FirstName,
                 Email = model.Email,
+                Type = model.Type,
                 jobType = model.jobType,
                 Mobile = Convert.ToInt32(model.PhoneNumber),
                 FacilityId = model.FacilityId
