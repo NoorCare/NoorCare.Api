@@ -49,6 +49,7 @@ namespace WebAPI.Entity
         [Key]
         public int Id { get; set; }
         public string CountryName { get; set; }
+        public string CountryCallingCode { get; set; }
     }
 
     [Serializable]

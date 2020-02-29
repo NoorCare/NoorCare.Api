@@ -22,6 +22,9 @@ namespace WebAPI.Controllers
 
         IQuickUploadRepository _quickUploadRepository =
             RepositoryFactory.Create<IQuickUploadRepository>(ContextTypes.EntityFramework);
+        IMedicalInformationRepository _medicalInformationRepository =
+            RepositoryFactory.Create<IMedicalInformationRepository>(ContextTypes.EntityFramework);
+
 
         [HttpGet]
         [Route("api/user/get/quickHealth/{ClientId}")]
@@ -65,7 +68,7 @@ namespace WebAPI.Controllers
                 Cholesterol = httpRequest.Form["Cholesterol"],
                 Other = httpRequest.Form["Other"],
             };
-            var objId = _quickHealthRepository.Insert(quickHeathDetails);
+             var objId = _quickHealthRepository.Insert(quickHeathDetails);
             try
             {
                 if (postedFile != null)
@@ -96,7 +99,19 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult AddQuickHeathDetails(string ClientId, QuickHeathDetails _quickHeathDetails)
         {
-
+            
+            if (_quickHeathDetails.Pressure==null)
+            {
+                _quickHeathDetails.Pressure = "0";
+            }
+            if (_quickHeathDetails.Cholesterol == "undefined")
+            {
+                _quickHeathDetails.Cholesterol = "0";
+            }
+            if (_quickHeathDetails.Weight == null)
+            {
+                _quickHeathDetails.Weight = "0";
+            }
             QuickHeathDetails quickHeathDetails = new QuickHeathDetails
             {
                 ClientId = ClientId,
@@ -111,7 +126,22 @@ namespace WebAPI.Controllers
                 Other = _quickHeathDetails.Other,
             };
            // _quickHealthRepository.Insert(quickHeathDetails);
+            
+            MedicalInformation medicalInformation = new MedicalInformation
+            {
+                clientId = ClientId,
+                Pressure = _quickHeathDetails.Pressure != null ? Convert.ToInt32(_quickHeathDetails.Pressure) : 0,
+                Heartbeats = _quickHeathDetails.Heartbeats != null ? Convert.ToInt32(_quickHeathDetails.Heartbeats) : 0,
+                Temprature = _quickHeathDetails.Temprature != null ? Convert.ToInt32(_quickHeathDetails.Temprature) : 0,
+                Sugar = _quickHeathDetails.Sugar != null ? Convert.ToInt32(_quickHeathDetails.Sugar) : 0,
+                Hight = _quickHeathDetails.Length != null ? Convert.ToInt32(_quickHeathDetails.Length) : 0,
+                Wight = _quickHeathDetails.Weight != null ? Convert.ToInt32(_quickHeathDetails.Weight) : 0,
+                Cholesterol = _quickHeathDetails.Cholesterol != null ? Convert.ToInt32(_quickHeathDetails.Cholesterol) : 0,
+                OtherDetails = _quickHeathDetails.Other,
+            };
+            var objId = _medicalInformationRepository.Insert(medicalInformation);
             return Ok(_quickHealthRepository.Insert(quickHeathDetails));
+
         }
 
         private void createDocPath(string clientId, int desiesId)
@@ -158,7 +188,8 @@ namespace WebAPI.Controllers
                     Email = _hospitalDetail.Email,
                     Website = _hospitalDetail.Website,
                 };
-                return Ok(_hospitalDetailsRepository.Insert(hospitalDetail));
+                var hospitalDetails = _hospitalDetailsRepository.Insert(hospitalDetail);
+                return Ok(hospitalDetails);
             }
             else
             {

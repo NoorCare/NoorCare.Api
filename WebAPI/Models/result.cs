@@ -38,6 +38,7 @@ namespace WebAPI.Models
 
     public class Hospital
     {
+        public int Id { get; set; }
         public string HospitalId { get; set; }
         public string HospitalName { get; set; }
         public Int64 Mobile { get; set; }

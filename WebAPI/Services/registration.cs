@@ -65,7 +65,7 @@ namespace WebAPI.Services
             return _facilityDetailsRepository.Insert(_facilityDetail);
         }
 
-        public string creatId(int jobType, int CountryCodes, int? gender)
+        public string creatId(int jobType, string NationalityId, int? gender)
         {
             string priFix = "NCM-";
             if (jobType == 3)
@@ -133,7 +133,16 @@ namespace WebAPI.Services
             {
                 priFix = "NCH-";
             }
-            string clientId = priFix + CountryCodes + "-" + _emailSender.Get();
+
+            if (NationalityId.Length==2)
+            {
+                NationalityId = "0" + NationalityId;
+            }
+            if (NationalityId.Length == 1)
+            {
+                NationalityId = "00" + NationalityId;
+            }
+            string clientId = priFix + NationalityId + "-" + _emailSender.Get();
             return clientId;
 
             //new Job Type
@@ -188,7 +197,7 @@ namespace WebAPI.Services
             user.FirstName = model.FirstName;
             user.PhoneNumber = model.PhoneNumber;
             user.LastName = model.LastName;
-            user.Id = creatId(user.JobType, user.CountryCodes, user.Gender);
+            user.Id = creatId(user.JobType, model.NationalityId, user.Gender);
             return user;
         }
 
