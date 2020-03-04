@@ -61,6 +61,7 @@ namespace WebAPI.Models
             modelBuilder.Entity<NewsBlogs>().ToTable("NewsBlogs");
             modelBuilder.Entity<ReadLike>().ToTable("ReadLike");
             modelBuilder.Entity<FacilityDetail>().ToTable("FacilityDetail");
+            modelBuilder.Entity<FacilityImages>().ToTable("FacilityImages");
 
         }
     }

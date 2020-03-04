@@ -19,6 +19,7 @@ namespace WebAPI.Controllers
     {
         IQuickUploadRepository _quickUploadRepo = RepositoryFactory.Create<IQuickUploadRepository>(ContextTypes.EntityFramework);
         IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
+        IFacilityImagesRepository _facelityImagesRepo = RepositoryFactory.Create<IFacilityImagesRepository>(ContextTypes.EntityFramework);
 
         [HttpPost]
         [Route("api/document/{clientId}/{diseaseId}")]
@@ -178,6 +179,58 @@ namespace WebAPI.Controllers
             return Ok(objId);
         }
 
+        [HttpPost]
+        [Route("api/facilityImages/uploadfacilityimges")]
+        [AllowAnonymous]
+        public IHttpActionResult uploadfacilityimges()
+        {
+            string imageName = null;
+            var httpRequest = HttpContext.Current.Request;
+            string facilityImageType = httpRequest.Form["FacilityImageType"];
+            string facilityNoorCareNumber = httpRequest.Form["FacilityNoorCareNumber"];
+            //var postedFile = httpRequest.Files["Image"];
+            string PostedFileName = string.Empty;
+            string PostedFileExt = string.Empty;
+            int objId = 0;
+            try
+            {
+                string year = DateTime.Now.Year.ToString();
+                string month = DateTime.Now.Month.ToString();
+                string directoryPath = string.Empty;
+                if (!Directory.Exists(HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType)))
+                {
+                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType));
+                }
+                
+                for (int i = 0; i < httpRequest.Files.Count; i++)
+                {
+                    var filePath = HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType);
+                    filePath = filePath + "/" + httpRequest.Files[i].FileName;
+                    FacilityImages facilityImages = new FacilityImages
+                    {
+                        FacilityImageType = facilityImageType,
+                        FacilityNoorCareNumber = facilityNoorCareNumber,
+                        ExpiryDate = DateTime.Now.ToString(),
+                        FileName = httpRequest.Files[i].FileName,
+                        FilePath = "FacilityImages/" + facilityNoorCareNumber + " / " + facilityImageType,
+                        DateEntered = DateTime.Now,
+                    };
+                    objId = _facelityImagesRepo.Insert(facilityImages);
+                    FileInfo fi = new FileInfo(httpRequest.Files[i].FileName.Replace(" ", "_"));
+                    if (fi != null)
+                    {
+                        PostedFileName = fi.Name;
+                        PostedFileExt = fi.Extension;
+                    }
+                    imageName = objId + i + PostedFileExt;
+                    httpRequest.Files[i].SaveAs(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return Ok(objId);
+        }
 
         [HttpPost]
         [Route("api/document/uploadreport")]
