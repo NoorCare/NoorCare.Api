@@ -184,11 +184,14 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult uploadfacilityimges()
         {
+            
             string imageName = null;
             var httpRequest = HttpContext.Current.Request;
             string facilityImageType = httpRequest.Form["FacilityImageType"];
             string facilityNoorCareNumber = httpRequest.Form["FacilityNoorCareNumber"];
             //var postedFile = httpRequest.Files["Image"];
+            
+            var imageCount = _facelityImagesRepo.Find(x => x.FacilityNoorCareNumber == facilityNoorCareNumber).ToList().Count;
             string PostedFileName = string.Empty;
             string PostedFileExt = string.Empty;
             int objId = 0;
@@ -284,6 +287,14 @@ namespace WebAPI.Controllers
             {
             }
             return Ok(objId);
+        }
+
+        [HttpGet]
+        [Route("api/facilityimagescount/{type}/{facilitynoorcarenumber}")]
+        public int Gefacilityimagescount(string facilitynoorcarenumber, string type)
+        {
+            var imageCount = _facelityImagesRepo.Find(x => x.FacilityNoorCareNumber == facilitynoorcarenumber && x.FacilityImageType == type).ToList().Count;
+            return imageCount;
         }
         #region GetDisease
 
