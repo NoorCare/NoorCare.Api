@@ -24,6 +24,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetAllNewsBlogs([FromUri] NewsBlogs newsBlogs, string Type)
         {
+		
 			var result =  _newsBlogsRepo.Find(
 				 x => x.Category == Type
 				 && (newsBlogs.UserId == null || newsBlogs.UserId.Contains(x.UserId))
@@ -159,9 +160,9 @@ namespace WebAPI.Controllers
         }
 
 
-        [Route("api/NewsBlogs/Read")]
-        [HttpPost]
-        [AllowAnonymous]
+        //[Route("api/NewsBlogs/Read")]
+        //[HttpPost]
+        //[AllowAnonymous]
         public HttpResponseMessage Read(ReadLike obj)
         {
             var read = _readLikeRepo.Find(x => x.UserId == obj.UserId && x.IsRead == true && x.Type== obj.Type).ToList();
@@ -173,9 +174,9 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, "Saved");
         }
 
-        [Route("api/NewsBlogs/Like")]
-        [HttpPost]
-        [AllowAnonymous]
+        //[Route("api/NewsBlogs/Like")]
+        //[HttpPost]
+        //[AllowAnonymous]
         public HttpResponseMessage Like(ReadLike obj)
         {
             var like = _readLikeRepo.Find(x => x.UserId == obj.UserId && x.IsLike == true && x.Type == obj.Type).ToList();
@@ -197,6 +198,27 @@ namespace WebAPI.Controllers
         }
 
 
+		[Route("api/NewsBlogs/Like/{id}")]
+		[HttpPost]
+		[AllowAnonymous]
+		public HttpResponseMessage Update(int id)
+		{
+			var result = _newsBlogsRepo.Get(id);
+			result.NoOfLikes = (result.NoOfLikes) + 1;
+			var msgString = _newsBlogsRepo.Update(result);
+			return Request.CreateResponse(HttpStatusCode.Accepted, msgString);
+		}
+
+		[Route("api/NewsBlogs/Read/{id}")]
+		[HttpPost]
+		[AllowAnonymous]
+		public HttpResponseMessage UpdateRead(int id)
+		{
+			var result = _newsBlogsRepo.Get(id);
+			result.NoOfRead = (result.NoOfRead) + 1;
+			var msgString = _newsBlogsRepo.Update(result);
+			return Request.CreateResponse(HttpStatusCode.Accepted, msgString);
+		}
 	}
 }
 
