@@ -106,7 +106,7 @@ namespace WebAPI.Controllers
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
             CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
-            string AppointmentId = _registration.creatId(5, obj.CountryCode, 0);
+            string AppointmentId = _registration.creatId(5, obj.CountryCode.ToString(), 0);
             obj.AppointmentId = AppointmentId;
 
             var _appointmentCreated = _appointmentRepo.Insert(obj);

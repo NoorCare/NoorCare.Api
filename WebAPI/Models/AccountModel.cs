@@ -14,6 +14,7 @@ namespace WebAPI.Models
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public int jobType { get; set; }
+        public string Type { get; set; }
         public string AccountType { get; set; }
         public int Gender { get; set; }
         public string Address { get; set; }
@@ -23,6 +24,7 @@ namespace WebAPI.Models
         public string LoggedOn { get; set; }
         public bool EmailConfirmed { get; set; }
         public int CountryCode { get; set; }
+        public string NationalityId { get; set; }
         public int FacilityId { get; set; }
     }
 

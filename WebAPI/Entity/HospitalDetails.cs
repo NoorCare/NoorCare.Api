@@ -31,6 +31,9 @@ public partial class HospitalDetails : IEntity<int>
     public int FacilityId { get; set; }
     public int jobType { get; set; }
 
+    [MaxLength(150)]
+    public string Type { get; set; }
+
     //HospitalAddress------
     [MaxLength(300)]
     public string Address { get; set; }

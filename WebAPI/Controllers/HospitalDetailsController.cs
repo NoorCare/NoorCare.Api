@@ -100,8 +100,90 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, _hospitals);
         }
 
+        [Route("api/hospital/details/{clientid}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetHospitalDetailByClientId(string clientid)
+        {
+            var clientType = clientid.Split('-')[0];
+            string hospitalId = string.Empty;
+            if (clientType == "NCD")
+            {
+                var user = _doctorRepo.Find(x => x.DoctorId == clientid).ToList();
+                if (user.Count>0)
+                {
+                    hospitalId = user[0].HospitalId;
+                }
+            }
+            else if (clientType == "NCH")
+            {
+                hospitalId = clientid;
+            }
+            else if (clientType == "NCS")
+            {
+                var user = _secretaryRepo.Find(x => x.SecretaryId == clientid);
+                if (user.Count > 0)
+                {
+                    hospitalId = user[0].HospitalId;
+                }
+            }
+            List<HospitalDetails> hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId);
+
+            var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
+            var hospitalAmenitie = _hospitalAmenitieRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
+            var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            Hospital _hospital = new Hospital();
+            List<Hospital> _hospitals = new List<Hospital>();
+
+            foreach (var h in hospitals ?? new List<HospitalDetails>())
+            {
+                var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
+
+                _hospital = new Hospital
+                {
+                    Id = h.Id,
+                    HospitalId = h.HospitalId,
+                    HospitalName = h.HospitalName,
+                    Mobile = h.Mobile,
+                    AlternateNumber = h.AlternateNumber,
+                    Email = h.Email,
+                    Website = h.Website,
+                    EstablishYear = h.EstablishYear,
+                    NumberofBed = h.NumberofBed,
+                    NumberofAmbulance = h.NumberofAmbulance,
+                    PaymentType = h.PaymentType,
+                    Emergency = h.Emergency,
+                    FacilityId = h.FacilityId,
+                    Address = h.Address,
+                    Street = h.Street,
+                    Country = h.Country,
+                    City = h.City,
+                    PostCode = h.PostCode,
+                    Landmark = h.Landmark,
+                    AboutUs = h.AboutUs,
+                    InsuranceCompanies = h.InsuranceCompanies,
+
+                    // AmenitiesIds = Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
+                    Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
+                    // ServicesIds = Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
+                    Services = getHospitalService(h.Services, hospitalService),
+                    Specialization = getSpecialization(h.Specialization, disease),
+                    Doctors = getDoctors(h.HospitalId),
+                    Secretary = getSecretary(h.HospitalId),
+                    Likes = feedback.Where(x => x.ILike == true).Count(),
+                    Feedbacks = feedback.Count(),
+                    BookingUrl = $"booking/{h.HospitalId}",
+                    ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
+                    ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                };
+
+                _hospitals.Add(_hospital);
+            }
+            return Request.CreateResponse(HttpStatusCode.Accepted, _hospitals);
+        }
+
         #region Uility      
-       
+
         private List<Doctors> getDoctors(string HospitalId)
         {
             List<TimeMaster> _timeMaster = new List<TimeMaster>();

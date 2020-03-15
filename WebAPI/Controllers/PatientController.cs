@@ -85,6 +85,15 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
+        [Route("api/user/getMobile/{clientId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage getMobile(string clientId)
+        {
+            var result = _clientDetailRepo.Find(m => m.ClientId == clientId).FirstOrDefault();
+            return Request.CreateResponse(HttpStatusCode.Accepted, result.MobileNo.ToString());
+        }
+        
 
         [HttpGet]
         [Route("api/patient/insuranceinfo/{clientId}")]

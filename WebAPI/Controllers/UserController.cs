@@ -123,6 +123,7 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Route("api/user/get/medicalinfo/{ClientId}")]
+        [AllowAnonymous]
         public IHttpActionResult getMedicalInformationt(string ClientId)
         {
            List<MedicalInformation> _miInformations = _medicalInformationRepository.Find(x => x.clientId == ClientId).OrderByDescending(x=>x.Id).Take(2).ToList();
