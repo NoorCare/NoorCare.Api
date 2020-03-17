@@ -1,4 +1,5 @@
 ﻿using AngularJSAuthentication.API.Services;
+using NoorCare.Repository;
 using System;
 using System.Text;
 using WebAPI.Entity;
@@ -10,6 +11,7 @@ namespace WebAPI.Services
     public class Registration
     {
         EmailSender _emailSender = new EmailSender();
+        IHospitalDetailsRepository _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         public int AddClientDetail(string clientId, AccountModel model, IClientDetailRepository _clientDetailRepo)
         {
             ClientDetail _clientDetail = new ClientDetail
@@ -197,7 +199,17 @@ namespace WebAPI.Services
             user.FirstName = model.FirstName;
             user.PhoneNumber = model.PhoneNumber;
             user.LastName = model.LastName;
-            user.Id = creatId(user.JobType, model.NationalityId, user.Gender);
+            if (model.HospitalId!=null)
+            {
+                string hid = model.HospitalId;
+                var NationalityId = hid.Split('-')[1];
+                user.Id = creatId(user.JobType, NationalityId, user.Gender);
+            }
+            else
+            {
+                user.Id = creatId(user.JobType, model.NationalityId, user.Gender);
+            }
+            
             return user;
         }
 
