@@ -125,14 +125,23 @@ namespace WebAPI.Controllers
                 var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
                 var manager = new UserManager<ApplicationUser>(userStore);
                 string password = _registration.RandomPassword(6);
-                ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(countryCode.CountryCodes));
+                ApplicationUser user = _registration.UserAccount(obj, Convert.ToInt16(countryCode.CountryCodes));
                 IdentityResult result = manager.Create(user, password);
                 user.PasswordHash = password;
-                _registration.sendRegistrationEmail(user);
-                _registration.sendRegistrationMessage(user);
+              
                 obj.DoctorId = user.Id;
                 IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
                 var _doctorCreated = _doctorRepo.Insert(obj);
+
+                try
+                {
+                    _registration.sendRegistrationEmail(user);
+                    _registration.sendRegistrationMessage(user);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
 
                 return Request.CreateResponse(HttpStatusCode.Accepted, obj.DoctorId);
             }

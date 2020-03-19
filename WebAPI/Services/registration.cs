@@ -186,6 +186,33 @@ namespace WebAPI.Services
             return builder.ToString();
         }
 
+        public ApplicationUser UserAccount(dynamic model, int countrycodevalue)
+        {
+            var user = new ApplicationUser()
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                JobType = model.jobType,
+                CountryCodes = countrycodevalue,
+                Gender = model.jobType == 1 ? model.Gender : 0,
+            };
+            user.FirstName = model.FirstName;
+            user.PhoneNumber = model.PhoneNumber;
+            user.LastName = model.LastName;
+            if (model.HospitalId != null)
+            {
+                string hid = model.HospitalId;
+                var NationalityId = hid.Split('-')[1];
+                user.Id = creatId(user.JobType, NationalityId, user.Gender);
+            }
+            else
+            {
+                user.Id = creatId(user.JobType, model.NationalityId, user.Gender);
+            }
+
+            return user;
+        }
+
         public ApplicationUser UserAcoount(dynamic model, int countrycodevalue)
         {
             var user = new ApplicationUser()

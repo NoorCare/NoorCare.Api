@@ -26,6 +26,12 @@ namespace WebAPI.Models
         public int CountryCode { get; set; }
         public string NationalityId { get; set; }
         public int FacilityId { get; set; }
+
+        public string HospitalId { get; set; }
+
+        public string DoctorId { get; set; }
+
+        public string SecretaryId { get; set; }
     }
 
     public class FacilityModel
