@@ -197,7 +197,17 @@ namespace WebAPI.Services
             user.FirstName = model.FirstName;
             user.PhoneNumber = model.PhoneNumber;
             user.LastName = model.LastName;
-            user.Id = creatId(user.JobType, model.NationalityId, user.Gender);
+            if (model.HospitalId != null)
+            {
+                string hid = model.HospitalId;
+                var NationalityId = hid.Split('-')[1];
+                user.Id = creatId(user.JobType, NationalityId, user.Gender);
+            }
+            else
+            {
+                user.Id = creatId(user.JobType, model.NationalityId, user.Gender);
+            }
+
             return user;
         }
 
