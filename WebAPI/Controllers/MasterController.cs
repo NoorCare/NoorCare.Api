@@ -65,7 +65,9 @@ namespace WebAPI.Controllers
         public List<TblCountry> GetCountries()
         {
             ICountryRepository _cityRepository = RepositoryFactory.Create<ICountryRepository>(ContextTypes.EntityFramework);
-            return _cityRepository.GetAll().OrderBy(x => x.CountryName).ToList();
+            var country= _cityRepository.GetAll().OrderBy(x => x.CountryName).ToList();
+            Dictionary<string, string> countryies = new Dictionary<string, string>();
+            return country;
         }
 
         [Route("api/state")]

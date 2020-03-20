@@ -40,7 +40,9 @@ namespace WebAPI.Services
                 Type = model.Type,
                 jobType = model.jobType,
                 Mobile = Convert.ToInt32(model.PhoneNumber),
-                FacilityId = model.FacilityId
+                FacilityId = model.FacilityId,
+                Country = model.NationalityId.ToString()
+                
             };
             return _hospitalDetailsRepository.Insert(_hospitalDetail);
         }
