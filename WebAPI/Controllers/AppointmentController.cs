@@ -21,6 +21,7 @@ namespace WebAPI.Controllers
         IAppointmentRepository _getAppointmentList = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
+        IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         [Route("api/appointment/getall")]
         [HttpGet]
         [AllowAnonymous]
@@ -74,6 +75,7 @@ namespace WebAPI.Controllers
             var resultTime = _timeMasterRepo.GetAll().ToList();
             var appointDetail = from a in result
                                 join t in resultTime on a.TimingId equals t.Id.ToString()
+                                join h in _hospitaldetailsRepo.GetAll().ToList() on a.HospitalId equals h.HospitalId
                                 where a.ClientId == ClientId
                                 select new
                                 {
@@ -81,14 +83,16 @@ namespace WebAPI.Controllers
                                     Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate + " " + t.TimeTo + t.AM_PM).ToString("dd/MM/yyyy hh:mm")),
                                     ClientId = a.ClientId,
                                     DateEntered = a.DateEntered,
-                                    DoctorId = a.DoctorId
+                                    DoctorId = a.DoctorId,
+                                    Status = a.Status == "0" ? "Pending" : "Booked",
+                                    HospitalName=h.HospitalName
+                                    
                                 };
-            //var abc = Convert.ToDateTime(Convert.ToDateTime("2020-01-21" + " " + "1:30" + "PM").ToString("dd/MM/yyyy hh:mm"));
             var todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm"));
             var appintmentresult = appointDetail.Where(x => x.Date >= todaydate);
             return Request.CreateResponse(HttpStatusCode.Accepted, appintmentresult);
         }
-
+      
         [Route("api/appointment/getdetail/{appointmentid}")]
         [HttpGet]
         [AllowAnonymous]
@@ -108,7 +112,6 @@ namespace WebAPI.Controllers
             CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
             string AppointmentId = _registration.creatId(5, obj.CountryCode.ToString(), 0);
             obj.AppointmentId = AppointmentId;
-
             var _appointmentCreated = _appointmentRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.AppointmentId);
         }

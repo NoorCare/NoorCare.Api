@@ -230,7 +230,65 @@ namespace WebAPI.Controllers
             }
             return _doctors;
         }
-      
+
+        [Route("api/hospital/doctor/{HospitalId}/{Specialtyid}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage getDoctorsBySpecialty(string HospitalId,string Specialtyid)
+        {
+            List<TimeMaster> _timeMaster = new List<TimeMaster>();
+            var timeMaster = _timeMasterRepo.GetAll().OrderBy(x => x.Id).ToList();
+
+
+            List<Disease> _disease = new List<Disease>();
+            List<decimal> _priceses = new List<decimal>();
+            Doctors _doctor = new Doctors();
+            List<Doctors> _doctors = new List<Doctors>();
+            List<Doctor> doctors = new List<Doctor>();
+            if (Specialtyid!="0")
+            {
+                doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId && x.Specialization.Contains(Specialtyid));
+            }
+            else
+            {
+                doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId);
+            }
+            
+            var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+
+            foreach (var d in doctors ?? new List<Doctor>())
+            {
+                var feedback = _feedbackRepo.Find(x => x.PageId == d.DoctorId);
+                var doctorAvailability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId).FirstOrDefault();
+                _doctor = new Doctors
+                {
+                    DoctorId = d.DoctorId,
+                    FirstName = d.FirstName,
+                    LastName = d.LastName,
+                    Email = d.Email,
+                    PhoneNumber = d.PhoneNumber,
+                    AlternatePhoneNumber = d.AlternatePhoneNumber,
+                    Gender = d.Gender,
+                    Experience = d.Experience,
+                    FeeMoney = d.FeeMoney,
+                    Language = d.Language,
+                    AgeGroupGender = d.AgeGroupGender,
+                    Degree = d.Degree,
+                    SpecializationIds = Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
+                    Specialization = getSpecialization(d.Specialization, disease),
+                    AboutUs = d.AboutUs,
+                    TimeAvailability = doctorAvailability != null ? getDoctorAvilability(doctorAvailability.TimeId, timeMaster) : null,
+                    Likes = feedback.Where(x => x.ILike == true).Count(),
+                    Feedbacks = feedback.Count(),
+                    BookingUrl = $"booking/{d.DoctorId}",
+                    ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
+                    ImgUrl = $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg"
+                };
+
+                _doctors.Add(_doctor);
+            }
+            return Request.CreateResponse(HttpStatusCode.Accepted, _doctors);
+        }
         private List<Secretary> getSecretary(string HospitalId)
         {
             Secretary _secretarys = new Secretary();
