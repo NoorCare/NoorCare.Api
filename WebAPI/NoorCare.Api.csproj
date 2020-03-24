@@ -234,6 +234,7 @@
     <Compile Include="Entity\Appointment.cs" />
     <Compile Include="Entity\FacilityImages.cs" />
     <Compile Include="Entity\FacilityDetail.cs" />
+    <Compile Include="Entity\HospitalDocuments.cs" />
     <Compile Include="Entity\NewsBlogs.cs" />
     <Compile Include="Entity\TimeMaster.cs" />
     <Compile Include="Entity\Feedback.cs" />
