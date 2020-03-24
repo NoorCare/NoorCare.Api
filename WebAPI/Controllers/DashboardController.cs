@@ -71,7 +71,7 @@ namespace WebAPI.Controllers
 
                     DashboardTypeModel.TotalDoctor = _doctorRepo.Find(d => d.HospitalId == HospitalId).ToList().Count();
 
-                    DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "1").ToList().Count();
+                    DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "Booked").ToList().Count();
 
                     DashboardTypeModel.CancelAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "2").ToList().Count();
 
@@ -145,7 +145,17 @@ namespace WebAPI.Controllers
             DashboardTypeModel.TotalDoctor = _doctorRepo.Find(d => d.HospitalId == pageId).ToList().Count();
             DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "Booked").ToList().Count();
             DashboardTypeModel.CancelAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "Cancel").ToList().Count();
-            DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.AppointmentDate == DateTime.Today.ToShortDateString()).ToList().Count();
+            var apDate = _appointmentRepo.Find(a => a.DoctorId == pageId ).ToList();
+           int appointMentCount = 0;
+            foreach (var apt in apDate)
+            {
+                var dbDate = Convert.ToDateTime(apt.AppointmentDate);
+                if (dbDate== DateTime.Today)
+                {
+                    appointMentCount = appointMentCount + 1;
+                }
+            }
+            DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.AppointmentDate.ToString() == DateTime.Today.ToString("yyyy-MM-dd")).ToList().Count();
             DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "0").ToList().Count();
 
             foreach (var item in _appointmentRepo.Find(a => a.HospitalId == HospitalId).ToList())
