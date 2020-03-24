@@ -29,6 +29,7 @@ namespace WebAPI.Controllers
         ITblHospitalAmenitiesRepository _hospitalAmenitieRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
         IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
         ISecretaryRepository _secretaryRepo = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
+        IHospitalDocumentsRepository _hospitalDocumentsRepo = RepositoryFactory.Create<IHospitalDocumentsRepository>(ContextTypes.EntityFramework);
 
         [Route("api/hospitaldetails/getall")]
         [HttpGet]
@@ -47,7 +48,7 @@ namespace WebAPI.Controllers
         public HttpResponseMessage GetHospitalDetail(string hospitalid)
         {
             List<HospitalDetails> hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalid);
-            
+
             var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
             var hospitalAmenitie = _hospitalAmenitieRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
@@ -64,7 +65,7 @@ namespace WebAPI.Controllers
                     HospitalName = h.HospitalName,
                     Mobile = h.Mobile,
                     AlternateNumber = h.AlternateNumber,
-                    Email=h.Email,
+                    Email = h.Email,
                     Website = h.Website,
                     EstablishYear = h.EstablishYear,
                     NumberofBed = h.NumberofBed,
@@ -80,10 +81,10 @@ namespace WebAPI.Controllers
                     Landmark = h.Landmark,
                     AboutUs = h.AboutUs,
                     InsuranceCompanies = h.InsuranceCompanies,
-                    
-                   // AmenitiesIds = Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
+
+                    // AmenitiesIds = Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
                     Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
-                   // ServicesIds = Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
+                    // ServicesIds = Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
                     Services = getHospitalService(h.Services, hospitalService),
                     Specialization = getSpecialization(h.Specialization, disease),
                     Doctors = getDoctors(h.HospitalId),
@@ -94,7 +95,7 @@ namespace WebAPI.Controllers
                     ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
                     ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
                 };
-             
+
                 _hospitals.Add(_hospital);
             }
             return Request.CreateResponse(HttpStatusCode.Accepted, _hospitals);
@@ -110,7 +111,7 @@ namespace WebAPI.Controllers
             if (clientType == "NCD")
             {
                 var user = _doctorRepo.Find(x => x.DoctorId == clientid).ToList();
-                if (user.Count>0)
+                if (user.Count > 0)
                 {
                     hospitalId = user[0].HospitalId;
                 }
@@ -218,7 +219,7 @@ namespace WebAPI.Controllers
                     SpecializationIds = Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
                     Specialization = getSpecialization(d.Specialization, disease),
                     AboutUs = d.AboutUs,
-                    TimeAvailability = doctorAvailability!=null?getDoctorAvilability(doctorAvailability.TimeId, timeMaster):null,
+                    TimeAvailability = doctorAvailability != null ? getDoctorAvilability(doctorAvailability.TimeId, timeMaster) : null,
                     Likes = feedback.Where(x => x.ILike == true).Count(),
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{d.DoctorId}",
@@ -234,7 +235,7 @@ namespace WebAPI.Controllers
         [Route("api/hospital/doctor/{HospitalId}/{Specialtyid}")]
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage getDoctorsBySpecialty(string HospitalId,string Specialtyid)
+        public HttpResponseMessage getDoctorsBySpecialty(string HospitalId, string Specialtyid)
         {
             List<TimeMaster> _timeMaster = new List<TimeMaster>();
             var timeMaster = _timeMasterRepo.GetAll().OrderBy(x => x.Id).ToList();
@@ -245,7 +246,7 @@ namespace WebAPI.Controllers
             Doctors _doctor = new Doctors();
             List<Doctors> _doctors = new List<Doctors>();
             List<Doctor> doctors = new List<Doctor>();
-            if (Specialtyid!="0")
+            if (Specialtyid != "0")
             {
                 doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId && x.Specialization.Contains(Specialtyid));
             }
@@ -253,7 +254,7 @@ namespace WebAPI.Controllers
             {
                 doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId);
             }
-            
+
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
 
             foreach (var d in doctors ?? new List<Doctor>())
@@ -434,9 +435,9 @@ namespace WebAPI.Controllers
         // DELETE: api/HospitalDetails/5
         public HttpResponseMessage Delete(string hospitalid)
         {
-            var hospital= _getHospitaldetailsList.Find(h => h.HospitalId == hospitalid).FirstOrDefault();
+            var hospital = _getHospitaldetailsList.Find(h => h.HospitalId == hospitalid).FirstOrDefault();
             int tblId = 0;
-            if (hospital!=null)
+            if (hospital != null)
             {
                 tblId = hospital.Id;
             }
@@ -444,11 +445,9 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
-        // Update Hospital Details
         [Route("api/hospitaldetails/{hospitalId}/updatehospital")]
         [HttpPatch]
         [AllowAnonymous]
-        // PUT: api/UpdateHospitalProfile/5
         public IHttpActionResult UpdateHospitalProfile(string hospitalId, Delta<HospitalDetails> obj)
         {
             HospitalDetails _hospitalDetails = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
@@ -460,6 +459,52 @@ namespace WebAPI.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("api/hospital/uploadhospitaldocuments")]
+        [AllowAnonymous]
+        public IHttpActionResult uploadhospitaldocuments()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            string hospitalId = httpRequest.Form["HospitalId"];
+            string address = httpRequest.Form["address"];
+            decimal latitude = Convert.ToDecimal(httpRequest.Form["Latitude"]);
+            decimal longitude = Convert.ToDecimal(httpRequest.Form["Longitude"]);
+            int objId = 0;
+            try
+            {
+                string basicPath = "~/HospitalDoc/" + hospitalId + "/";
+                var directoryBackViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "BackView"));
+                var directoryFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "FrontView"));
+                var directoryCRFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "CRFrontView"));
+                var directoryLicenseFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "LicenseFrontView"));
+                string IdBackView = basicPath + "BackView" + httpRequest.Files["IdBackView"].FileName;
+                string IdFrontView = basicPath + "IdFrontView" + "/" + httpRequest.Files["IdFrontView"].FileName;
+                string CrFrontView = basicPath + "CrFrontView" + "/" + httpRequest.Files["CrFrontView"].FileName;
+                string LicenseFrontView = basicPath + "LicenseFrontView" + "/" + httpRequest.Files["LicenseFrontView"].FileName;
+                HospitalDocumentVerification hospitalDocuments = new HospitalDocumentVerification
+                {
+                    HospitalId = hospitalId,
+                    IdBackView = IdBackView,
+                    IdFrontView = IdFrontView,
+                    CrFrontView = CrFrontView,
+                    LicenseFrontView = LicenseFrontView,
+                    Address = address,
+                    Latitude = latitude,
+                    Longitude = longitude,
+                };
+                objId = _hospitalDocumentsRepo.Insert(hospitalDocuments);
+                string filepath = HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName);
+                httpRequest.Files["IdBackView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName));
+                httpRequest.Files["IdFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "FrontView/" + httpRequest.Files["IdBackView"].FileName));
+                httpRequest.Files["CrFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "CrFrontView/" + httpRequest.Files["CrFrontView"].FileName));
+                httpRequest.Files["LicenseFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName));
+            }
+            catch (Exception ex)
+            {
+            }
+            return Ok(objId);
         }
     }
 }

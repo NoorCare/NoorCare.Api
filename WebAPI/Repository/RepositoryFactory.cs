@@ -130,7 +130,10 @@ namespace NoorCare.Repository
                     {
                         return new FacilityImagesRepository() as TRepository;
                     }
-
+                    if (typeof(TRepository) == typeof(IHospitalDocumentsRepository))
+                    {
+                        return new HospitalDocumentsRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;
