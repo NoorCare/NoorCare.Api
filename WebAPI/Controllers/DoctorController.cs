@@ -124,7 +124,7 @@ namespace WebAPI.Controllers
                 EmailSender _emailSender = new EmailSender();
                 var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
                 var manager = new UserManager<ApplicationUser>(userStore);
-                string password = _registration.RandomPassword(6);
+                string password = "123456789";// _registration.RandomPassword(6);
                 ApplicationUser user = _registration.UserAccount(obj, Convert.ToInt16(countryCode.CountryCodes));
                 IdentityResult result = manager.Create(user, password);
                 user.PasswordHash = password;
@@ -403,12 +403,12 @@ namespace WebAPI.Controllers
                 if (type == "1")
                 {
                     hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-             (countryId != "0" && x.Country == countryId) && x.Type == hospitalType);
+             (countryId != "0" && x.Country == countryId) && x.Type == hospitalType && x.IsDocumentApproved == 1);
                 }
                 else
                 {
                     hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-             (countryId != "0" && x.Country == countryId));
+             (countryId != "0" && x.Country == countryId) && x.IsDocumentApproved == 1);
                 }
                 
             }
@@ -416,11 +416,11 @@ namespace WebAPI.Controllers
             {
                 if (type=="1")
                 {
-                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType);
+                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.IsDocumentApproved == 1);
                 }
                 else
                 {
-                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId);
+                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.IsDocumentApproved == 1);
                 }
             }
             List<TblHospitalServices> _hospitalServices = new List<TblHospitalServices>();
