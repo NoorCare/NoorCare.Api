@@ -24,6 +24,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetAllNewsBlogs([FromUri] NewsBlogs newsBlogs, string Type)
         {
+		
 			var result =  _newsBlogsRepo.Find(
 				 x => x.Category == Type
 				 && (newsBlogs.UserId == null || newsBlogs.UserId.Contains(x.UserId))
@@ -158,43 +159,27 @@ namespace WebAPI.Controllers
             }
         }
 
+		[Route("api/NewsBlogs/Like/{id}")]
+		[HttpPost]
+		[AllowAnonymous]
+		public HttpResponseMessage Update(int id)
+		{
+			var result = _newsBlogsRepo.Get(id);
+			result.NoOfLikes = (result.NoOfLikes) + 1;
+			var msgString = _newsBlogsRepo.Update(result);
+			return Request.CreateResponse(HttpStatusCode.Accepted, msgString);
+		}
 
-        [Route("api/NewsBlogs/Read")]
-        [HttpPost]
-        [AllowAnonymous]
-        public HttpResponseMessage Read(ReadLike obj)
-        {
-            var read = _readLikeRepo.Find(x => x.UserId == obj.UserId && x.IsRead == true && x.Type== obj.Type).ToList();
-            if (read.Count == 0)
-            {
-                obj.ReadDate = System.DateTime.Now.ToString();
-                _readLikeRepo.Insert(obj);
-            }
-            return Request.CreateResponse(HttpStatusCode.Accepted, "Saved");
-        }
-
-        [Route("api/NewsBlogs/Like")]
-        [HttpPost]
-        [AllowAnonymous]
-        public HttpResponseMessage Like(ReadLike obj)
-        {
-            var like = _readLikeRepo.Find(x => x.UserId == obj.UserId && x.IsLike == true && x.Type == obj.Type).ToList();
-            if (like.Count==0)
-            {
-                _readLikeRepo.Insert(obj);
-            }
-            return Request.CreateResponse(HttpStatusCode.Accepted, "Saved");
-        }
-        [Route("api/NewsBlogs/ReadLikeCount/{Type}")]
-        [HttpGet]
-        [AllowAnonymous]
-        public HttpResponseMessage ReadLikeCount(string Type)
-        {
-            var likeCount = _readLikeRepo.Find(x=>x.IsLike == true && x.Type==Type).ToList().Count;
-            var readCount = _readLikeRepo.Find(x=>x.IsRead == true && x.Type == Type).ToList().Count;
-            var result = new { LikeCount= likeCount, ReadCount= readCount };
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        }
+		[Route("api/NewsBlogs/Read/{id}")]
+		[HttpPost]
+		[AllowAnonymous]
+		public HttpResponseMessage UpdateRead(int id)
+		{
+			var result = _newsBlogsRepo.Get(id);
+			result.NoOfRead = (result.NoOfRead) + 1;
+			var msgString = _newsBlogsRepo.Update(result);
+			return Request.CreateResponse(HttpStatusCode.Accepted, msgString);
+		}
 
 
 	}
