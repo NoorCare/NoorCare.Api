@@ -30,7 +30,12 @@ namespace NoorCare.Repository
     public class PatientPrescriptionRepository : EFRepositoryBase<ApplicationDbContext, PatientPrescription, int>, IPatientPrescriptionRepository { }
     public class NewsBlogsRepository : EFRepositoryBase<ApplicationDbContext, NewsBlogs, int>, INewsBlogsRepository { }
     public class ReadLikeRepository : EFRepositoryBase<ApplicationDbContext, ReadLike, int>, IReadLikeRepository { }
-    public class FacilityDetailRepository : EFRepositoryBase<ApplicationDbContext, FacilityDetail, int>, IFacilityDetailRepository { } 
+    public class FacilityDetailRepository : EFRepositoryBase<ApplicationDbContext, FacilityDetail, int>, IFacilityDetailRepository { }
+
+    public class FacilityImagesRepository : EFRepositoryBase<ApplicationDbContext, FacilityImages, int>, IFacilityImagesRepository { }
+
+    public class HospitalDocumentsRepository : EFRepositoryBase<ApplicationDbContext, HospitalDocumentVerification, int>, IHospitalDocumentsRepository { }
+
 }
 
 

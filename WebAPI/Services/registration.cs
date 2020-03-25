@@ -1,4 +1,5 @@
 ﻿using AngularJSAuthentication.API.Services;
+using NoorCare.Repository;
 using System;
 using System.Text;
 using WebAPI.Entity;
@@ -10,6 +11,7 @@ namespace WebAPI.Services
     public class Registration
     {
         EmailSender _emailSender = new EmailSender();
+        IHospitalDetailsRepository _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         public int AddClientDetail(string clientId, AccountModel model, IClientDetailRepository _clientDetailRepo)
         {
             ClientDetail _clientDetail = new ClientDetail
@@ -38,7 +40,9 @@ namespace WebAPI.Services
                 Type = model.Type,
                 jobType = model.jobType,
                 Mobile = Convert.ToInt32(model.PhoneNumber),
-                FacilityId = model.FacilityId
+                FacilityId = model.FacilityId,
+                Country = model.NationalityId.ToString()
+                
             };
             return _hospitalDetailsRepository.Insert(_hospitalDetail);
         }
@@ -184,7 +188,7 @@ namespace WebAPI.Services
             return builder.ToString();
         }
 
-        public ApplicationUser UserAcoount(dynamic model, int countrycodevalue)
+        public ApplicationUser UserAccount(dynamic model, int countrycodevalue)
         {
             var user = new ApplicationUser()
             {
@@ -208,6 +212,32 @@ namespace WebAPI.Services
                 user.Id = creatId(user.JobType, model.NationalityId, user.Gender);
             }
 
+            return user;
+        }
+
+        public ApplicationUser UserAcoount(dynamic model, int countrycodevalue)
+        {
+            var user = new ApplicationUser()
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                JobType = model.jobType,
+                CountryCodes = countrycodevalue,
+                Gender = model.jobType == 1 ? model.Gender : 0,
+            };
+            user.FirstName = model.FirstName;
+            user.PhoneNumber = model.PhoneNumber;
+            user.LastName = model.LastName;
+            if (model.HospitalId != null)
+            {
+                string hid = model.HospitalId;
+                var NationalityId = hid.Split('-')[1];
+                user.Id = creatId(user.JobType, NationalityId, user.Gender);
+            }
+            else
+            {
+                user.Id = creatId(user.JobType, model.NationalityId, user.Gender);
+            }
             return user;
         }
 
