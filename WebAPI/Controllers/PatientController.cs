@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
 
@@ -18,6 +19,12 @@ namespace WebAPI.Controllers
         IInsuranceInformationRepository _insuranceInformationRepo = RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
+        IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+        IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+        IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
+        IQuickHealthRepository _quickHealthRepository =
+            RepositoryFactory.Create<IQuickHealthRepository>(ContextTypes.EntityFramework);
+
         [Route("api/patient/GetAllPatient")]
         [HttpGet]
         [AllowAnonymous]
@@ -52,7 +59,7 @@ namespace WebAPI.Controllers
             foreach (var item in appointDetail.Distinct().ToList())
             {
                 var patinet = _patientList.Where(x => x.ClientId != item.ClientId).ToList();
-                if (patinet.Count==0)
+                if (patinet.Count == 0)
                 {
                     Patient patient = new Patient();
                     patient.Name = item.Name;
@@ -62,7 +69,7 @@ namespace WebAPI.Controllers
                     patient.LastVisitTime = appointDetail.Where(x => x.ClientId == item.ClientId).OrderByDescending(x => x.Id).FirstOrDefault().Time;
                     _patientList.Add(patient);
                 }
-                
+
             }
             return Request.CreateResponse(HttpStatusCode.Accepted, _patientList.Distinct());
         }
@@ -93,13 +100,13 @@ namespace WebAPI.Controllers
             var result = _clientDetailRepo.Find(m => m.ClientId == clientId).FirstOrDefault();
             return Request.CreateResponse(HttpStatusCode.Accepted, result.MobileNo.ToString());
         }
-        
+
 
         [HttpGet]
         [Route("api/patient/insuranceinfo/{clientId}")]
         public IHttpActionResult getInsuranceInformation(string clientId)
         {
-            var result= _insuranceInformationRepo.Find(x => x.ClientId == clientId).FirstOrDefault();
+            var result = _insuranceInformationRepo.Find(x => x.ClientId == clientId).FirstOrDefault();
 
             return Ok(result);
         }
@@ -109,7 +116,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage getPrescription(string patientId)
         {
-           List<PatientPrescription> lstPrescription = _prescriptionRepo.GetAll().Where(x=>x.PatientId== patientId).ToList<PatientPrescription>().OrderByDescending(x=>x.Id).ToList();
+            List<PatientPrescription> lstPrescription = _prescriptionRepo.GetAll().Where(x => x.PatientId == patientId).ToList<PatientPrescription>().OrderByDescending(x => x.Id).ToList();
 
             return Request.CreateResponse(HttpStatusCode.Accepted, lstPrescription);
         }
@@ -137,6 +144,110 @@ namespace WebAPI.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.Accepted, false);
             }
+        }
+
+        [Route("api/patient/getallprescription/{patientId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage getAllPrescription(string patientId)
+        {
+            var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            var patientPrescriptions = from p in _prescriptionRepo.GetAll()
+                                       join d in _doctorRepo.GetAll() on p.DoctorId equals d.DoctorId
+                                       join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
+                                       where (p.PatientId == patientId)
+                                       select new
+                                       {
+                                           HospitalName = h.HospitalName,
+                                           HospitalNCNumber = h.HospitalId,
+                                           DoctorName = d.FirstName + " " + d.LastName,
+                                           DoctorNCNumber = d.DoctorId,
+                                           Prescription = p.Prescription,
+                                           PrescriptionDate = p.DateEntered,
+                                           PrescriptionId = p.Id,
+                                           Specialization = getSpecialization(d.Specialization, disease),
+                                       };
+            return Request.CreateResponse(HttpStatusCode.Accepted, patientPrescriptions);
+        }
+
+        [Route("api/patient/getprescriptiondetail/{prescriptionId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage getPrescriptionDetail(Int32 prescriptionId)
+        {
+            // on p.PatientId equals mi.clientId
+            //var medicalinformation = _medicalInformationRepo.GetAll();
+            //join pet in pets on person equals pet.Owner into gj
+            //   from subpet in gj.DefaultIfEmpty()
+            //    select new { person.FirstName, PetName = subpet?.Name ?? String.Empty };
+
+            var patientPrescriptions = from p in _prescriptionRepo.GetAll()
+                                       join d in _doctorRepo.GetAll() on p.DoctorId equals d.DoctorId
+                                       join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
+                                       join c in _clientDetailRepo.GetAll() on p.PatientId equals c.ClientId
+                                       join mi in _medicalInformationRepo.GetAll() on p.PatientId equals mi.clientId
+                                       into mif from medi in mif.DefaultIfEmpty()
+                                       where (p.Id == prescriptionId)
+                                       select new
+                                       {
+                                           HospitalName = h.HospitalName,
+                                           HospitalNCNumber = h.HospitalId,
+                                           DoctorName = d.FirstName + " " + d.LastName,
+                                           DoctorNCNumber = d.DoctorId,
+                                           Prescription = p.Prescription,
+                                           PrescriptionDate = p.DateEntered,
+                                           PrescriptionId = p.Id,
+                                           PatientId = p.PatientId,
+                                           Date = p.DateEntered,
+                                           Name = c.FirstName + " " + c.LastName,
+                                           Age = this.GetAge(c.DOB),
+                                           Gender = c.Gender == 1 ? "Male" : "FeMale",
+                                           Pressure = medi?.Pressure ?? 0,
+                                           Temperature = medi?.Temprature ?? 0 ,
+                                           Hight = medi?.Hight??0,
+                                           Weight = medi?.Wight??0,
+                                           Cholesterol = medi?.Cholesterol ?? 0,
+                                           Others = medi?.OtherDetails ?? "N/A",
+                                           Sugar = medi?.Sugar ?? 0 ,
+                                           Heartbeat = medi?.Heartbeats ?? 0,
+                                       };
+
+            
+            return Request.CreateResponse(HttpStatusCode.Accepted, patientPrescriptions);
+        }
+        public string GetAge(string dateOfbirth)
+        {
+            if (dateOfbirth==null)
+            {
+                return "N/A";
+            }
+            DateTime dateOfBirth=(Convert.ToDateTime(dateOfbirth));
+            var today = DateTime.Today;
+            var a = (today.Year * 100 + today.Month) * 100 + today.Day;
+            var b = (dateOfBirth.Year * 100 + dateOfBirth.Month) * 100 + dateOfBirth.Day;
+
+            return ((a - b) / 10000).ToString();
+        }
+
+        //private MedicalInformation getMedicalInformation(string clientId)
+        //{
+        //    var medicalInformation = _medicalInformationRepo.Find(x => x.clientId == clientId);
+        //    if (medicalInformation.Count>0)
+        //    {
+        //        return medicalInformation.FirstOrDefault();
+        //    }
+            
+        //}
+        private List<Disease> getSpecialization(string diesiesType, List<Disease> diseases)
+        {
+            if (diesiesType == null || diesiesType == "")
+            {
+                return new List<Disease>();
+            }
+            var diesiesTypes = diesiesType.Split(',');
+            int[] myInts = Array.ConvertAll(diesiesTypes, s => int.Parse(s));
+            var diseasesList = diseases.Where(x => myInts.Contains(x.Id)).ToList();
+            return diseasesList;
         }
     }
 }
