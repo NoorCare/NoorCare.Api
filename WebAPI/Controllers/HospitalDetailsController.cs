@@ -42,10 +42,7 @@ namespace WebAPI.Controllers
 			{
 				var result = _hospitaldetailsRepo.GetAll().ToList();
 				return Request.CreateResponse(HttpStatusCode.Accepted, result);
-
 			});
-
-
 		}
 
 		//[Route("api/getHospitalDetail/{hospitalid}")] this is renamed by below name
