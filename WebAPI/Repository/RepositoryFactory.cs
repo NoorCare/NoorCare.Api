@@ -126,9 +126,13 @@ namespace NoorCare.Repository
                     {
                         return new FacilityDetailRepository() as TRepository;
                     }
+					if (typeof(TRepository) == typeof(IEmailNotificationsRepository))
+					{
+						return new EmailNotificationsRepository() as TRepository;
+					}
 
 
-                    return null;
+					return null;
                 default:
                     return null;
             }
