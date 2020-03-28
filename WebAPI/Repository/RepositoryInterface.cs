@@ -31,5 +31,4 @@ namespace WebAPI.Repository
     public interface INewsBlogsRepository : IRepository<NewsBlogs, int> { }
     public interface IReadLikeRepository : IRepository<ReadLike, int> { }
     public interface IFacilityDetailRepository : IRepository<FacilityDetail, int> { }
-	public interface IEmailNotificationsRepository : IRepository<EmailNotifications, int> { }
 }
