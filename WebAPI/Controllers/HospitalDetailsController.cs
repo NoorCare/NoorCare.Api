@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.OData;
@@ -35,14 +36,20 @@ namespace WebAPI.Controllers
         [HttpGet]
         [AllowAnonymous]
         // GET: api/HospitalDetails
-        public HttpResponseMessage GetAll()
+        public async Task<HttpResponseMessage> GetAll()
         {
-            var result = _hospitaldetailsRepo.GetAll().ToList();
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        }
+			return await Task.Run(() =>
+			{
+				var result = _hospitaldetailsRepo.GetAll().ToList();
+				return Request.CreateResponse(HttpStatusCode.Accepted, result);
 
-        //[Route("api/getHospitalDetail/{hospitalid}")] this is renamed by below name
-        [Route("api/hospitaldetails/getdetail/{hospitalid}")]
+			});
+
+
+		}
+
+		//[Route("api/getHospitalDetail/{hospitalid}")] this is renamed by below name
+		[Route("api/hospitaldetails/getdetail/{hospitalid}")]
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage GetHospitalDetail(string hospitalid)
