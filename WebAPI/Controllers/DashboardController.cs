@@ -155,7 +155,7 @@ namespace WebAPI.Controllers
                     appointMentCount = appointMentCount + 1;
                 }
             }
-            DashboardTypeModel.TodayAppointment = appointMentCount;
+            DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.AppointmentDate.ToString() == DateTime.Today.ToString("yyyy-MM-dd")).ToList().Count();
             DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "0").ToList().Count();
 
             foreach (var item in _appointmentRepo.Find(a => a.HospitalId == HospitalId).ToList())

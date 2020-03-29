@@ -116,7 +116,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage getPrescription(string patientId)
         {
-            List<PatientPrescription> lstPrescription = _prescriptionRepo.GetAll().Where(x => x.PatientId == patientId).ToList<PatientPrescription>().OrderByDescending(x => x.Id).ToList();
+           List<PatientPrescription> lstPrescription = _prescriptionRepo.GetAll().Where(x=>x.PatientId== patientId).ToList<PatientPrescription>().OrderByDescending(x=>x.Id).ToList();
 
             return Request.CreateResponse(HttpStatusCode.Accepted, lstPrescription);
         }
