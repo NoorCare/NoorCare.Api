@@ -46,25 +46,38 @@ namespace WebAPI.Controllers
                                 {
                                     Id=a.Id,
                                     Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
-                                    Date = Convert.ToDateTime(a.AppointmentDate).ToShortDateString(),
+                                    Date = (Convert.ToDateTime(a.AppointmentDate)).ToShortDateString(),
                                     ClientId = a.ClientId,
                                     DateEntered = a.DateEntered,
                                     DoctorId = a.DoctorId,
                                     Name=c.FirstName+" "+c.LastName,
                                     Gender=c.Gender,
-                                    Age= CalculateAge(Convert.ToDateTime(c.DOB)),
+                                    Age= this.GetAge(c.DOB),
                                 };
             return Request.CreateResponse(HttpStatusCode.Accepted, appointDetail.OrderByDescending(x=>x.Id));
         }
-        private static int CalculateAge(DateTime dateOfBirth)
+        public string GetAge(string dateOfbirth)
         {
-            int age = 0;
-            age = DateTime.Now.Year - dateOfBirth.Year;
-            if (DateTime.Now.DayOfYear < dateOfBirth.DayOfYear)
-                age = age - 1;
+            if (dateOfbirth == null)
+            {
+                return "N/A";
+            }
+            DateTime dateOfBirth = (Convert.ToDateTime(dateOfbirth));
+            var today = DateTime.Today;
+            var a = (today.Year * 100 + today.Month) * 100 + today.Day;
+            var b = (dateOfBirth.Year * 100 + dateOfBirth.Month) * 100 + dateOfBirth.Day;
 
-            return age;
+            return ((a - b) / 10000).ToString();
         }
+        //private static int CalculateAge(DateTime dateOfBirth)
+        //{
+        //    int age = 0;
+        //    age = DateTime.Now.Year - dateOfBirth.Year;
+        //    if (DateTime.Now.DayOfYear < dateOfBirth.DayOfYear)
+        //        age = age - 1;
+
+        //    return age;
+        //}
         [Route("api/appointment/getUpcommingAppointment/{ClientId}")]
         [HttpGet]
         [AllowAnonymous]
