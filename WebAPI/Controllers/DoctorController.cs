@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
         Registration _registration = new Registration();
 
         ICountryRepository _countryRepo = RepositoryFactory.Create<ICountryRepository>(ContextTypes.EntityFramework);
-            ICityRepository _cityRepo = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
+        ICityRepository _cityRepo = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _getDoctorList = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
@@ -70,7 +70,7 @@ namespace WebAPI.Controllers
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-        
+
         [Route("api/doctorbypatient/{ClientID}")]
         [HttpGet]
         [AllowAnonymous]
@@ -79,7 +79,8 @@ namespace WebAPI.Controllers
         {
             var result = from a in _appointmentRepo.GetAll()
                          join
-            d in _getDoctorList.GetAll() on a.DoctorId equals d.DoctorId where a.ClientId == ClientID && a.Status.ToLower()=="booked"
+            d in _getDoctorList.GetAll() on a.DoctorId equals d.DoctorId
+                         where a.ClientId == ClientID && a.Status.ToLower() == "booked"
                          select new
                          {
                              Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,
@@ -128,7 +129,7 @@ namespace WebAPI.Controllers
                 ApplicationUser user = _registration.UserAccount(obj, Convert.ToInt16(countryCode.CountryCodes));
                 IdentityResult result = manager.Create(user, password);
                 user.PasswordHash = password;
-              
+
                 obj.DoctorId = user.Id;
                 IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
                 var _doctorCreated = _doctorRepo.Insert(obj);
@@ -214,7 +215,7 @@ namespace WebAPI.Controllers
             var result = _doctorRepo.Delete(tbleId);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-        
+
         //---------------- Doctor Availability
         [Route("api/doctor/doctorAvailablity")]
         [HttpPost]
@@ -264,7 +265,7 @@ namespace WebAPI.Controllers
                     Degree = d.Degree,
                     AboutUs = d.AboutUs,
                     HospitalName = hospitals.HospitalName,
-                    HospitalId=hospitals.HospitalId,
+                    HospitalId = hospitals.HospitalId,
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),
@@ -285,20 +286,20 @@ namespace WebAPI.Controllers
         }
 
 
-        [Route("api/result/{type?}/{cityId?}/{countryId?}/{diseaseType?}/{hospitalType?}")]
+        [Route("api/result/{type?}/{cityId?}/{countryId?}/{diseaseType?}/{hospitalType?}/{searchType?}/{searchName?}")]
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage getDoctorDetail(string type = "0",string cityId = "0", string countryId = "0", string diseaseType = "0",string hospitalType="0")
+        public HttpResponseMessage getDoctorDetail(string type = "0", string cityId = "0", string countryId = "0", string diseaseType = "0", string hospitalType = "0", string searchType = "", string searchName = "")
         {
             FilterDoctor _filterDoctor = new FilterDoctor();
             FilterHospital _filterHospital = new FilterHospital();
             result _result = new result();
-            _result.Hospitals = getHospital(type, cityId, countryId, diseaseType, hospitalType, ref _filterDoctor, ref _filterHospital);
-            _result.FilterDoctor = type == "0"? _filterDoctor : null;
+            _result.Hospitals = getHospital(type, cityId, countryId, diseaseType, hospitalType, searchType, searchName, ref _filterDoctor, ref _filterHospital);
+            _result.FilterDoctor = type == "0" ? _filterDoctor : null;
             _result.FilterHospital = _filterHospital;
             return Request.CreateResponse(HttpStatusCode.Accepted, _result);
         }
-        
+
         #region Uility
         private List<Disease> getSpecialization(string diesiesType, List<Disease> diseases)
         {
@@ -337,21 +338,33 @@ namespace WebAPI.Controllers
 
             return hospitalAmenitieList;
         }
-        private List<Doctors> getDoctors(string HospitalId, string diseaseType, ref FilterDoctor _filterDoctor)
+        private List<Doctors> getDoctors(string HospitalId, string diseaseType,string searchtext, ref FilterDoctor _filterDoctor)
         {
-            if (diseaseType == null || diseaseType == "" || diseaseType == "null")
+            if (searchtext == "null")
             {
-                return new List<Doctors>();
+                if (diseaseType == null || diseaseType == "" || diseaseType == "null")
+                {
+                    return new List<Doctors>();
+                }
             }
             var diesiesTypes = diseaseType.Split(',');
-
-            int[] myInts = Array.ConvertAll(diesiesTypes, s => int.Parse(s));
+            //int[] myInts = Array.ConvertAll(diesiesTypes, s => int.Parse(s));
             List<Disease> _disease = new List<Disease>();
             List<decimal> _priceses = new List<decimal>();
             Doctors _doctor = new Doctors();
             List<Doctors> _doctors = new List<Doctors>();
-            List<Doctor> doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId);
-             //.Where(x=> x.Specialization.Where(s=> diesiesTypes.Contains(x.Specialization)).ToList().Count() > 0).ToList();
+            List<Doctor> doctors = new List<Doctor>(); 
+
+            if (searchtext != "" && searchtext != "null")
+            {
+                doctors= _doctorRepo.Find(x => x.HospitalId == HospitalId && x.FirstName.Contains(searchtext));
+
+            }
+            else
+            {
+                doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId);
+            }
+            //.Where(x=> x.Specialization.Where(s=> diesiesTypes.Contains(x.Specialization)).ToList().Count() > 0).ToList();
             //.Where(x => x.Specialization.Where(c => myInts.Contains(c)).ToList().Count() > 0).ToList();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
             foreach (var d in doctors ?? new List<Doctor>())
@@ -390,7 +403,7 @@ namespace WebAPI.Controllers
             _filterDoctor.Specialization = _disease.Select(x => new FilterData { Id = x.Id, Name = x.DiseaseType }).Distinct().ToList();
             return _doctors;
         }
-        private List<Hospital> getHospital(string type, string cityId, string countryId, string diseaseType,string hospitalType, ref FilterDoctor _filterDoctor, ref FilterHospital _filterHospital)
+        private List<Hospital> getHospital(string type, string cityId, string countryId, string diseaseType, string hospitalType, string searchType, string searchName, ref FilterDoctor _filterDoctor, ref FilterHospital _filterHospital)
         {
             int[] a = new int[0];
             var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
@@ -398,85 +411,146 @@ namespace WebAPI.Controllers
             Hospital _hospital = new Hospital();
             List<Hospital> _hospitals = new List<Hospital>();
             List<HospitalDetails> hospitals = new List<HospitalDetails>();
-            if (cityId!="null")
+            var searchtext = searchName.Split('(')[0];
+            if (searchType == "1")
             {
-                if (type == "1")
+                hospitals = _hospitaldetailsRepo.Find(x =>x.HospitalName.Contains(searchtext));
+            }
+            else if (searchType == "2")
+            {
+                var doctor = _doctorRepo.GetAll().Where(x => x.FirstName == searchtext).FirstOrDefault();
+                if (doctor!=null)
                 {
-                    hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-             (countryId != "0" && x.Country == countryId) && x.Type == hospitalType);
-                }
-                else
-                {
-                    hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-             (countryId != "0" && x.Country == countryId));
-                }
-                
+                    hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == doctor.HospitalId).ToList();
+                };
             }
             else
             {
-                if (type=="1")
+                if (cityId != "null")
                 {
-                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType);
+                    if (type == "1")
+                    {
+                        hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
+                 (countryId != "0" && x.Country == countryId) && x.Type == hospitalType);
+                    }
+                    else
+                    {
+                        hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
+                 (countryId != "0" && x.Country == countryId));
+                    }
+
                 }
                 else
                 {
-                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId);
+                    if (type == "1")
+                    {
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType);
+                    }
+                    else
+                    {
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId);
+                    }
                 }
             }
+
             List<TblHospitalServices> _hospitalServices = new List<TblHospitalServices>();
             List<TblHospitalAmenities> _hospitalAmenities = new List<TblHospitalAmenities>();
-
-            foreach (var h in hospitals ?? new List<HospitalDetails>())
+            if (searchType != "2")
             {
-               var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
-                
-                _hospital = new Hospital
+                foreach (var h in hospitals ?? new List<HospitalDetails>())
                 {
-                    HospitalId = h.HospitalId,
-                    HospitalName = h.HospitalName,
-                    Mobile = h.Mobile,
-                    AlternateNumber = h.AlternateNumber,
-                    Website = h.Website,
-                    EstablishYear = h.EstablishYear,
-                    NumberofBed = h.NumberofBed,
-                    NumberofAmbulance = h.NumberofAmbulance,
-                    PaymentType = h.PaymentType,
-                    Emergency = h.Emergency,
-                    FacilityId = h.FacilityId,
-                    Address = h.Address,
-                    Street = h.Street,
-                    Country = GetCountryName(Convert.ToInt16(h.Country)),
-                    City = GetCityName(Convert.ToInt16(h.City)),
-                    PostCode = h.PostCode,
-                    Landmark = h.Landmark,
-                    InsuranceCompanies = h.InsuranceCompanies??"",
-                    AmenitiesIds = h.Amenities == null ? a : Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
-                    Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
-                    ServicesIds = h.Services == null ? a : Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
-                    Services = getHospitalService(h.Services, hospitalService),
-                    Doctors = type == "0" ? getDoctors(h.HospitalId, diseaseType, ref _filterDoctor) : null,
-                    Likes = feedback.Where(x => x.ILike == true).Count(),
-                    Feedbacks = feedback.Count(),
-                    BookingUrl = $"booking/{h.HospitalId}",
-                    ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                    ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
-                };
-                _hospitalServices.AddRange(_hospital.Services);
-                _hospitalAmenities.AddRange(_hospital.Amenities);
-                _hospitals.Add(_hospital);
+                    var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
+
+                    _hospital = new Hospital
+                    {
+                        HospitalId = h.HospitalId,
+                        HospitalName = h.HospitalName,
+                        Mobile = h.Mobile,
+                        AlternateNumber = h.AlternateNumber,
+                        Website = h.Website,
+                        EstablishYear = h.EstablishYear,
+                        NumberofBed = h.NumberofBed,
+                        NumberofAmbulance = h.NumberofAmbulance,
+                        PaymentType = h.PaymentType,
+                        Emergency = h.Emergency,
+                        FacilityId = h.FacilityId,
+                        Address = h.Address,
+                        Street = h.Street,
+                        Country = GetCountryName(Convert.ToInt16(h.Country)),
+                        City = GetCityName(Convert.ToInt16(h.City)),
+                        PostCode = h.PostCode,
+                        Landmark = h.Landmark,
+                        InsuranceCompanies = h.InsuranceCompanies ?? "",
+                        AmenitiesIds = h.Amenities == null ? a : Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
+                        Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
+                        ServicesIds = h.Services == null ? a : Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
+                        Services = getHospitalService(h.Services, hospitalService),
+                        Doctors = type == "0" ? getDoctors(h.HospitalId, diseaseType, searchtext, ref _filterDoctor) : null,
+                        Likes = feedback.Where(x => x.ILike == true).Count(),
+                        Feedbacks = feedback.Count(),
+                        BookingUrl = $"booking/{h.HospitalId}",
+                        ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
+                        ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                    };
+                    _hospitalServices.AddRange(_hospital.Services);
+                    _hospitalAmenities.AddRange(_hospital.Amenities);
+                    _hospitals.Add(_hospital);
+                }
+            }
+            else
+            {
+                foreach (var h in hospitals ?? new List<HospitalDetails>())
+                {
+                    var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
+
+                    _hospital = new Hospital
+                    {
+                        HospitalId = h.HospitalId,
+                        HospitalName = h.HospitalName,
+                        Mobile = h.Mobile,
+                        AlternateNumber = h.AlternateNumber,
+                        Website = h.Website,
+                        EstablishYear = h.EstablishYear,
+                        NumberofBed = h.NumberofBed,
+                        NumberofAmbulance = h.NumberofAmbulance,
+                        PaymentType = h.PaymentType,
+                        Emergency = h.Emergency,
+                        FacilityId = h.FacilityId,
+                        Address = h.Address,
+                        Street = h.Street,
+                        Country = GetCountryName(Convert.ToInt16(h.Country)),
+                        City = GetCityName(Convert.ToInt16(h.City)),
+                        PostCode = h.PostCode,
+                        Landmark = h.Landmark,
+                        InsuranceCompanies = h.InsuranceCompanies ?? "",
+                        AmenitiesIds = h.Amenities == null ? a : Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
+                        Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
+                        ServicesIds = h.Services == null ? a : Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
+                        Services = getHospitalService(h.Services, hospitalService),
+                        Doctors = getDoctors(h.HospitalId, diseaseType, searchtext, ref _filterDoctor),
+                        Likes = feedback.Where(x => x.ILike == true).Count(),
+                        Feedbacks = feedback.Count(),
+                        BookingUrl = $"booking/{h.HospitalId}",
+                        ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
+                        ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                    };
+                    _hospitalServices.AddRange(_hospital.Services);
+                    _hospitalAmenities.AddRange(_hospital.Amenities);
+                    _hospitals.Add(_hospital);
+                }
             }
             var Services = _hospitalServices.Select(x => new FilterData { Id = x.Id, Name = x.HospitalServices }).Distinct().ToList();
             _filterDoctor.Services = Services;
             _filterHospital.Services = Services;
             _filterHospital.Amenities = _hospitalAmenities.Select(x => new FilterData { Id = x.Id, Name = x.HospitalAmenities }).Distinct().ToList();
-           // _filterHospital.Specialization = _filterDoctor.Specialization;
+            // _filterHospital.Specialization = _filterDoctor.Specialization;
             return _hospitals;
         }
         private string GetCountryName(Int32 id)
         {
             string countryName = "N/A";
-            var country= _countryRepo.Find(x => x.Id == id).FirstOrDefault();
-            if (country!=null)
+            var country = _countryRepo.Find(x => x.Id == id).FirstOrDefault();
+            if (country != null)
             {
                 countryName = country.CountryName;
             }
@@ -501,11 +575,11 @@ namespace WebAPI.Controllers
         {
             var doctors = _getDoctorList.GetAll().Where(x => x.HospitalId == HospitalID && x.IsDeleted == false).ToList();
             var docList = from d in doctors
-                    select new
-                    {
-                        Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,
-                        DoctorId = d.DoctorId
-                    };
+                          select new
+                          {
+                              Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,
+                              DoctorId = d.DoctorId
+                          };
             return Request.CreateResponse(HttpStatusCode.Accepted, docList.ToList().Distinct());
         }
     }
