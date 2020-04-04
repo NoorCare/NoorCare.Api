@@ -58,7 +58,7 @@ namespace WebAPI.Controllers
             EmailSender _emailSender = new EmailSender();
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
-            string password = _registration.RandomPassword(6);
+            string password = "123456789";// _registration.RandomPassword(6);
             ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(country_Code));
             IdentityResult result = manager.Create(user, password);
             user.PasswordHash = password;
