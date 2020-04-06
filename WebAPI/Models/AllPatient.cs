@@ -20,4 +20,9 @@ namespace WebAPI.Models
         public string LastVisitTime { get; set; }
         public string TotalVisit { get; set; }
     }
+
+    public class AutocompleteData
+    {
+        public string Name { get; set; }
+    }
 }

@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using WebAPI.Entity;
+using WebAPI.Models;
 using WebAPI.Repository;
 
 namespace WebAPI.Controllers
@@ -13,7 +14,8 @@ namespace WebAPI.Controllers
     public class MasterController : ApiController
     {
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
-
+        IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+        IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         [Route("api/GetTimeMaster")]
         [HttpGet]
         [AllowAnonymous]
@@ -65,7 +67,7 @@ namespace WebAPI.Controllers
         public List<TblCountry> GetCountries()
         {
             ICountryRepository _cityRepository = RepositoryFactory.Create<ICountryRepository>(ContextTypes.EntityFramework);
-            var country= _cityRepository.GetAll().OrderBy(x => x.CountryName).ToList();
+            var country = _cityRepository.GetAll().OrderBy(x => x.CountryName).ToList();
             Dictionary<string, string> countryies = new Dictionary<string, string>();
             return country;
         }
@@ -106,8 +108,36 @@ namespace WebAPI.Controllers
             return _stateRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
         }
 
-
-
+        [Route("api/autocompletedata/{searchtype}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<string> AtocompleteData(string searchtype)
+        {
+            List<string> autodatalist = new List<string>();
+            if (searchtype == "1")
+            {
+                var hospitals = from h in _hospitaldetailsRepo.GetAll()
+                          select new { Name = h.HospitalName.ToString()+"( "+h.HospitalId+"-"+h.Address+")" };
+                List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
+                foreach (var item in hospitals)
+                {
+                    autodatalist.Add(item.Name);
+                }
+                return autodatalist;
+            }
+            else
+            {
+                var doctors = from d in _doctorRepo.GetAll()
+                              join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
+                          select new { Name = d.FirstName + "( " + d.DoctorId + "-" + h.HospitalName + ")" };
+                List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
+                foreach (var item in doctors)
+                {
+                    autodatalist.Add(item.Name);
+                }
+                return autodatalist;
+            }
+        }
     }
 }
 
