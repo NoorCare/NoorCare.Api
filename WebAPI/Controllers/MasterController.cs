@@ -16,6 +16,7 @@ namespace WebAPI.Controllers
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+
         [Route("api/GetTimeMaster")]
         [HttpGet]
         [AllowAnonymous]
@@ -136,6 +137,24 @@ namespace WebAPI.Controllers
                     autodatalist.Add(item.Name);
                 }
                 return autodatalist;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/allhospital/logo")]
+        [AllowAnonymous]
+        public HttpResponseMessage GetAllHospitalLogoImage(string FacilityNoorCare)
+        {
+            try
+            {
+                var logoIMG = _hospitaldetailsRepo.GetAll().ToList();
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, logoIMG);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, "Error");
+
             }
         }
     }

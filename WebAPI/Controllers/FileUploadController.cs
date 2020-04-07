@@ -232,7 +232,7 @@ namespace WebAPI.Controllers
                         FacilityNoorCareNumber = facilityNoorCareNumber,
                         ExpiryDate = DateTime.Now.ToString(),
                         FileName = httpRequest.Files[i].FileName,
-                        FilePath = "FacilityImages/" + facilityNoorCareNumber + " / " + facilityImageType,
+                        FilePath = "FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType+"/"+ httpRequest.Files[i].FileName,
                         DateEntered = DateTime.Now,
                     };
                     objId = _facelityImagesRepo.Insert(facilityImages);
