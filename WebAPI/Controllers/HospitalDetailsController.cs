@@ -453,6 +453,7 @@ namespace WebAPI.Controllers
             HospitalDetails _hospitalDetails = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
             if (_hospitalDetails != null)
             {
+                _hospitalDetails.ProfilePath= "ProfilePic/Hospital/"+ hospitalId+ "." + ImageFormat.Jpeg;
                 obj.Patch(_hospitalDetails);
                 var result = _hospitaldetailsRepo.Update(_hospitalDetails);
                 return Ok(result);
