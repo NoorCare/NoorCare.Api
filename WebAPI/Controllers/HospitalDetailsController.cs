@@ -12,7 +12,6 @@ using System.Web.Http.OData;
 using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
-using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
@@ -414,8 +413,9 @@ namespace WebAPI.Controllers
                     // Save ProfilePath in table HospitalDetails
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                return Ok(ex.Message);
             }
             return Ok(hospitalId);
         }

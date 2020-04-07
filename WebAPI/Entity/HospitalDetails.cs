@@ -60,6 +60,9 @@ public partial class HospitalDetails : IEntity<int>
     [MaxLength(50)]
     public string Services { get; set; }
 
+    [MaxLength(300)]
+    public string ProfilePath { get; set; }
+
     public bool Timing { get; set; }
 
     //WorkingDay
