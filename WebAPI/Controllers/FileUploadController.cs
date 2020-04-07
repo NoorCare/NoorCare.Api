@@ -112,8 +112,6 @@ namespace WebAPI.Controllers
                     filePath = filePath + "/" + imageName;
 
                     postedFile.SaveAs(filePath);
-
-
                 }
             }
             catch (Exception ex)
@@ -177,6 +175,25 @@ namespace WebAPI.Controllers
             {
             }
             return Ok(objId);
+        }
+
+        // Get Facility Image
+        [HttpGet]
+        [Route("api/facilityImage/GetFacilityImage/{FacilityNoorCare}")]
+        [AllowAnonymous]
+        public HttpResponseMessage GetFacilityImage(string FacilityNoorCare)
+        {
+            try
+            {
+                var FacilityIMG = _facelityImagesRepo.Find(x => x.FacilityNoorCareNumber == FacilityNoorCare).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, FacilityIMG);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, "Error");
+
+            }
         }
 
         [HttpPost]
