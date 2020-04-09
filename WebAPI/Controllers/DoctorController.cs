@@ -322,6 +322,7 @@ namespace WebAPI.Controllers
             List<Hospital> _hospitals = new List<Hospital>();
             List<HospitalDetails> hospitals = new List<HospitalDetails>();
             string searchtext = "null";
+            int facilityid = Convert.ToInt32(type);
             if (searchName!=null)
             {
                 searchtext = searchName.Split('(')[0];
@@ -347,12 +348,17 @@ namespace WebAPI.Controllers
                     if (type == "1")
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId) && x.Type == hospitalType);
+                 (countryId != "0" && x.Country == countryId) && x.Type == hospitalType && x.FacilityId== 1 && x.IsDocumentApproved == 1);
+                    }
+                    else if (type == "0")
+                    {
+                        hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
+                 (countryId != "0" && x.Country == countryId && x.FacilityId == 1 && x.IsDocumentApproved == 1));
                     }
                     else
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId));
+                 (countryId != "0" && x.Country == countryId && x.FacilityId == facilityid && x.IsDocumentApproved == 1));
                     }
 
                 }
@@ -360,14 +366,18 @@ namespace WebAPI.Controllers
                 {
                     if (type == "1")
                     {
-                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType);
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.FacilityId == facilityid && x.IsDocumentApproved == 1);
+                    }
+                    else if(type=="0")
+                    {
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.FacilityId == 1 && x.IsDocumentApproved == 1);
                     }
                     else
                     {
-                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId);
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType  && x.FacilityId == facilityid && x.IsDocumentApproved == 1);
                     }
 
-                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.IsDocumentApproved == 1);
+                    //hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.IsDocumentApproved == 1);
                 }
             }
             List<TblHospitalServices> _hospitalServices = new List<TblHospitalServices>();
