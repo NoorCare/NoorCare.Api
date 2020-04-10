@@ -16,6 +16,7 @@ namespace WebAPI.Controllers
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+
         [Route("api/GetTimeMaster")]
         [HttpGet]
         [AllowAnonymous]
@@ -108,15 +109,15 @@ namespace WebAPI.Controllers
             return _stateRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
         }
 
-        [Route("api/autocompletedata/{searchtype}")]
+        [Route("api/autocompletedata/{searchtype}/{autosearchtext}")]
         [HttpGet]
         [AllowAnonymous]
-        public List<string> AtocompleteData(string searchtype)
+        public List<string> AtocompleteData(string searchtype,string autosearchtext)
         {
             List<string> autodatalist = new List<string>();
             if (searchtype == "1")
             {
-                var hospitals = from h in _hospitaldetailsRepo.GetAll()
+                var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x=>x.HospitalName.ToLower().Contains(autosearchtext.ToLower()))
                           select new { Name = h.HospitalName.ToString()+"( "+h.HospitalId+"-"+h.Address+")" };
                 List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in hospitals)
@@ -129,6 +130,7 @@ namespace WebAPI.Controllers
             {
                 var doctors = from d in _doctorRepo.GetAll()
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
+                              where d.FirstName.ToLower().Contains(autosearchtext.ToLower())
                           select new { Name = d.FirstName + "( " + d.DoctorId + "-" + h.HospitalName + ")" };
                 List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in doctors)
@@ -136,6 +138,24 @@ namespace WebAPI.Controllers
                     autodatalist.Add(item.Name);
                 }
                 return autodatalist;
+            }
+        }
+
+        [HttpGet]
+        [Route("api/allhospital/logo")]
+        [AllowAnonymous]
+        public HttpResponseMessage GetAllHospitalLogoImage(string FacilityNoorCare)
+        {
+            try
+            {
+                var logoIMG = _hospitaldetailsRepo.GetAll().ToList();
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, logoIMG);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, "Error");
+
             }
         }
     }
