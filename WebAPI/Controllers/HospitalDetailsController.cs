@@ -12,7 +12,6 @@ using System.Web.Http.OData;
 using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
-using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
@@ -414,8 +413,9 @@ namespace WebAPI.Controllers
                     // Save ProfilePath in table HospitalDetails
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                return Ok(ex.Message);
             }
             return Ok(hospitalId);
         }
@@ -453,6 +453,7 @@ namespace WebAPI.Controllers
             HospitalDetails _hospitalDetails = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
             if (_hospitalDetails != null)
             {
+                _hospitalDetails.ProfilePath= "ProfilePic/Hospital/"+ hospitalId+ "." + ImageFormat.Jpeg;
                 obj.Patch(_hospitalDetails);
                 var result = _hospitaldetailsRepo.Update(_hospitalDetails);
                 return Ok(result);
