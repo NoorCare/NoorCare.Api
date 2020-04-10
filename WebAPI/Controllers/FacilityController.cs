@@ -33,9 +33,9 @@ namespace WebAPI.Controllers
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(countryCode.CountryCodes));
- 
-            IdentityResult result = manager.Create(user,obj.Password);
- 
+
+            IdentityResult result = manager.Create(user, obj.Password);
+
             IHttpActionResult errorResult = GetErrorResult(result);
             if (errorResult != null)
             {
