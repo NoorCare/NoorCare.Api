@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
         Registration _registration = new Registration();
 
         ICountryRepository _countryRepo = RepositoryFactory.Create<ICountryRepository>(ContextTypes.EntityFramework);
-            ICityRepository _cityRepo = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
+        ICityRepository _cityRepo = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _getDoctorList = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
@@ -70,7 +70,7 @@ namespace WebAPI.Controllers
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-        
+
         [Route("api/doctorbypatient/{ClientID}")]
         [HttpGet]
         [AllowAnonymous]
@@ -79,7 +79,8 @@ namespace WebAPI.Controllers
         {
             var result = from a in _appointmentRepo.GetAll()
                          join
-            d in _getDoctorList.GetAll() on a.DoctorId equals d.DoctorId where a.ClientId == ClientID && a.Status.ToLower()=="booked"
+            d in _getDoctorList.GetAll() on a.DoctorId equals d.DoctorId
+                         where a.ClientId == ClientID && a.Status.ToLower() == "booked"
                          select new
                          {
                              Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,
@@ -128,7 +129,7 @@ namespace WebAPI.Controllers
                 ApplicationUser user = _registration.UserAccount(obj, Convert.ToInt16(countryCode.CountryCodes));
                 IdentityResult result = manager.Create(user, password);
                 user.PasswordHash = password;
-              
+
                 obj.DoctorId = user.Id;
                 IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
                 var _doctorCreated = _doctorRepo.Insert(obj);
@@ -214,7 +215,7 @@ namespace WebAPI.Controllers
             var result = _doctorRepo.Delete(tbleId);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
-        
+
         //---------------- Doctor Availability
         [Route("api/doctor/doctorAvailablity")]
         [HttpPost]
@@ -264,7 +265,7 @@ namespace WebAPI.Controllers
                     Degree = d.Degree,
                     AboutUs = d.AboutUs,
                     HospitalName = hospitals.HospitalName,
-                    HospitalId=hospitals.HospitalId,
+                    HospitalId = hospitals.HospitalId,
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),
@@ -294,7 +295,7 @@ namespace WebAPI.Controllers
             FilterDoctor _filterDoctor = new FilterDoctor();
             FilterHospital _filterHospital = new FilterHospital();
             result _result = new result();
-            _result.Hospitals = getHospital("0", "0", "0","0","0",searchType, searchName, ref _filterDoctor, ref _filterHospital);
+            _result.Hospitals = getHospital("0", "0", "0", "0", "0", searchType, searchName, ref _filterDoctor, ref _filterHospital);
             _result.FilterDoctor = type == "0" ? _filterDoctor : null;
             _result.FilterHospital = _filterHospital;
             return Request.CreateResponse(HttpStatusCode.Accepted, _result);
@@ -303,13 +304,13 @@ namespace WebAPI.Controllers
         [Route("api/result/{type?}/{cityId?}/{countryId?}/{diseaseType?}/{hospitalType?}")]
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage getDoctorDetail(string type = "0",string cityId = "0", string countryId = "0", string diseaseType = "0",string hospitalType="0")
+        public HttpResponseMessage getDoctorDetail(string type = "0", string cityId = "0", string countryId = "0", string diseaseType = "0", string hospitalType = "0")
         {
             FilterDoctor _filterDoctor = new FilterDoctor();
             FilterHospital _filterHospital = new FilterHospital();
             result _result = new result();
             _result.Hospitals = getHospital(type, cityId, countryId, diseaseType, hospitalType, null, null, ref _filterDoctor, ref _filterHospital);
-            _result.FilterDoctor = type == "0"? _filterDoctor : null;
+            _result.FilterDoctor = type == "0" ? _filterDoctor : null;
             _result.FilterHospital = _filterHospital;
             return Request.CreateResponse(HttpStatusCode.Accepted, _result);
         }
@@ -322,11 +323,12 @@ namespace WebAPI.Controllers
             List<Hospital> _hospitals = new List<Hospital>();
             List<HospitalDetails> hospitals = new List<HospitalDetails>();
             string searchtext = "null";
-            if (searchName!=null)
+            int facilityid = Convert.ToInt32(type);
+            if (searchName != null)
             {
                 searchtext = searchName.Split('(')[0];
             }
-            
+
             if (searchType == "1")
             {
                 hospitals = _hospitaldetailsRepo.Find(x => x.HospitalName.Contains(searchtext));
@@ -347,12 +349,17 @@ namespace WebAPI.Controllers
                     if (type == "1")
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId) && x.Type == hospitalType);
+                 (countryId != "0" && x.Country == countryId) && x.Type == hospitalType && x.FacilityId == 1 && x.IsDocumentApproved == 1);
+                    }
+                    else if (type == "0")
+                    {
+                        hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
+                 (countryId != "0" && x.Country == countryId && x.FacilityId == 1 && x.IsDocumentApproved == 1));
                     }
                     else
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId));
+                 (countryId != "0" && x.Country == countryId && x.FacilityId == facilityid && x.IsDocumentApproved == 1));
                     }
 
                 }
@@ -360,14 +367,18 @@ namespace WebAPI.Controllers
                 {
                     if (type == "1")
                     {
-                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType);
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.FacilityId == facilityid && x.IsDocumentApproved == 1);
+                    }
+                    else if (type == "0")
+                    {
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.FacilityId == 1 && x.IsDocumentApproved == 1);
                     }
                     else
                     {
-                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId);
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.FacilityId == facilityid && x.IsDocumentApproved == 1);
                     }
 
-                    hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.IsDocumentApproved == 1);
+                    //hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.IsDocumentApproved == 1);
                 }
             }
             List<TblHospitalServices> _hospitalServices = new List<TblHospitalServices>();
@@ -407,7 +418,7 @@ namespace WebAPI.Controllers
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{h.HospitalId}",
                         ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                        ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                        ImgUrl = h.ProfilePath == null ? $"{constant.baseUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg" : $"{constant.baseUrl}/{h.ProfilePath}",
                     };
                     _hospitalServices.AddRange(_hospital.Services);
                     _hospitalAmenities.AddRange(_hospital.Amenities);
@@ -554,7 +565,7 @@ namespace WebAPI.Controllers
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{d.DoctorId}",
                     ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                    ImgUrl = $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg"
+                    ImgUrl = d.PhotoPath == null ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.baseUrl}/{d.PhotoPath}"
                 };
 
                 // Add Filter Value
@@ -569,8 +580,8 @@ namespace WebAPI.Controllers
         private string GetCountryName(Int32 id)
         {
             string countryName = "N/A";
-            var country= _countryRepo.Find(x => x.Id == id).FirstOrDefault();
-            if (country!=null)
+            var country = _countryRepo.Find(x => x.Id == id).FirstOrDefault();
+            if (country != null)
             {
                 countryName = country.CountryName;
             }
@@ -595,13 +606,12 @@ namespace WebAPI.Controllers
         {
             var doctors = _getDoctorList.GetAll().Where(x => x.HospitalId == HospitalID && x.IsDeleted == false).ToList();
             var docList = from d in doctors
-                    select new
-                    {
-                        Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,
-                        DoctorId = d.DoctorId
-                    };
+                          select new
+                          {
+                              Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,
+                              DoctorId = d.DoctorId
+                          };
             return Request.CreateResponse(HttpStatusCode.Accepted, docList.ToList().Distinct());
         }
     }
 }
-

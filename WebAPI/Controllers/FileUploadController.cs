@@ -142,10 +142,10 @@ namespace WebAPI.Controllers
             int objId = 0;
             try
             {
-                
+
                 string year = DateTime.Now.Year.ToString();
                 string month = DateTime.Now.Month.ToString();
-                var directoryPath= Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/ClientDocument/" + clientId + "/" + diseaseType + "/" + year + "/" + month));
+                var directoryPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/ClientDocument/" + clientId + "/" + diseaseType + "/" + year + "/" + month));
                 for (int i = 0; i < httpRequest.Files.Count; i++)
                 {
                     QuickUpload quickHeathDetails = new QuickUpload
@@ -159,15 +159,15 @@ namespace WebAPI.Controllers
                     };
                     objId = _quickUploadRepo.Insert(quickHeathDetails);
                     FileInfo fi = new FileInfo(httpRequest.Files[i].FileName.Replace(" ", "_"));
-                        if (fi != null)
-                        {
-                            PostedFileName = fi.Name;
-                            PostedFileExt = fi.Extension;
-                        }
-                        imageName = objId+i + PostedFileExt;
-                        var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + clientId + "/" + diseaseType + "/" + year + "/" + month);
-                         filePath = filePath + "/" + httpRequest.Files[i].FileName;
-                        httpRequest.Files[i].SaveAs(filePath);
+                    if (fi != null)
+                    {
+                        PostedFileName = fi.Name;
+                        PostedFileExt = fi.Extension;
+                    }
+                    imageName = objId + i + PostedFileExt;
+                    var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + clientId + "/" + diseaseType + "/" + year + "/" + month);
+                    filePath = filePath + "/" + httpRequest.Files[i].FileName;
+                    httpRequest.Files[i].SaveAs(filePath);
 
                 }
             }
@@ -201,13 +201,13 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult uploadfacilityimges()
         {
-            
+
             string imageName = null;
             var httpRequest = HttpContext.Current.Request;
             string facilityImageType = httpRequest.Form["FacilityImageType"];
             string facilityNoorCareNumber = httpRequest.Form["FacilityNoorCareNumber"];
             //var postedFile = httpRequest.Files["Image"];
-            
+
             var imageCount = _facelityImagesRepo.Find(x => x.FacilityNoorCareNumber == facilityNoorCareNumber).ToList().Count;
             string PostedFileName = string.Empty;
             string PostedFileExt = string.Empty;
@@ -221,7 +221,7 @@ namespace WebAPI.Controllers
                 {
                     Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType));
                 }
-                
+
                 for (int i = 0; i < httpRequest.Files.Count; i++)
                 {
                     var filePath = HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType);
@@ -232,7 +232,7 @@ namespace WebAPI.Controllers
                         FacilityNoorCareNumber = facilityNoorCareNumber,
                         ExpiryDate = DateTime.Now.ToString(),
                         FileName = httpRequest.Files[i].FileName,
-                        FilePath = "FacilityImages/" + facilityNoorCareNumber + " / " + facilityImageType,
+                        FilePath = "FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType + "/" + httpRequest.Files[i].FileName,
                         DateEntered = DateTime.Now,
                     };
                     objId = _facelityImagesRepo.Insert(facilityImages);
