@@ -354,7 +354,7 @@ namespace WebAPI.Controllers
                     else if (type == "0")
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId  && x.IsDocumentApproved == 1));
+                 (countryId != "0" && x.Country == countryId && x.IsDocumentApproved == 1));
                     }
                     else
                     {
@@ -472,6 +472,21 @@ namespace WebAPI.Controllers
             _filterHospital.Services = Services;
             _filterHospital.Amenities = _hospitalAmenities.Select(x => new FilterData { Id = x.Id, Name = x.HospitalAmenities }).Distinct().ToList();
             // _filterHospital.Specialization = _filterDoctor.Specialization;
+            bool isDoctors = false;
+            if (type == "0" && searchName == null)
+            {
+                foreach (var item in _hospitals)
+                {
+                    if (item.Doctors.Count>0)
+                    {
+                        isDoctors = true;
+                    }
+                }
+                if (isDoctors == false)
+                {
+                     _hospitals=new List<Hospital>();
+                }
+            }
             return _hospitals;
         }
         #region Uility
@@ -536,10 +551,9 @@ namespace WebAPI.Controllers
             }
             else
             {
-                doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId);
+               var  doctorsList = _doctorRepo.Find(x => x.HospitalId == HospitalId );
+                doctors = doctorsList.Where(x =>x.Specialization.Contains(diesiesTypes[0])).ToList<Doctor>();
             }
-            //.Where(x=> x.Specialization.Where(s=> diesiesTypes.Contains(x.Specialization)).ToList().Count() > 0).ToList();
-            //.Where(x => x.Specialization.Where(c => myInts.Contains(c)).ToList().Count() > 0).ToList();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
             foreach (var d in doctors ?? new List<Doctor>())
             {
