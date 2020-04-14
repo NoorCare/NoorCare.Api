@@ -346,36 +346,36 @@ namespace WebAPI.Controllers
                 if (cityId != "null")
                 {
 
-                    if (type == "1")
+                    if (type == "2")
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId) && x.Type == hospitalType && x.FacilityId == 1 && x.IsDocumentApproved == 1);
+                 (countryId != "0" && x.Country == countryId) && x.Type == hospitalType && x.FacilityId == 2);
                     }
                     else if (type == "0")
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId && x.IsDocumentApproved == 1));
+                 (countryId != "0" && x.Country == countryId ));
                     }
                     else
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId && x.FacilityId == facilityid && x.IsDocumentApproved == 1));
+                 (countryId != "0" && x.Country == countryId && x.FacilityId == facilityid));
                     }
 
                 }
                 else
                 {
-                    if (type == "1")
+                    if (type == "2")
                     {
-                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.FacilityId == facilityid && x.IsDocumentApproved == 1);
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.FacilityId == facilityid);
                     }
                     else if (type == "0")
                     {
-                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.IsDocumentApproved == 1);
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId);
                     }
                     else
                     {
-                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.FacilityId == facilityid && x.IsDocumentApproved == 1);
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.FacilityId == facilityid);
                     }
 
                     //hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.Type == hospitalType && x.IsDocumentApproved == 1);
