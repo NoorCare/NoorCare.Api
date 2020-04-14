@@ -145,11 +145,11 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
-        [Route("api/appointment/updateStatus/{AppointmentId}/{status}")]
+        [Route("api/appointment/updateStatus/{AppointmentId}/{status}/{AppointmentDate}/{AppointmentTime}")]
         [HttpPost]
         [AllowAnonymous]
         // PUT: api/Appointment/5
-        public HttpResponseMessage UpdateStatus(string AppointmentId, string status)
+        public HttpResponseMessage UpdateStatus(string AppointmentId, string status, string AppointmentDate, string AppointmentTime)
         {
             Appointment obj = _getAppointmentList.Find(x => x.AppointmentId == AppointmentId).FirstOrDefault();
             if (obj != null)
@@ -176,7 +176,10 @@ namespace WebAPI.Controllers
                 obj.Status = appointment.Status;
                 obj.Comment = appointment.Comment;
                 obj.DoctorId = appointment.DoctorId;
-                obj.DateModified = DateTime.Now.ToString();
+                obj.DateModified = DateTime.Now.ToString(); ;
+                obj.AppointmentDate = appointment.AppointmentDate;
+                obj.TimingId = appointment.TimingId;
+
             }
             var result = _appointmentRepo.Update(obj);
             //Email sent on status change
