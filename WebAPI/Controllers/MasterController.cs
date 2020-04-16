@@ -62,6 +62,17 @@ namespace WebAPI.Controllers
             return _cityRepository.Find(x => x.CountryId == countryId).OrderBy(x => x.City).ToList();
         }
 
+        [Route("api/citybycountrycode/{countrycode}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<TblCity> GetCityByCountryCode(int countrycode)
+        {
+            
+            ICityRepository _cityRepository = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
+            var citylist= _cityRepository.Find(x => x.CountryId == countrycode).OrderBy(x => x.City).ToList();
+            return citylist;
+        }
+
         [Route("api/countries")]
         [HttpGet]
         [AllowAnonymous]
@@ -106,7 +117,10 @@ namespace WebAPI.Controllers
         public List<TblHospitalAmenities> HospitalAmenities()
         {
             ITblHospitalAmenitiesRepository _stateRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
-            return _stateRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
+            var amenities = _stateRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
+
+
+            return amenities;
         }
 
         [Route("api/autocompletedata/{searchtype}/{autosearchtext}")]

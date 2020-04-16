@@ -480,10 +480,10 @@ namespace WebAPI.Controllers
                 var directoryFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "FrontView"));
                 var directoryCRFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "CRFrontView"));
                 var directoryLicenseFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "LicenseFrontView"));
-                string IdBackView = basicPath + "BackView" + httpRequest.Files["IdBackView"].FileName;
-                string IdFrontView = basicPath + "IdFrontView" + "/" + httpRequest.Files["IdFrontView"].FileName;
-                string CrFrontView = basicPath + "CrFrontView" + "/" + httpRequest.Files["CrFrontView"].FileName;
-                string LicenseFrontView = basicPath + "LicenseFrontView" + "/" + httpRequest.Files["LicenseFrontView"].FileName;
+                string IdBackView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/BackView/"+ httpRequest.Files["IdBackView"].FileName;
+                string IdFrontView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/IdFrontView/" + httpRequest.Files["IdFrontView"].FileName;
+                string CrFrontView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/CrFrontView/"+ httpRequest.Files["CrFrontView"].FileName;
+                string LicenseFrontView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName;
                 HospitalDocumentVerification hospitalDocuments = new HospitalDocumentVerification
                 {
                     HospitalId = hospitalId,

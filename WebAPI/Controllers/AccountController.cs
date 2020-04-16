@@ -77,14 +77,58 @@ namespace WebAPI.Controllers
         {
             var identityClaims = (ClaimsIdentity)User.Identity;
             IEnumerable<Claim> claims = identityClaims.Claims;
+            var id = claims.FirstOrDefault().Value;
+            string firstname = "";
+            string lastname = "";
+            string phoneno = "";
+            var usertype = id.Split('-')[0];
+            if (usertype== "NCM"|| usertype == "NCF")
+            {
+                var patient = this._clientDetailRepo.GetAll().Where(x=>x.ClientId== id).FirstOrDefault();
+                if (patient!=null)
+                {
+                    firstname = patient.FirstName;
+                    lastname = patient.LastName;
+                    phoneno =Convert.ToString(patient.MobileNo);
+                }
+            }
+            else if (usertype == "NCD")
+            {
+                var doctor = this._doctorRepository.GetAll().Where(x => x.DoctorId == id).FirstOrDefault();
+                if (doctor != null)
+                {
+                    firstname = doctor.FirstName;
+                    lastname = doctor.LastName;
+                    phoneno = doctor.PhoneNumber;
+                }
+            }
+            else if (usertype == "NCS")
+            {
+                var secretary = this._secretaryRepository.GetAll().Where(x => x.SecretaryId == id).FirstOrDefault();
+                if (secretary != null)
+                {
+                    firstname = secretary.FirstName;
+                    lastname = secretary.LastName;
+                    phoneno = secretary.PhoneNumber;
+                }
+            }
+            else
+            {
+                var hospital = this._hospitalDetailsRepository.GetAll().Where(x => x.HospitalId == id).FirstOrDefault();
+                if (hospital != null)
+                {
+                    firstname = hospital.HospitalName;
+                    phoneno = hospital.Mobile.ToString();
+                }
+            }
             ViewAccount model = new ViewAccount()
             {
                 UserName = identityClaims.FindFirst("Username").Value,
                 Email = identityClaims.FindFirst("Email").Value,
-                FirstName = identityClaims.FindFirst("FirstName").Value,
-                LastName = identityClaims.FindFirst("LastName").Value,
+                FirstName = firstname, //identityClaims.FindFirst("FirstName").Value,
+                LastName = lastname, //identityClaims.FindFirst("LastName").Value,
                 ClientId = identityClaims.FindFirst("UserId").Value,
-                PhoneNo = identityClaims.FindFirst("PhoneNo").Value,
+                PhoneNo = phoneno.ToString(), //identityClaims.FindFirst("PhoneNo").Value,
                 JobType = identityClaims.FindFirst("JobType").Value,
             };
             return model;
@@ -170,6 +214,7 @@ namespace WebAPI.Controllers
             clientDetail.EmailId = httpRequest.Form["EmailId"] == null ? clientDetail.EmailId : httpRequest.Form["EmailId"];
             clientDetail.MaritalStatus = httpRequest.Form["MaritalStatus"]== null ? clientDetail.MaritalStatus : Convert.ToInt16(httpRequest.Form["MaritalStatus"]);
             clientDetail.DOB = httpRequest.Form["DOB"]== null ? clientDetail.DOB :httpRequest.Form["DOB"];
+            
             return Ok(_clientDetailRepo.Update(clientDetail));
         }
 
