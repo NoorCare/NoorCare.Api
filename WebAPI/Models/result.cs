@@ -65,7 +65,7 @@ namespace WebAPI.Models
         public List<TblHospitalServices> Services { get; set; }
 
         public int[] SpecializationIds { get; set; }
-        public List<Disease> Specialization { get; set; }
+        public List<TblHospitalSpecialties> Specialization { get; set; }
 
         public List<Doctors> Doctors { get; set; }
         public List<Secretary> Secretary { get; set; }
@@ -107,6 +107,9 @@ namespace WebAPI.Models
         public string aboutMe { get; set; }
         public string website { get; set; }
         public string Address { get; set; }
+        public string HospitalPicUrl { get; set; }
+        public string HospitalEmail { get; set; }
+        public string HospitalAddress { get; set; }
         public List<DoctorAvailableTime> DoctorAvilability { get; set; }
         public FilterDoctor FilterDoctor { get; set; }
         public List<Disease> Specialization { get; set; }

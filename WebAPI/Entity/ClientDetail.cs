@@ -45,6 +45,8 @@ public class PatientPrescription : IEntity<int>
 
     public string Prescription { get; set; }
 
+    public string Report { get; set; }
+
     public bool IsDeleted { get; set; }
     [MaxLength(50)]
     public string CreatedBy { get; set; }
@@ -54,5 +56,6 @@ public class PatientPrescription : IEntity<int>
     public string DateEntered { get; set; }
     [MaxLength(50)]
     public string DateModified { get; set; }
+    //public WebAPI.Models.Doctors Doctors { get; set; }
 }
 

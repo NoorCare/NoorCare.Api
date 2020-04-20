@@ -24,6 +24,15 @@ namespace WebAPI.Controllers
         IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
         IQuickHealthRepository _quickHealthRepository =
             RepositoryFactory.Create<IQuickHealthRepository>(ContextTypes.EntityFramework);
+        //IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+        IDoctorRepository _getDoctorList = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+        //IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+        IDoctorAvailableTimeRepository _doctorAvailabilityRepo = RepositoryFactory.Create<IDoctorAvailableTimeRepository>(ContextTypes.EntityFramework);
+        //IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
+        ITblHospitalServicesRepository _hospitalServicesRepository = RepositoryFactory.Create<ITblHospitalServicesRepository>(ContextTypes.EntityFramework);
+        ITblHospitalAmenitiesRepository _hospitalAmenitieRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
+        IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
+        //IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
 
         [Route("api/patient/GetAllPatient")]
         [HttpGet]
@@ -117,8 +126,14 @@ namespace WebAPI.Controllers
         public HttpResponseMessage getPrescription(string patientId)
         {
            List<PatientPrescription> lstPrescription = _prescriptionRepo.GetAll().Where(x=>x.PatientId== patientId).ToList<PatientPrescription>().OrderByDescending(x=>x.Id).ToList();
-
-            return Request.CreateResponse(HttpStatusCode.Accepted, lstPrescription);
+            List<PatientPrescription> lstPrescriptionList = new List<PatientPrescription>();
+            foreach (var item in lstPrescription)
+            {
+                //item.Doctors = getDoctorDetailByDoctorId(item.DoctorId);
+                //item.DateEntered = Convert.ToDateTime(item.DateEntered).ToString();
+                lstPrescriptionList.Add(item);
+            }
+            return Request.CreateResponse(HttpStatusCode.Accepted, lstPrescriptionList.OrderBy(x=>x.Id));
         }
 
         [Route("api/patient/SavePatientPrescription")]
@@ -129,6 +144,8 @@ namespace WebAPI.Controllers
             var _prescriptionCreated = _prescriptionRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
         }
+
+       
 
         [Route("api/patient/IsValidNoorCare/{patientId}")]
         [HttpGet]
@@ -163,13 +180,89 @@ namespace WebAPI.Controllers
                                            DoctorName = d.FirstName + " " + d.LastName,
                                            DoctorNCNumber = d.DoctorId,
                                            Prescription = p.Prescription,
+                                           Report = p.Report,
                                            PrescriptionDate = p.DateEntered,
                                            PrescriptionId = p.Id,
                                            Specialization = getSpecialization(d.Specialization, disease),
+                                           Doctors = getDoctorDetailByDoctorId(d.DoctorId)
                                        };
+
             return Request.CreateResponse(HttpStatusCode.Accepted, patientPrescriptions);
         }
 
+        public Doctors getDoctorDetailByDoctorId(string doctorid)
+        {
+            Doctors _doctor = new Doctors();
+            List<Feedback> feedbacks = new List<Feedback>();
+            var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            Doctor d = _doctorRepo.Find(x => x.DoctorId == doctorid).FirstOrDefault();
+            var feedback = _feedbackRepo.Find(x => x.PageId == doctorid);
+            var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
+            var hospitalAmenitie = _hospitalAmenitieRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
+            HospitalDetails hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == d.HospitalId).FirstOrDefault();
+            if (d != null)
+            {
+                _doctor = new Doctors
+                {
+                    DoctorId = d.DoctorId,
+                    FirstName = d.FirstName,
+                    LastName = d.LastName,
+                    Email = d.Email,
+                    PhoneNumber = d.PhoneNumber,
+                    AlternatePhoneNumber = d.AlternatePhoneNumber,
+                    Gender = d.Gender,
+                    Experience = d.Experience,
+                    FeeMoney = d.FeeMoney,
+                    Language = d.Language,
+                    AgeGroupGender = d.AgeGroupGender,
+                    Degree = d.Degree,
+                    AboutUs = d.AboutUs,
+                    HospitalName = hospitals.HospitalName,
+                    HospitalId = hospitals.HospitalId,
+                    HospitalEmail = hospitals.Email,
+                    HospitalAddress = hospitals.Address,
+                    HospitalPicUrl = $"{constant.baseUrl}/" + hospitals.ProfilePath,
+                    aboutMe = d.AboutUs,
+                    DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
+                    Specialization = getSpecialization(d.Specialization, disease),
+                    Amenities = getHospitalAmenities(hospitals.Amenities, hospitalAmenitie),
+                    Services = getHospitalService(hospitals.Services, hospitalService),
+                    Feedback = _feedbackRepo.Find(x => x.PageId == doctorid),
+                    Likes = _feedbackRepo.Find(x => x.PageId == doctorid && x.ILike == true).Count(),
+                    location = "",
+                    ImgUrl = $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg",
+                    website = hospitals.Website,
+                    Address = hospitals.Address
+                };
+
+
+            }
+            return _doctor;
+        }
+        private List<TblHospitalAmenities> getHospitalAmenities(string amenitieType, List<TblHospitalAmenities> hospitalAmenitie)
+        {
+            if (amenitieType == null)
+            {
+                return new List<TblHospitalAmenities>();
+            }
+            var serviceTypes = amenitieType.Split(',');
+            int[] myInts = Array.ConvertAll(serviceTypes, s => int.Parse(s));
+            var hospitalAmenitieList = hospitalAmenitie.Where(x => myInts.Contains(x.Id)).ToList();
+
+            return hospitalAmenitieList;
+        }
+        private List<TblHospitalServices> getHospitalService(string serviceType, List<TblHospitalServices> hospitalService)
+        {
+            if (serviceType == null)
+            {
+                return new List<TblHospitalServices>();
+            }
+            var serviceTypes = serviceType.Split(',');
+            int[] myInts = Array.ConvertAll(serviceTypes, s => int.Parse(s));
+            var hospitalServiceList = hospitalService.Where(x => myInts.Contains(x.Id)).ToList();
+
+            return hospitalServiceList;
+        }
         [Route("api/patient/getprescriptiondetail/{prescriptionId}")]
         [HttpGet]
         [AllowAnonymous]
@@ -206,6 +299,7 @@ namespace WebAPI.Controllers
                                            Temperature = medi?.Temprature ?? 0 ,
                                            Hight = medi?.Hight??0,
                                            Weight = medi?.Wight??0,
+                                           Report=p.Report,
                                            Cholesterol = medi?.Cholesterol ?? 0,
                                            Others = medi?.OtherDetails ?? "N/A",
                                            Sugar = medi?.Sugar ?? 0 ,
