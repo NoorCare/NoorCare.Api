@@ -184,7 +184,7 @@ namespace WebAPI.Controllers
                                            PrescriptionDate = p.DateEntered,
                                            PrescriptionId = p.Id,
                                            Specialization = getSpecialization(d.Specialization, disease),
-                                           Doctors = getDoctorDetailByDoctorId(d.DoctorId)
+                                           //Doctors = getDoctorDetailByDoctorId(d.DoctorId)
                                        };
 
             return Request.CreateResponse(HttpStatusCode.Accepted, patientPrescriptions);

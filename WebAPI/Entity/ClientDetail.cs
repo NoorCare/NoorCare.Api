@@ -29,6 +29,8 @@ public partial class ClientDetail : IEntity<int>
     public DateTime CreatedDate { get; set; }
     public int CountryCode { get; set; }
     public int PinCode { get; set; }
+
+    public string ImageUrl { get; set; }
 }
 
 [Serializable]

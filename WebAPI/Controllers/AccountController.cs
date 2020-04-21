@@ -81,15 +81,28 @@ namespace WebAPI.Controllers
             string firstname = "";
             string lastname = "";
             string phoneno = "";
+            string profilepic = "";
             var usertype = id.Split('-')[0];
+            
+            string fileName = id + ".Jpeg";
             if (usertype== "NCM"|| usertype == "NCF")
             {
                 var patient = this._clientDetailRepo.GetAll().Where(x=>x.ClientId== id).FirstOrDefault();
                 if (patient!=null)
                 {
+                    string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic"));
                     firstname = patient.FirstName;
                     lastname = patient.LastName;
                     phoneno =Convert.ToString(patient.MobileNo);
+                    
+                    foreach (var item in fileEntries)
+                    {
+                        if (fileName== Path.GetFileName(item))
+                        {
+                            profilepic = $"{constant.baseUrl}/ProfilePic/{fileName}";
+                        }
+                    }
+                    
                 }
             }
             else if (usertype == "NCD")
@@ -100,6 +113,16 @@ namespace WebAPI.Controllers
                     firstname = doctor.FirstName;
                     lastname = doctor.LastName;
                     phoneno = doctor.PhoneNumber;
+                    string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Doctor"));
+                    foreach (var item in fileEntries)
+                    {
+                        if (fileName == Path.GetFileName(item))
+                        {
+                            profilepic = $"{constant.baseUrl}/ProfilePic/Doctor/{fileName}";
+                        }
+                    }
+                    //profilepic = $"{constant.baseUrl}/ProfilePic/{doctor.PhotoPath}";
+
                 }
             }
             else if (usertype == "NCS")
@@ -110,6 +133,14 @@ namespace WebAPI.Controllers
                     firstname = secretary.FirstName;
                     lastname = secretary.LastName;
                     phoneno = secretary.PhoneNumber;
+                    string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Secretary"));
+                    foreach (var item in fileEntries)
+                    {
+                        if (fileName == Path.GetFileName(item))
+                        {
+                            profilepic = $"{constant.baseUrl}/ProfilePic/Secretary/{fileName}";
+                        }
+                    }
                 }
             }
             else
@@ -119,6 +150,15 @@ namespace WebAPI.Controllers
                 {
                     firstname = hospital.HospitalName;
                     phoneno = hospital.Mobile.ToString();
+                    string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Hospital"));
+                    foreach (var item in fileEntries)
+                    {
+                        if (fileName == Path.GetFileName(item))
+                        {
+                            profilepic = $"{constant.baseUrl}/ProfilePic/Hospital/{fileName}";
+                        }
+                    }
+                    //profilepic = $"{constant.baseUrl}/{hospital.ProfilePath}";
                 }
             }
             ViewAccount model = new ViewAccount()
@@ -130,6 +170,7 @@ namespace WebAPI.Controllers
                 ClientId = identityClaims.FindFirst("UserId").Value,
                 PhoneNo = phoneno.ToString(), //identityClaims.FindFirst("PhoneNo").Value,
                 JobType = identityClaims.FindFirst("JobType").Value,
+                ProfilePic= profilepic
             };
             return model;
         }
