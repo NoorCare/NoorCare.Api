@@ -354,7 +354,7 @@ namespace WebAPI.Controllers
                     else if (type == "0")
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId ));
+                 (countryId != "0" && x.Country == countryId  && x.IsDocumentApproved == 1));
                     }
                     else
                     {
@@ -371,7 +371,7 @@ namespace WebAPI.Controllers
                     }
                     else if (type == "0")
                     {
-                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId);
+                        hospitals = _hospitaldetailsRepo.Find(x => countryId != "0" && x.Country == countryId && x.IsDocumentApproved == 1);
                     }
                     else
                     {
