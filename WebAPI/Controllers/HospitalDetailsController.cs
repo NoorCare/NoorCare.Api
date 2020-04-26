@@ -29,6 +29,7 @@ namespace WebAPI.Controllers
         IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
         ISecretaryRepository _secretaryRepo = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
         IHospitalDocumentsRepository _hospitalDocumentsRepo = RepositoryFactory.Create<IHospitalDocumentsRepository>(ContextTypes.EntityFramework);
+        ITblHospitalSpecialtiesRepository _hospitalSpecialtiesRepo = RepositoryFactory.Create<ITblHospitalSpecialtiesRepository>(ContextTypes.EntityFramework);
 
         [Route("api/hospitaldetails/getall")]
         [HttpGet]
@@ -50,7 +51,7 @@ namespace WebAPI.Controllers
 
             var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
             var hospitalAmenitie = _hospitalAmenitieRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
-            var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            var disease = _hospitalSpecialtiesRepo.GetAll().OrderBy(x => x.HospitalSpecialties).ToList();
             Hospital _hospital = new Hospital();
             List<Hospital> _hospitals = new List<Hospital>();
 
@@ -85,7 +86,7 @@ namespace WebAPI.Controllers
                     Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
                     // ServicesIds = Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
                     Services = getHospitalService(h.Services, hospitalService),
-                    Specialization = getSpecialization(h.Specialization, disease),
+                    Specialization = getHospitalSpecialization(h.Specialization, disease),
                     Doctors = getDoctors(h.HospitalId),
                     Secretary = getSecretary(h.HospitalId),
                     Likes = feedback.Where(x => x.ILike == true).Count(),
@@ -131,7 +132,7 @@ namespace WebAPI.Controllers
 
             var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
             var hospitalAmenitie = _hospitalAmenitieRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
-            var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            var disease = _hospitalSpecialtiesRepo.GetAll().OrderBy(x => x.HospitalSpecialties).ToList();
             Hospital _hospital = new Hospital();
             List<Hospital> _hospitals = new List<Hospital>();
 
@@ -167,7 +168,7 @@ namespace WebAPI.Controllers
                     Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
                     // ServicesIds = Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
                     Services = getHospitalService(h.Services, hospitalService),
-                    Specialization = getSpecialization(h.Specialization, disease),
+                    Specialization = getHospitalSpecialization(h.Specialization, disease),
                     Doctors = getDoctors(h.HospitalId),
                     Secretary = getSecretary(h.HospitalId),
                     Likes = feedback.Where(x => x.ILike == true).Count(),
@@ -354,6 +355,20 @@ namespace WebAPI.Controllers
             }
         }
 
+        private List<TblHospitalSpecialties> getHospitalSpecialization(string diesiesType, List<TblHospitalSpecialties> diseases)
+        {
+            if (!string.IsNullOrEmpty(diesiesType))
+            {
+                var diesiesTypes = diesiesType.Split(',');
+                int[] myInts = Array.ConvertAll(diesiesTypes, s => int.Parse(s));
+                var diseasesList = diseases.Where(x => myInts.Contains(x.Id)).ToList();
+                return diseasesList;
+            }
+            else
+            {
+                return null;
+            }
+        }
         private List<TblHospitalServices> getHospitalService(string serviceType, List<TblHospitalServices> hospitalService)
         {
             if (!string.IsNullOrEmpty(serviceType))
@@ -480,10 +495,10 @@ namespace WebAPI.Controllers
                 var directoryFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "FrontView"));
                 var directoryCRFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "CRFrontView"));
                 var directoryLicenseFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "LicenseFrontView"));
-                string IdBackView = basicPath + "BackView" + httpRequest.Files["IdBackView"].FileName;
-                string IdFrontView = basicPath + "IdFrontView" + "/" + httpRequest.Files["IdFrontView"].FileName;
-                string CrFrontView = basicPath + "CrFrontView" + "/" + httpRequest.Files["CrFrontView"].FileName;
-                string LicenseFrontView = basicPath + "LicenseFrontView" + "/" + httpRequest.Files["LicenseFrontView"].FileName;
+                string IdBackView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/BackView/"+ httpRequest.Files["IdBackView"].FileName;
+                string IdFrontView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/IdFrontView/" + httpRequest.Files["IdFrontView"].FileName;
+                string CrFrontView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/CrFrontView/"+ httpRequest.Files["CrFrontView"].FileName;
+                string LicenseFrontView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName;
                 HospitalDocumentVerification hospitalDocuments = new HospitalDocumentVerification
                 {
                     HospitalId = hospitalId,

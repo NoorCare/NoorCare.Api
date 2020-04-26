@@ -211,7 +211,11 @@ namespace WebAPI.Services
             {
                 user.Id = creatId(user.JobType, model.NationalityId, user.Gender);
             }
-
+            var dsid = user.Id.Split('-')[0];
+            if (dsid == "NCD" || dsid == "NCS")
+            {
+                user.EmailConfirmed = true;
+            }
             return user;
         }
 

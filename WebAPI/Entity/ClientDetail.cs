@@ -29,6 +29,8 @@ public partial class ClientDetail : IEntity<int>
     public DateTime CreatedDate { get; set; }
     public int CountryCode { get; set; }
     public int PinCode { get; set; }
+
+    public string ImageUrl { get; set; }
 }
 
 [Serializable]
@@ -45,6 +47,8 @@ public class PatientPrescription : IEntity<int>
 
     public string Prescription { get; set; }
 
+    public string Report { get; set; }
+
     public bool IsDeleted { get; set; }
     [MaxLength(50)]
     public string CreatedBy { get; set; }
@@ -54,5 +58,6 @@ public class PatientPrescription : IEntity<int>
     public string DateEntered { get; set; }
     [MaxLength(50)]
     public string DateModified { get; set; }
+    //public WebAPI.Models.Doctors Doctors { get; set; }
 }
 
