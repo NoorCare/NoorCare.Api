@@ -79,6 +79,8 @@ namespace WebAPI.Models
         public string LastName { get; set; }
         public string PhoneNo { get; set; }
         public string JobType { get; set; }
+
+        public string ProfilePic { get; set; }
     }
 
     public class ChangePassword

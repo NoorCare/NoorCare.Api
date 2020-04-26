@@ -52,7 +52,7 @@ namespace WebAPI.Models
             modelBuilder.Entity<Secretary>().ToTable("Secretary");
             modelBuilder.Entity<Feedback>().ToTable("Feedback");
             modelBuilder.Entity<Appointment>().ToTable("Appointment");
-            modelBuilder.Entity<TblHospitalAmenities>().ToTable("NoorCare.TblHospitalAmenities");
+            modelBuilder.Entity<TblHospitalAmenities>().ToTable("TblHospitalAmenities");
             modelBuilder.Entity<TblHospitalServices>().ToTable("TblHospitalServices");
             modelBuilder.Entity<TblHospitalSpecialties>().ToTable("TblHospitalSpecialties");
             modelBuilder.Entity<DoctorAvailableTime>().ToTable("DoctorAvailableTime");

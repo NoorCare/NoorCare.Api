@@ -162,6 +162,7 @@ namespace WebAPI.Controllers
             _insuranceInformation.ClientId = ClientId;
             _insuranceInformation.CompanyName = insuranceInformation.CompanyName;
             _insuranceInformation.InsuraceNo = insuranceInformation.InsuraceNo;
+            _insuranceInformation.ExpiryDate = insuranceInformation.ExpiryDate;
             return Ok(_insuranceInformationRepository.Update(_insuranceInformation));
         }
 

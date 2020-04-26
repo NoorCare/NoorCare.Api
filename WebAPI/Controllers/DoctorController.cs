@@ -129,8 +129,9 @@ namespace WebAPI.Controllers
                 ApplicationUser user = _registration.UserAccount(obj, Convert.ToInt16(countryCode.CountryCodes));
                 IdentityResult result = manager.Create(user, password);
                 user.PasswordHash = password;
-
+                
                 obj.DoctorId = user.Id;
+                obj.EmailConfirmed = true;
                 IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
                 var _doctorCreated = _doctorRepo.Insert(obj);
 
@@ -266,6 +267,9 @@ namespace WebAPI.Controllers
                     AboutUs = d.AboutUs,
                     HospitalName = hospitals.HospitalName,
                     HospitalId = hospitals.HospitalId,
+                    HospitalEmail = hospitals.Email,
+                    HospitalAddress= hospitals.Address,
+                    HospitalPicUrl = $"{constant.baseUrl}/"+hospitals.ProfilePath,
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),

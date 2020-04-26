@@ -65,6 +65,7 @@ namespace WebAPI.Controllers
             _registration.sendRegistrationEmail(user);
             _registration.sendRegistrationMessage(user);
             obj.SecretaryId = user.Id;
+            obj.EmailConfirmed = true;
             var _sectiryCreated = _secretaryRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.SecretaryId);
         }
