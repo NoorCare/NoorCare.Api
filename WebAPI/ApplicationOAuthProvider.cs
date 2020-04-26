@@ -46,23 +46,27 @@ namespace WebAPI
             else
             {
                 if (user.JobType == 2) {
+                    _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
                     hospitalDetails = _hospitalDetailsRepository.Find(x => x.HospitalId.Trim() == user.Id.Trim()).FirstOrDefault();
                     jobType = hospitalDetails.jobType;
                     isEmailConfirmed = hospitalDetails.EmailConfirmed;
                 }
                 else  if (user.JobType == 1) {
+                    _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
                     clientDetailRepo = _clientDetailRepo.Find(x => x.ClientId.Trim() == user.Id.Trim()).FirstOrDefault();
                     jobType = clientDetailRepo.Jobtype;
                     isEmailConfirmed = clientDetailRepo.EmailConfirmed;
                 }
                 else if (user.JobType == 3)
                 {
+                    _doctorRepository = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
                     doctor = _doctorRepository.Find(x => x.DoctorId.Trim() == user.Id.Trim()).FirstOrDefault();
                     jobType = doctor.jobType;
                     isEmailConfirmed =true;
                 }
                 else if (user.JobType == 4)
                 {
+                    _secretaryRepository = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
                     secretary = _secretaryRepository.Find(x => x.SecretaryId.Trim() == user.Id.Trim()).FirstOrDefault();
                     jobType = secretary.jobType;
                     isEmailConfirmed = true;
