@@ -339,7 +339,9 @@ namespace WebAPI.Controllers
             }
             else if (searchType == "2")
             {
-                var doctor = _doctorRepo.GetAll().Where(x => x.FirstName == searchtext).FirstOrDefault();
+                var docId = searchName.Split('(')[1].Split(')')[0];
+                searchtext = docId;
+                var doctor = _doctorRepo.GetAll().Where(x => x.DoctorId == docId).FirstOrDefault();
                 if (doctor != null)
                 {
                     hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == doctor.HospitalId).ToList();
@@ -550,7 +552,8 @@ namespace WebAPI.Controllers
 
             if (searchtext != "" && searchtext != "null")
             {
-                doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId && x.FirstName.Contains(searchtext));
+
+                doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId && x.DoctorId==searchtext);
 
             }
             else
