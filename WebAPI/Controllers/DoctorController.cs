@@ -39,8 +39,6 @@ namespace WebAPI.Controllers
         // GET: api/Doctor
         public HttpResponseMessage GetAll()
         {
-            //int b = 2; int c = 0;
-            //int a = (int)(b / c);
             var result = _doctorRepo.GetAll().ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
@@ -132,7 +130,8 @@ namespace WebAPI.Controllers
                 
                 obj.DoctorId = user.Id;
                 obj.EmailConfirmed = true;
-                IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+                _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+
                 var _doctorCreated = _doctorRepo.Insert(obj);
 
                 try
@@ -335,7 +334,7 @@ namespace WebAPI.Controllers
 
             if (searchType == "1")
             {
-                hospitals = _hospitaldetailsRepo.Find(x => x.HospitalName.Contains(searchtext));
+                hospitals = _hospitaldetailsRepo.Find(x => x.HospitalName.Contains(searchtext) && x.EmailConfirmed == true);
             }
             else if (searchType == "2")
             {
@@ -344,7 +343,7 @@ namespace WebAPI.Controllers
                 var doctor = _doctorRepo.GetAll().Where(x => x.DoctorId == docId).FirstOrDefault();
                 if (doctor != null)
                 {
-                    hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == doctor.HospitalId).ToList();
+                    hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == doctor.HospitalId && x.EmailConfirmed == true).ToList();
                 };
             }
             else
