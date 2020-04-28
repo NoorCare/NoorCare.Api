@@ -127,7 +127,7 @@ namespace WebAPI.Controllers
                 ApplicationUser user = _registration.UserAccount(obj, Convert.ToInt16(countryCode.CountryCodes));
                 IdentityResult result = manager.Create(user, password);
                 user.PasswordHash = password;
-                
+
                 obj.DoctorId = user.Id;
                 obj.EmailConfirmed = true;
                 _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
@@ -267,8 +267,8 @@ namespace WebAPI.Controllers
                     HospitalName = hospitals.HospitalName,
                     HospitalId = hospitals.HospitalId,
                     HospitalEmail = hospitals.Email,
-                    HospitalAddress= hospitals.Address,
-                    HospitalPicUrl = $"{constant.baseUrl}/"+hospitals.ProfilePath,
+                    HospitalAddress = hospitals.Address,
+                    HospitalPicUrl = $"{constant.baseUrl}/" + hospitals.ProfilePath,
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),
@@ -359,7 +359,7 @@ namespace WebAPI.Controllers
                     else if (type == "0")
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId  && x.IsDocumentApproved == 1));
+                 (countryId != "0" && x.Country == countryId && x.IsDocumentApproved == 1));
                     }
                     else
                     {
@@ -394,37 +394,36 @@ namespace WebAPI.Controllers
                 {
                     var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
 
-                    _hospital = new Hospital
-                    {
-                        HospitalId = h.HospitalId,
-                        HospitalName = h.HospitalName,
-                        Mobile = h.Mobile,
-                        AlternateNumber = h.AlternateNumber,
-                        Website = h.Website,
-                        EstablishYear = h.EstablishYear,
-                        NumberofBed = h.NumberofBed,
-                        NumberofAmbulance = h.NumberofAmbulance,
-                        PaymentType = h.PaymentType,
-                        Emergency = h.Emergency,
-                        FacilityId = h.FacilityId,
-                        Address = h.Address,
-                        Street = h.Street,
-                        Country = GetCountryName(Convert.ToInt16(h.Country)),
-                        City = GetCityName(Convert.ToInt16(h.City)),
-                        PostCode = h.PostCode,
-                        Landmark = h.Landmark,
-                        InsuranceCompanies = h.InsuranceCompanies ?? "",
-                        AmenitiesIds = h.Amenities == null ? a : Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
-                        Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),
-                        ServicesIds = h.Services == null ? a : Array.ConvertAll(h.Services.Split(','), s => int.Parse(s)),
-                        Services = getHospitalService(h.Services, hospitalService),
-                        Doctors = type == "0" ? getDoctors(h.HospitalId, diseaseType, searchtext, ref _filterDoctor) : null,
-                        Likes = feedback.Where(x => x.ILike == true).Count(),
-                        Feedbacks = feedback.Count(),
-                        BookingUrl = $"booking/{h.HospitalId}",
-                        ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                        ImgUrl = h.ProfilePath == null ? $"{constant.baseUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg" : $"{constant.baseUrl}/{h.ProfilePath}",
-                    };
+                    _hospital = new Hospital();
+
+                    _hospital.HospitalId = h.HospitalId;
+                    _hospital.HospitalName = h.HospitalName;
+                    _hospital.Mobile = h.Mobile;
+                    _hospital.AlternateNumber = h.AlternateNumber;
+                    _hospital.Website = h.Website;
+                    _hospital.EstablishYear = h.EstablishYear;
+                    _hospital.NumberofBed = h.NumberofBed;
+                    _hospital.NumberofAmbulance = h.NumberofAmbulance;
+                    _hospital.PaymentType = h.PaymentType;
+                    _hospital.Emergency = h.Emergency;
+                    _hospital.FacilityId = h.FacilityId;
+                    _hospital.Address = h.Address;
+                    _hospital.Street = h.Street;
+                    _hospital.Country = GetCountryName(Convert.ToInt16(h.Country));
+                    _hospital.City = GetCityName(Convert.ToInt16(h.City));
+                    _hospital.PostCode = h.PostCode;
+                    _hospital.Landmark = h.Landmark;
+                    _hospital.InsuranceCompanies = h.InsuranceCompanies ?? "";
+                    _hospital.AmenitiesIds = h.Amenities == null ? a : Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s));
+                    _hospital.Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie);
+                    _hospital.ServicesIds = h.Services == null ? a : Array.ConvertAll(h.Services.Split(','), s => int.Parse(s));
+                    _hospital.Services = getHospitalService(h.Services, hospitalService);
+                    _hospital.Doctors = type == "0" ? getDoctors(h.HospitalId, diseaseType, searchtext, ref _filterDoctor) : null;
+                    _hospital.Likes = feedback.Where(x => x.ILike == true).Count();
+                    _hospital.Feedbacks = feedback.Count();
+                    _hospital.BookingUrl = $"booking/{h.HospitalId}";
+                    _hospital.ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}";
+                    _hospital.ImgUrl = h.ProfilePath == null ? $"{constant.baseUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg" : $"{constant.baseUrl}/{h.ProfilePath}";
                     _hospitalServices.AddRange(_hospital.Services);
                     _hospitalAmenities.AddRange(_hospital.Amenities);
                     _hospitals.Add(_hospital);
@@ -482,14 +481,14 @@ namespace WebAPI.Controllers
             {
                 foreach (var item in _hospitals)
                 {
-                    if (item.Doctors.Count>0)
+                    if (item.Doctors.Count > 0)
                     {
                         isDoctors = true;
                     }
                 }
                 if (isDoctors == false)
                 {
-                     _hospitals=new List<Hospital>();
+                    _hospitals = new List<Hospital>();
                 }
             }
             return _hospitals;
@@ -548,54 +547,63 @@ namespace WebAPI.Controllers
             Doctors _doctor = new Doctors();
             List<Doctors> _doctors = new List<Doctors>();
             List<Doctor> doctors = new List<Doctor>();
-
-            if (searchtext != "" && searchtext != "null")
+            try
             {
 
-                doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId && x.DoctorId==searchtext);
 
-            }
-            else
-            {
-               var  doctorsList = _doctorRepo.Find(x => x.HospitalId == HospitalId );
-                doctors = doctorsList.Where(x =>x.Specialization.Contains(diesiesTypes[0])).ToList<Doctor>();
-            }
-            var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
-            foreach (var d in doctors ?? new List<Doctor>())
-            {
-                var feedback = _feedbackRepo.Find(x => x.PageId == d.DoctorId);
-                _doctor = new Doctors
+                if (searchtext != "" && searchtext != "null")
                 {
-                    DoctorId = d.DoctorId,
-                    FirstName = d.FirstName,
-                    LastName = d.LastName,
-                    Email = d.Email,
-                    PhoneNumber = d.PhoneNumber,
-                    AlternatePhoneNumber = d.AlternatePhoneNumber,
-                    Gender = d.Gender,
-                    Experience = d.Experience,
-                    FeeMoney = d.FeeMoney,
-                    Language = d.Language,
-                    AgeGroupGender = d.AgeGroupGender,
-                    Degree = d.Degree,
-                    SpecializationIds = Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
-                    Specialization = getSpecialization(d.Specialization, disease),
-                    AboutUs = d.AboutUs,
-                    Likes = feedback.Where(x => x.ILike == true).Count(),
-                    Feedbacks = feedback.Count(),
-                    BookingUrl = $"booking/{d.DoctorId}",
-                    ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                    ImgUrl = d.PhotoPath == null ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.baseUrl}/{d.PhotoPath}"
-                };
 
-                // Add Filter Value
-                _priceses.Add(d.FeeMoney);
-                _disease.AddRange(_doctor.Specialization);
-                _doctors.Add(_doctor);
+                    doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId && x.DoctorId == searchtext);
+
+                }
+                else
+                {
+                    var doctorsList = _doctorRepo.Find(x => x.HospitalId == HospitalId);
+                    doctors = doctorsList.Where(x => x.Specialization.Contains(diesiesTypes[0])).ToList<Doctor>();
+                }
+                var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+                foreach (var d in doctors ?? new List<Doctor>())
+                {
+                    var feedback = _feedbackRepo.Find(x => x.PageId == d.DoctorId);
+                    _doctor = new Doctors
+                    {
+                        DoctorId = d.DoctorId,
+                        FirstName = d.FirstName,
+                        LastName = d.LastName,
+                        Email = d.Email,
+                        PhoneNumber = d.PhoneNumber,
+                        AlternatePhoneNumber = d.AlternatePhoneNumber,
+                        Gender = d.Gender,
+                        Experience = d.Experience,
+                        FeeMoney = d.FeeMoney,
+                        Language = d.Language,
+                        AgeGroupGender = d.AgeGroupGender,
+                        Degree = d.Degree,
+                        SpecializationIds = Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
+                        Specialization = getSpecialization(d.Specialization, disease),
+                        AboutUs = d.AboutUs,
+                        Likes = feedback.Where(x => x.ILike == true).Count(),
+                        Feedbacks = feedback.Count(),
+                        BookingUrl = $"booking/{d.DoctorId}",
+                        ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
+                        ImgUrl = d.PhotoPath == null ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.baseUrl}/{d.PhotoPath}"
+                    };
+
+                    // Add Filter Value
+                    _priceses.Add(d.FeeMoney);
+                    _disease.AddRange(_doctor.Specialization);
+                    _doctors.Add(_doctor);
+                }
+                _filterDoctor.Price = _priceses;
+                _filterDoctor.Specialization = _disease.Select(x => new FilterData { Id = x.Id, Name = x.DiseaseType }).Distinct().ToList();
+                return _doctors;
             }
-            _filterDoctor.Price = _priceses;
-            _filterDoctor.Specialization = _disease.Select(x => new FilterData { Id = x.Id, Name = x.DiseaseType }).Distinct().ToList();
-            return _doctors;
+            catch (Exception)
+            {
+
+                return _doctors;
+            }
         }
         private string GetCountryName(Int32 id)
         {
