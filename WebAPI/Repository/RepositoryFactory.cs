@@ -134,6 +134,14 @@ namespace NoorCare.Repository
                     {
                         return new HospitalDocumentsRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IMailBoxRepository))
+                    {
+                        return new MailBoxRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(IMailBoxAttachmentsRepository))
+                    {
+                        return new MailBoxAttachmentsRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;

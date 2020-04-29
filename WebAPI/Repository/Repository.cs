@@ -36,6 +36,10 @@ namespace NoorCare.Repository
 
     public class HospitalDocumentsRepository : EFRepositoryBase<ApplicationDbContext, HospitalDocumentVerification, int>, IHospitalDocumentsRepository { }
 
+    public class MailBoxRepository : EFRepositoryBase<ApplicationDbContext, MailBox, int>, IMailBoxRepository { }
+
+    public class MailBoxAttachmentsRepository : EFRepositoryBase<ApplicationDbContext, MailBoxAttachments, int>, IMailBoxAttachmentsRepository { }
+
 }
 
 
