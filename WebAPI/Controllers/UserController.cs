@@ -163,8 +163,9 @@ namespace WebAPI.Controllers
                 ClientId = ClientId,
                 CompanyName = insuranceInformation.CompanyName,
                 InsuraceNo = insuranceInformation.InsuraceNo,
-                ExpiryDate= insuranceInformation.ExpiryDate
-
+                ExpiryDate = insuranceInformation.ExpiryDate,
+                IsActive = true
+                
             };
             return Ok(_insuranceInformationRepository.Insert(_insuranceInformation));
         }
