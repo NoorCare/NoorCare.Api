@@ -138,7 +138,21 @@ namespace WebAPI.Controllers
             InsuranceInformation _insuranceContact = _insuranceInformationRepository.Find(x => x.ClientId == ClientId).FirstOrDefault();
             return Ok(_insuranceContact);
         }
+        [HttpGet]
+        [Route("api/user/get/insurancedetail/{insuranceId}")]
+        public IHttpActionResult getinsurancedetail(int insuranceId)
+        {
+            InsuranceInformation _insuranceContact = _insuranceInformationRepository.Find(x => x.Id == insuranceId).FirstOrDefault();
+            return Ok(_insuranceContact);
+        }
 
+        [HttpGet]
+        [Route("api/user/getall/insuranceinfo/{ClientId}")]
+        public IHttpActionResult getallInsurancenformationt(string ClientId)
+        {
+            List<InsuranceInformation> _insuranceContact = _insuranceInformationRepository.Find(x => x.ClientId == ClientId).ToList();
+            return Ok(_insuranceContact);
+        }
         [HttpPost]
         [Route("api/user/add/insuranceinfo/{ClientId}")]
         [AllowAnonymous]
@@ -148,23 +162,31 @@ namespace WebAPI.Controllers
             {
                 ClientId = ClientId,
                 CompanyName = insuranceInformation.CompanyName,
-                InsuraceNo = insuranceInformation.InsuraceNo
+                InsuraceNo = insuranceInformation.InsuraceNo,
+                ExpiryDate= insuranceInformation.ExpiryDate
+
             };
             return Ok(_insuranceInformationRepository.Insert(_insuranceInformation));
         }
 
         [HttpPost]
-        [Route("api/user/update/insuranceinfo/{ClientId}")]
-        public IHttpActionResult UpdateInsurancenformationt(string ClientId, InsuranceInformation insuranceInformation)
+        [Route("api/user/update/insuranceinfo")]
+        public IHttpActionResult UpdateInsurancenformationt(InsuranceInformation insuranceInformation)
         {
-            InsuranceInformation _insuranceInformation = _insuranceInformationRepository.Find(x => x.ClientId == ClientId).FirstOrDefault();
-
-            _insuranceInformation.ClientId = ClientId;
+            InsuranceInformation _insuranceInformation = _insuranceInformationRepository.Find(x => x.Id == insuranceInformation.Id).FirstOrDefault();
             _insuranceInformation.CompanyName = insuranceInformation.CompanyName;
             _insuranceInformation.InsuraceNo = insuranceInformation.InsuraceNo;
             _insuranceInformation.ExpiryDate = insuranceInformation.ExpiryDate;
             return Ok(_insuranceInformationRepository.Update(_insuranceInformation));
         }
 
+        [HttpPost]
+        [Route("api/user/delete/insuranceinfo")]
+        public IHttpActionResult DeleteInsurancenformationt(InsuranceInformation insuranceInformation)
+        {
+            InsuranceInformation _insuranceInformation = _insuranceInformationRepository.Find(x => x.Id == insuranceInformation.Id).FirstOrDefault();
+            _insuranceInformation.IsActive = insuranceInformation.IsActive;
+            return Ok(_insuranceInformationRepository.Update(_insuranceInformation));
+        }
     }
 }
