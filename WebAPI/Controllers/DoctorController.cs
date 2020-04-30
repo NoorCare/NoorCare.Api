@@ -636,7 +636,7 @@ namespace WebAPI.Controllers
             var docList = from d in doctors
                           select new
                           {
-                              Name = d.FirstName + " " + d.FirstName + "_" + d.Degree,
+                              Name = d.FirstName + " " + d.LastName + "_" + d.Degree,
                               DoctorId = d.DoctorId
                           };
             return Request.CreateResponse(HttpStatusCode.Accepted, docList.ToList().Distinct());

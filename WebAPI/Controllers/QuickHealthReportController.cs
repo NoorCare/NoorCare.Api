@@ -40,7 +40,7 @@ namespace WebAPI.Controllers
         public IHttpActionResult getDoctorQuickHealth(string ClientId)
         {
             QuickHeathDetails _quickHeathDetails = _quickHealthRepository.Find(x => x.ClientId == ClientId).LastOrDefault();
-            
+
             return Ok(_quickHeathDetails);
         }
         [HttpPost]
@@ -52,7 +52,7 @@ namespace WebAPI.Controllers
             var httpRequest = HttpContext.Current.Request;
             string clientId = httpRequest.Form["ClientId"];
             string diseaseType = httpRequest.Form["diseaseType"];
-             var postedFile = httpRequest.Files["Image"];
+            var postedFile = httpRequest.Files["Image"];
             string PostedFileName = string.Empty;
             string PostedFileExt = string.Empty;
             ////File Information Save in Database
@@ -68,30 +68,41 @@ namespace WebAPI.Controllers
                 Cholesterol = httpRequest.Form["Cholesterol"],
                 Other = httpRequest.Form["Other"],
             };
-             var objId = _quickHealthRepository.Insert(quickHeathDetails);
-            try
-            {
-                if (postedFile != null)
-                {
-                    FileInfo fi = new FileInfo(postedFile.FileName.Replace(" ", "_"));
-                    if (fi != null)
-                    {
-                        PostedFileName = fi.Name;
-                        PostedFileExt = fi.Extension;
-                    }
-                    imageName = objId + PostedFileExt;
-                    string year = DateTime.Now.Year.ToString();
-                    string month = DateTime.Now.Month.ToString();
-                    var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + httpRequest.Form["ClientId"] + "/" + diseaseType + "/" + year + "/" + month);
-                    Directory.CreateDirectory(filePath);
-                    filePath = filePath + "/" + imageName;
-                    postedFile.SaveAs(filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-            return Ok(objId);
+            MedicalInformation medicalInformation = new MedicalInformation();
+            medicalInformation.clientId = httpRequest.Form["ClientId"];
+            medicalInformation.Pressure = Convert.ToInt16(httpRequest.Form["Pressure"]);
+            medicalInformation.Heartbeats = Convert.ToInt16(httpRequest.Form["Heartbeats"]);
+            medicalInformation.Temprature = Convert.ToInt16(httpRequest.Form["Temprature"]);
+            medicalInformation.Sugar = Convert.ToInt16(httpRequest.Form["Sugar"]);
+            medicalInformation.Hight = Convert.ToInt16(httpRequest.Form["Length"]);
+            medicalInformation.Wight = Convert.ToInt16(httpRequest.Form["Weight"]);
+                medicalInformation.Cholesterol = Convert.ToInt16(httpRequest.Form["Cholesterol"]);
+            medicalInformation.OtherDetails = httpRequest.Form["Other"];
+            int mId=this._medicalInformationRepository.Insert(medicalInformation);
+            var objId = _quickHealthRepository.Insert(quickHeathDetails);
+            //try
+            //{
+            //    if (postedFile != null)
+            //    {
+            //        FileInfo fi = new FileInfo(postedFile.FileName.Replace(" ", "_"));
+            //        if (fi != null)
+            //        {
+            //            PostedFileName = fi.Name;
+            //            PostedFileExt = fi.Extension;
+            //        }
+            //        imageName = objId + PostedFileExt;
+            //        string year = DateTime.Now.Year.ToString();
+            //        string month = DateTime.Now.Month.ToString();
+            //        var filePath = HttpContext.Current.Server.MapPath("~/ClientDocument/" + httpRequest.Form["ClientId"] + "/" + diseaseType + "/" + year + "/" + month);
+            //        Directory.CreateDirectory(filePath);
+            //        filePath = filePath + "/" + imageName;
+            //        postedFile.SaveAs(filePath);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //}
+            return Ok(mId);
         }
 
         [HttpPost]
@@ -99,8 +110,8 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult AddQuickHeathDetails(string ClientId, QuickHeathDetails _quickHeathDetails)
         {
-            
-            if (_quickHeathDetails.Pressure==null)
+
+            if (_quickHeathDetails.Pressure == null)
             {
                 _quickHeathDetails.Pressure = "0";
             }
@@ -125,20 +136,19 @@ namespace WebAPI.Controllers
                 Cholesterol = _quickHeathDetails.Cholesterol,
                 Other = _quickHeathDetails.Other,
             };
-           // _quickHealthRepository.Insert(quickHeathDetails);
+            // _quickHealthRepository.Insert(quickHeathDetails);
+
+            MedicalInformation medicalInformation = new MedicalInformation();
+            medicalInformation.clientId = ClientId;
+            medicalInformation.Pressure = _quickHeathDetails.Pressure != null ? Convert.ToInt32(_quickHeathDetails.Pressure) : 0;
+            medicalInformation.Heartbeats = _quickHeathDetails.Heartbeats != null ? Convert.ToInt32(_quickHeathDetails.Heartbeats) : 0;
+            medicalInformation.Temprature = _quickHeathDetails.Temprature != null ? Convert.ToInt32(_quickHeathDetails.Temprature) : 0;
+            medicalInformation.Sugar = _quickHeathDetails.Sugar != null ? Convert.ToInt32(_quickHeathDetails.Sugar) : 0;
+            medicalInformation.Hight = _quickHeathDetails.Length != null ? Convert.ToInt32(_quickHeathDetails.Length) : 0;
+            medicalInformation.Wight = _quickHeathDetails.Weight != null ? Convert.ToInt32(_quickHeathDetails.Weight) : 0;
+            medicalInformation.Cholesterol = _quickHeathDetails.Cholesterol != null ? Convert.ToInt32(_quickHeathDetails.Cholesterol) : 0;
+            medicalInformation.OtherDetails = _quickHeathDetails.Other;
             
-            MedicalInformation medicalInformation = new MedicalInformation
-            {
-                clientId = ClientId,
-                Pressure = _quickHeathDetails.Pressure != null ? Convert.ToInt32(_quickHeathDetails.Pressure) : 0,
-                Heartbeats = _quickHeathDetails.Heartbeats != null ? Convert.ToInt32(_quickHeathDetails.Heartbeats) : 0,
-                Temprature = _quickHeathDetails.Temprature != null ? Convert.ToInt32(_quickHeathDetails.Temprature) : 0,
-                Sugar = _quickHeathDetails.Sugar != null ? Convert.ToInt32(_quickHeathDetails.Sugar) : 0,
-                Hight = _quickHeathDetails.Length != null ? Convert.ToInt32(_quickHeathDetails.Length) : 0,
-                Wight = _quickHeathDetails.Weight != null ? Convert.ToInt32(_quickHeathDetails.Weight) : 0,
-                Cholesterol = _quickHeathDetails.Cholesterol != null ? Convert.ToInt32(_quickHeathDetails.Cholesterol) : 0,
-                OtherDetails = _quickHeathDetails.Other,
-            };
             var objId = _medicalInformationRepository.Insert(medicalInformation);
             return Ok(_quickHealthRepository.Insert(quickHeathDetails));
 

@@ -139,6 +139,19 @@ namespace WebAPI.Controllers
             return Ok(_insuranceContact);
         }
         [HttpGet]
+        [Route("api/user/get/appointmentinsuranceinfo/{appointmentid}")]
+        public IHttpActionResult getAppointmentInsurancenformationt(string appointmentid)
+        {
+            IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
+            var appointment = _appointmentRepo.Find(x => x.AppointmentId == appointmentid).FirstOrDefault();
+            InsuranceInformation _insuranceContact = new InsuranceInformation();
+            if (appointment!=null)
+            {
+                _insuranceContact = _insuranceInformationRepository.Find(x => x.Id == appointment.InsuranceId).FirstOrDefault();
+            }
+            return Ok(_insuranceContact);
+        }
+        [HttpGet]
         [Route("api/user/get/insurancedetail/{insuranceId}")]
         public IHttpActionResult getinsurancedetail(int insuranceId)
         {

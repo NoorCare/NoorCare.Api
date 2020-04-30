@@ -79,7 +79,8 @@ namespace WebAPI.Controllers
 
                     DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "1" && a.AppointmentDate == searchDate).ToList().Count();
                 }
-                foreach (var item in _appointmentRepo.Find(a => a.HospitalId == HospitalId).ToList())
+                var appointmentList = _appointmentRepo.Find(a => a.HospitalId == HospitalId).ToList();
+                foreach (var item in appointmentList)
                 {
                     DashboardAppointmentListModel DashboardAppointmentListModel = new DashboardAppointmentListModel();
 
@@ -109,7 +110,7 @@ namespace WebAPI.Controllers
                     var doctorDetails = _doctorRepo.Find(d => d.DoctorId == item.DoctorId).FirstOrDefault();
                     if (doctorDetails != null)
                     {
-                        DashboardAppointmentListModel.DoctorName = doctorDetails.FirstName;
+                        DashboardAppointmentListModel.DoctorName = doctorDetails.FirstName +" "+doctorDetails.LastName;
                     }
                     lstDashboardAppointmentListModel.Add(DashboardAppointmentListModel);
                 }
