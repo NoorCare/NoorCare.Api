@@ -22,6 +22,7 @@ namespace WebAPI.Controllers
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+        IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         [Route("api/appointment/getall")]
         [HttpGet]
         [AllowAnonymous]
@@ -183,11 +184,32 @@ namespace WebAPI.Controllers
             }
             var result = _appointmentRepo.Update(obj);
             //Email sent on status change
-            string html = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
-            //_emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
+            int timeid = Convert.ToInt16(obj.TimingId);
+            var clientDetail = _clientDetailRepo.Find(x => x.ClientId == obj.ClientId).FirstOrDefault();
+            var doctorDetail = _doctorRepo.Find(x => x.DoctorId == obj.DoctorId).FirstOrDefault();
+            var time = _timeMasterRepo.Find(x => x.Id == timeid).FirstOrDefault();//clientDetail.EmailId
+            string html = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/appointmenttemplat.html"));
+            _emailSender.email_send_booked_reject_appointment(clientDetail.EmailId, 
+                clientDetail.FirstName + " " + clientDetail.LastName == null ? "" : clientDetail.LastName, 
+                appointment.Status, 
+                doctorDetail.FirstName+" "+ doctorDetail.LastName, 
+                appointment.AppointmentDate,
+                clientDetail.ClientId, time.TimeFrom+"-"+ time.TimeTo);
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
+
+        public void sendRegistrationEmail(Appointment model)
+        {
+            try
+            {
+                //_emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
         [Route("api/appointment/delete/{appointmentid}")]
         [HttpDelete]
         [AllowAnonymous]

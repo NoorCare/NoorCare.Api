@@ -144,8 +144,8 @@ namespace WebAPI.Controllers
             {
                 var doctors = from d in _doctorRepo.GetAll()
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
-                              where d.FirstName.ToLower().Contains(autosearchtext.ToLower())
-                              select new { Name = d.FirstName + "( " + d.DoctorId + "-" + h.HospitalName + ")" };
+                              where d.FirstName.ToLower().Contains(autosearchtext.ToLower() )|| d.LastName.ToLower().Contains(autosearchtext.ToLower())
+                              select new { Name = d.FirstName +" "+d.LastName + "(" + d.DoctorId + ") " + h.HospitalName };
                 List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in doctors)
                 {

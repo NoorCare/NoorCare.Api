@@ -1,6 +1,7 @@
 ﻿using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,8 +11,6 @@ using System.Web.Http;
 using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
-using System.Web.Configuration;
-using System.Configuration;
 
 namespace WebAPI.Controllers
 {
@@ -133,7 +132,7 @@ namespace WebAPI.Controllers
             //var postedFile = httpRequest.Files["Image"];
             string PostedFileName = string.Empty;
             string PostedFileExt = string.Empty;
-            string fileName = "";
+           // string fileName = "";
             //for (int i = 0; i < httpRequest.Files.Count; i++)
             //{
             //    fileName = fileName + "," + httpRequest.Files[i].FileName;
@@ -201,7 +200,6 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult uploadfacilityimges()
         {
-
             string imageName = null;
             var httpRequest = HttpContext.Current.Request;
             string facilityImageType = httpRequest.Form["FacilityImageType"];
