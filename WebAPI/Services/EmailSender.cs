@@ -72,7 +72,8 @@ namespace AngularJSAuthentication.API.Services
             //SMS
             try
             {
-                string uri = "http://api.smscountry.com/SMSCwebservice_bulk.aspx?User=NoorCare&passwd=NoorCare@123&mobilenumber=" + sCustomerPhoneNum + "&message=" + sMessage + "&sid=Noorcare&mtype=N&DR=Y";
+                string smsPassword = ConfigurationManager.AppSettings.Get("SMSPassword");
+                string uri = "http://api.smscountry.com/SMSCwebservice_bulk.aspx?User=NoorCare&passwd="+ smsPassword +"&mobilenumber=" + sCustomerPhoneNum + "&message=" + sMessage + "&sid=Noorcare&mtype=N&DR=Y";
                 sendSMS(uri);
                 //  SendSMS(SMSUserId, SMSPassword, PhoneNumber, customMessage + DateTime.Now, "N", "Y", SMSSid);
             }
@@ -174,6 +175,37 @@ namespace AngularJSAuthentication.API.Services
         }
 
         #endregion
-
+        #region Booked Or Reject Appointment
+        public void email_send_booked_reject_appointment(string mailTo = "NoorCareNew@gmail.com", string clientName = "AppointMent", string status="Booked",string doctorname="test",string appointmentdate="test",
+           string ClientId = "Test",string time="")
+        {
+            string message = "";
+            if (status.ToLower()=="booked")
+            {
+                message = @"Your appointment has been booked with Dr." + doctorname + "<br/>" +
+                    "on " + appointmentdate +" " +time;
+                    
+            }
+            else
+            {
+                message = @"Your appointment has been rejected.";
+            }
+            string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/appointmenttemplat.html"));
+            MailMessage mail = new MailMessage();
+            SmtpClient SmtpServer = new SmtpClient(SMTP);
+            mail.From = new MailAddress(From);
+            mail.To.Add(mailTo);
+            mail.IsBodyHtml = true;
+            mail.Subject = "Appointment "+ status;
+            mail.Body = html.Replace("CLIENTNAME", clientName + " (" + ClientId + ")").Replace("AppointmentMessage", message);
+            mail.Body = getLogoUrl(mail.Body);
+            SmtpServer.Port = 587;
+            SmtpServer.EnableSsl = true;
+            SmtpServer.UseDefaultCredentials = false;
+            SmtpServer.Credentials = new NetworkCredential(From, SMTPPassword);
+            SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
+            SmtpServer.Send(mail);
+        }
+        #endregion
     }
 }
