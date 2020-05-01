@@ -72,7 +72,8 @@ namespace AngularJSAuthentication.API.Services
             //SMS
             try
             {
-                string uri = "http://api.smscountry.com/SMSCwebservice_bulk.aspx?User=NoorCare&passwd=NoorCare@123&mobilenumber=" + sCustomerPhoneNum + "&message=" + sMessage + "&sid=Noorcare&mtype=N&DR=Y";
+                string smsPassword = ConfigurationManager.AppSettings.Get("SMSPassword");
+                string uri = "http://api.smscountry.com/SMSCwebservice_bulk.aspx?User=NoorCare&passwd="+ smsPassword +"&mobilenumber=" + sCustomerPhoneNum + "&message=" + sMessage + "&sid=Noorcare&mtype=N&DR=Y";
                 sendSMS(uri);
                 //  SendSMS(SMSUserId, SMSPassword, PhoneNumber, customMessage + DateTime.Now, "N", "Y", SMSSid);
             }

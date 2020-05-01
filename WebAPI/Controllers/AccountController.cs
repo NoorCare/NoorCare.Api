@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
 
         EmailSender _emailSender = new EmailSender();
         Registration _registration = new Registration();
-        string tokenCode = "";
+        //string tokenCode = "";
 
         [Route("api/account/register")]
         [HttpPost]
@@ -59,9 +59,17 @@ namespace WebAPI.Controllers
                 {
                     _registration.AddHospitalDetail(user.Id, model, _hospitalDetailsRepository);
                 }
-
-                _registration.sendRegistrationEmail(user);
-                _registration.sendRegistrationMessage(user);
+                try
+                {
+                    _registration.sendRegistrationEmail(user);
+                    _registration.sendRegistrationMessage(user);
+                }
+                catch (Exception ex)
+                {
+                    return "Registration has been done & getting error in sending email & message" +
+                                            ex.Message;
+                }
+                
             }
             
             return "Registration has been done, And Account activation link" +
