@@ -29,6 +29,7 @@ namespace WebAPI.Controllers
 				 x => x.Category == Type
 				 && (newsBlogs.UserId == null || newsBlogs.UserId.Contains(x.UserId))
 				 && (newsBlogs.NewsCategory == null || x.NewsCategory.ToUpper().Contains(newsBlogs.NewsCategory.ToUpper()))
+                 && (x.IsDeleted == false)
 				 && (newsBlogs.NewsTitle == null || x.NewsTitle.ToUpper().Contains(newsBlogs.NewsTitle.ToUpper()))).OrderByDescending(x => x.Id).Take(15).ToList(); 
 			return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
