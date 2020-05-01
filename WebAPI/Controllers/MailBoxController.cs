@@ -20,16 +20,48 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Route("api/mailbox/{ClientId}/{lableName?}")]
+        [AllowAnonymous]
         // GET: MailBox
-        public HttpResponseMessage getMailBox(string ClientId, string lableName = null)
+        public IHttpActionResult getMailBox(string ClientId, string lableName = null)
         {
             //IHospitalDetailsRepository _hospitalRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
-            List<MailBox> mailBox = _mailbocRepository.Find(
-                x => x.EmailTo == ClientId &&
-                lableName != null ? x.LabelName == lableName : x.LabelName == x.LabelName);
+            List<MailBox> mailBox = new List<MailBox>();
+            if (lableName != null && (lableName == "Send"|| lableName=="Draft"))
+            {
+                mailBox = _mailbocRepository.Find(
+                   x => x.EmailFrom == ClientId &&
+                    lableName == "Draft" ? x.LabelName == lableName : x.LabelName != "Draft");
 
 
-            return Request.CreateResponse(HttpStatusCode.Accepted, mailBox);
+            }
+            else
+            {
+                mailBox = _mailbocRepository.Find(
+                    x => x.EmailTo == ClientId
+                    &&
+                    lableName != null ? x.LabelName == lableName : x.EmailTo == ClientId
+                    );
+
+            }
+            return Ok(mailBox);
+        }
+
+        [HttpPost]
+        [Route("api/mailbox/add/{ClientId}")]
+        [AllowAnonymous]
+        // GET: MailBox
+        public IHttpActionResult addMailBox(string ClientId, MailBox mailBox)
+        {
+            return Ok(_mailbocRepository.Insert(mailBox));
+        }
+
+        [HttpPost]
+        [Route("api/mailbox/update/{ClientId}")]
+        [AllowAnonymous]
+        // GET: MailBox
+        public IHttpActionResult updateMailBox(string ClientId, MailBox mailBox)
+        {
+            return Ok(_mailbocRepository.Update(mailBox));
         }
     }
 }

@@ -13,7 +13,7 @@ namespace WebAPI.Entity
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey("MailBox")]
+        //[ForeignKey("MailBox")]
         public string MailBoxId { get; set; }
 
         [MaxLength(100)]
@@ -25,8 +25,8 @@ namespace WebAPI.Entity
         [MaxLength(250)]
         public string FilePath { get; set; }
 
-        [MaxLength(100)]
-        public DateTime? ExpireDate { get; set; }
+        //[MaxLength(100)]
+        //public DateTime? ExpireDate { get; set; }
 
         [MaxLength(10)]
         public string Status { get; set; }
