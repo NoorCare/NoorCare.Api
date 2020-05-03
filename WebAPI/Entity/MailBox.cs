@@ -19,6 +19,9 @@ namespace WebAPI.Entity
         [MaxLength(300)]
         public string EmailTo { get; set; }
 
+        [MaxLength(250)]
+        public string AllRecipients { get; set; }
+
         [MaxLength(1000)]
         public string EmailBody { get; set; }
 

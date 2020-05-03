@@ -1,4 +1,5 @@
-﻿using NoorCare.Repository;
+﻿using Newtonsoft.Json.Linq;
+using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +19,19 @@ namespace WebAPI.Controllers
         IMailBoxAttachmentsRepository _mailboxAttachmentsRepository =
             RepositoryFactory.Create<IMailBoxAttachmentsRepository>(ContextTypes.EntityFramework);
 
+
         [HttpGet]
-        [Route("api/mailbox/{ClientId}/{lableName?}")]
+        [Route("api/mailboxAttachments/get/{MailBoxId}")]
+        public IHttpActionResult getMailBoxAttachments(int MailBoxId)
+        {
+            List<MailBoxAttachments> mailBoxAttachments = _mailboxAttachmentsRepository.Find(x => x.MailBoxId == MailBoxId).ToList();
+            return Ok(mailBoxAttachments);
+        }
+
+
+
+        [HttpGet]
+        [Route("api/mailbox/get/{ClientId}/{lableName?}")]
         [AllowAnonymous]
         // GET: MailBox
         public IHttpActionResult getMailBox(string ClientId, string lableName = null)
@@ -43,25 +55,113 @@ namespace WebAPI.Controllers
                     );
 
             }
+
             return Ok(mailBox);
         }
 
         [HttpPost]
-        [Route("api/mailbox/add/{ClientId}")]
+        [Route("api/mailbox/add")]
         [AllowAnonymous]
         // GET: MailBox
-        public IHttpActionResult addMailBox(string ClientId, MailBox mailBox)
+        public IHttpActionResult addMailBox([FromBody]JObject data)
         {
-            return Ok(_mailbocRepository.Insert(mailBox));
+            try
+            {
+                MailBox mailBox = data["MailBox"].ToObject<MailBox>();
+                MailBoxAttachments[] mailBoxAttachments = data["MailBoxAttachments"].ToObject<MailBoxAttachments[]>();
+                int mailBoxid = 0;
+                if (mailBox != null)
+                {
+                    string all_recp = mailBox.AllRecipients;
+                    string[] emailTo = all_recp.Split(';');
+                    foreach (var item in emailTo)
+                    {
+                        mailBox.EmailTo = item;
+                        mailBoxid = _mailbocRepository.Insert(mailBox);
+                        if (mailBoxAttachments != null)
+                        {
+                            foreach (MailBoxAttachments element in mailBoxAttachments)
+                            {
+                                element.MailBoxId = mailBoxid;
+                                _mailboxAttachmentsRepository.Insert(element);
+                            }
+                        }
+                    }
+
+                }
+                return Ok(mailBoxid);
+
+            }catch(Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+            //return Ok(mailBoxid);
         }
 
         [HttpPost]
-        [Route("api/mailbox/update/{ClientId}")]
+        [Route("api/mailbox/update")]
         [AllowAnonymous]
         // GET: MailBox
-        public IHttpActionResult updateMailBox(string ClientId, MailBox mailBox)
+        public IHttpActionResult updateMailBox([FromBody]JObject data)
         {
-            return Ok(_mailbocRepository.Update(mailBox));
+            try
+            {
+                MailBox mailBox = data["MailBox"].ToObject<MailBox>();
+                MailBoxAttachments[] mailBoxAttachments = data["MailBoxAttachments"].ToObject<MailBoxAttachments[]>();
+                Boolean status=false;
+                if (mailBox != null)
+                {
+                    status = _mailbocRepository.Update(mailBox);
+                    int mailBoxid = mailBox.Id;
+                    if (mailBoxAttachments != null)
+                    {
+                        foreach (MailBoxAttachments element in mailBoxAttachments)
+                        {
+                            if(element.MailBoxId==0)
+                            {
+                                element.MailBoxId = mailBoxid;
+                                _mailboxAttachmentsRepository.Insert(element);
+                            }
+                            else
+                            {
+                                _mailboxAttachmentsRepository.Update(element);
+                            }
+                            
+                        }
+                    }
+                }
+                return Ok(status);
+
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
+
+        [Route("api/mailbox/delete")]
+        [HttpPost]
+        [AllowAnonymous]
+        public IHttpActionResult deleteMailBox(int[] Id)
+        {
+            if (Id != null)
+            {
+                foreach (int mailBoxId in Id)
+                {
+                    MailBox _mailBoxDtls = _mailbocRepository.Find(x => x.Id == mailBoxId).FirstOrDefault();
+                    if (_mailBoxDtls != null)
+                    {
+                        _mailBoxDtls.EmailStatus = "Deleted";
+                        var result = _mailbocRepository.Update(_mailBoxDtls);
+                        return Ok(result);
+                    }
+                }
+               
+            }
+
+            return Ok();
+        }
+
+        
     }
 }

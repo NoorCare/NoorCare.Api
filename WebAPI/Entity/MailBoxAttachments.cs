@@ -14,7 +14,7 @@ namespace WebAPI.Entity
         public int Id { get; set; }
 
         //[ForeignKey("MailBox")]
-        public string MailBoxId { get; set; }
+        public int MailBoxId { get; set; }
 
         [MaxLength(100)]
         public string FileType { get; set; }
