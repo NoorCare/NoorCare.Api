@@ -48,5 +48,7 @@ namespace WebAPI.Entity
         public string ModifiedBy { get; set; }
         public string DateEntered { get; set; }
         public string DateModified { get; set; }
+        public int? InsuranceId { get; set; }
+        
     }
 }

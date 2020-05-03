@@ -103,6 +103,7 @@ namespace WebAPI.Entity
         public string CompanyName { get; set; }
         public int InsuraceNo { get; set; }
         public string ExpiryDate { get; set; }
+        public bool IsActive { get; set; }
     }
 
     [Serializable]
