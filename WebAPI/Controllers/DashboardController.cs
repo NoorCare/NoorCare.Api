@@ -5,6 +5,7 @@ using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -73,11 +74,21 @@ namespace WebAPI.Controllers
 
                     DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "Booked").ToList().Count();
 
-                    DashboardTypeModel.CancelAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "2").ToList().Count();
+                    DashboardTypeModel.CancelAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "Rejected").ToList().Count();
 
                     DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "0").ToList().Count();
-
-                    DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.Status == "1" && a.AppointmentDate == searchDate).ToList().Count();
+                    var appointment = _appointmentRepo.Find(a => a.HospitalId == HospitalId);
+                    int count = 0;
+                    foreach (var item in appointment)
+                    {
+                        var apdate = item.AppointmentDate;
+                        var tdate = System.DateTime.Today.ToString("yyyy-MM-dd");
+                        if (apdate== tdate)
+                        {
+                            count++;
+                        }
+                    }
+                    DashboardTypeModel.TodayAppointment = count;
                 }
                 var appointmentList = _appointmentRepo.Find(a => a.HospitalId == HospitalId).ToList();
                 foreach (var item in appointmentList)

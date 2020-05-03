@@ -177,7 +177,7 @@ namespace WebAPI.Controllers
                 obj.Status = appointment.Status;
                 obj.Comment = appointment.Comment;
                 obj.DoctorId = appointment.DoctorId;
-                obj.DateModified = DateTime.Now.ToString(); ;
+                obj.DateModified = DateTime.Now.ToString();
                 obj.AppointmentDate = appointment.AppointmentDate;
                 obj.TimingId = appointment.TimingId;
 
