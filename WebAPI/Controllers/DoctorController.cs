@@ -127,11 +127,11 @@ namespace WebAPI.Controllers
                 ApplicationUser user = _registration.UserAccount(obj, Convert.ToInt16(countryCode.CountryCodes));
                 IdentityResult result = manager.Create(user, password);
                 user.PasswordHash = password;
-
+                
                 obj.DoctorId = user.Id;
                 obj.EmailConfirmed = true;
-                _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
-
+                IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+ 
                 var _doctorCreated = _doctorRepo.Insert(obj);
 
                 try
@@ -359,7 +359,8 @@ namespace WebAPI.Controllers
                     else if (type == "0")
                     {
                         hospitals = _hospitaldetailsRepo.Find(x => (cityId != "0" && x.City == cityId) &&
-                 (countryId != "0" && x.Country == countryId && x.IsDocumentApproved == 1));
+                    (countryId != "0" && x.Country == countryId  && x.IsDocumentApproved == 1));
+
                     }
                     else
                     {
