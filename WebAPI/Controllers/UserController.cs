@@ -96,7 +96,9 @@ namespace WebAPI.Controllers
                 Disability = medicalInformation.Disability,
                 Smoke = medicalInformation.Smoke,
                 Drink = medicalInformation.Drink,
-                OtherDetails = medicalInformation.OtherDetails
+                OtherDetails = medicalInformation.OtherDetails,
+                CreatedBy = medicalInformation.CreatedBy,
+                CreatedDate = DateTime.Now
             };
             return Ok(_medicalInformationRepository.Insert(_medicalInformation));
         }
@@ -118,6 +120,8 @@ namespace WebAPI.Controllers
             mInfo.Smoke = medicalInformation.Smoke;
             mInfo.Drink = medicalInformation.Drink;
             mInfo.OtherDetails = medicalInformation.OtherDetails;
+            mInfo.ModifiedBy = medicalInformation.ModifiedBy;
+            mInfo.ModifiedDate = DateTime.Now;
             return Ok(_medicalInformationRepository.Update(mInfo));
         }
 

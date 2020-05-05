@@ -59,26 +59,27 @@ namespace WebAPI.Controllers
         }
         public string GetAge(string dateOfbirth)
         {
-            if (dateOfbirth == null)
+            try
             {
-                return "N/A";
+                if (dateOfbirth == null)
+                {
+                    return "N/A";
+                }
+                DateTime dateOfBirth = (Convert.ToDateTime(dateOfbirth));
+                var today = DateTime.Today;
+                var a = (today.Year * 100 + today.Month) * 100 + today.Day;
+                var b = (dateOfBirth.Year * 100 + dateOfBirth.Month) * 100 + dateOfBirth.Day;
+
+                return ((a - b) / 10000).ToString();
             }
-            DateTime dateOfBirth = (Convert.ToDateTime(dateOfbirth));
-            var today = DateTime.Today;
-            var a = (today.Year * 100 + today.Month) * 100 + today.Day;
-            var b = (dateOfBirth.Year * 100 + dateOfBirth.Month) * 100 + dateOfBirth.Day;
+            catch (Exception ex)
+            {
 
-            return ((a - b) / 10000).ToString();
+                return "0";
+            }
+            
         }
-        //private static int CalculateAge(DateTime dateOfBirth)
-        //{
-        //    int age = 0;
-        //    age = DateTime.Now.Year - dateOfBirth.Year;
-        //    if (DateTime.Now.DayOfYear < dateOfBirth.DayOfYear)
-        //        age = age - 1;
-
-        //    return age;
-        //}
+        
         [Route("api/appointment/getUpcommingAppointment/{ClientId}")]
         [HttpGet]
         [AllowAnonymous]
