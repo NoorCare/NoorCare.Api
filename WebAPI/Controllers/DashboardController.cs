@@ -122,6 +122,7 @@ namespace WebAPI.Controllers
                     if (doctorDetails != null)
                     {
                         DashboardAppointmentListModel.DoctorName = doctorDetails.FirstName +" "+doctorDetails.LastName;
+                        DashboardAppointmentListModel.DoctorId = doctorDetails.DoctorId;
                     }
                     lstDashboardAppointmentListModel.Add(DashboardAppointmentListModel);
                 }
