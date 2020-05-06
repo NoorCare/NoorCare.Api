@@ -40,6 +40,9 @@ namespace NoorCare.Repository
 
     public class MailBoxAttachmentsRepository : EFRepositoryBase<ApplicationDbContext, MailBoxAttachments, int>, IMailBoxAttachmentsRepository { }
 
+    public class QuickUploadAssignRepository : EFRepositoryBase<ApplicationDbContext, QuickUploadAssign, int>, IQuickUploadAssignRepository { }
+    //
+
 }
 
 

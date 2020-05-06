@@ -168,6 +168,21 @@ namespace WebAPI.Entity
         public string DateModified { get; set; }
     }
 
-    
-   
+    [Serializable]
+    [Table("QuickUploadAssign")]
+    public class QuickUploadAssign : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public int QuickUploadId { get; set; }
+        public string AssignId { get; set; }
+        public string AssignBy { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime? AssignDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+    }
+
+
+
 }

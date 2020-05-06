@@ -72,11 +72,8 @@ namespace WebAPI.Controllers
                 int mailBoxid = 0;
                 if (mailBox != null)
                 {
-                    string all_recp = mailBox.AllRecipients;
-                    string[] emailTo = all_recp.Split(';');
-                    foreach (var item in emailTo)
+                    if (mailBox.LabelName == "Draft")
                     {
-                        mailBox.EmailTo = item;
                         mailBoxid = _mailbocRepository.Insert(mailBox);
                         if (mailBoxAttachments != null)
                         {
@@ -87,6 +84,25 @@ namespace WebAPI.Controllers
                             }
                         }
                     }
+                    else
+                    {
+                        string all_recp = mailBox.AllRecipients;
+                        string[] emailTo = all_recp.Split(';');
+                        foreach (var item in emailTo)
+                        {
+                            mailBox.EmailTo = item;
+                            mailBoxid = _mailbocRepository.Insert(mailBox);
+                            if (mailBoxAttachments != null)
+                            {
+                                foreach (MailBoxAttachments element in mailBoxAttachments)
+                                {
+                                    element.MailBoxId = mailBoxid;
+                                    _mailboxAttachmentsRepository.Insert(element);
+                                }
+                            }
+                        }
+                    }
+                   
 
                 }
                 return Ok(mailBoxid);

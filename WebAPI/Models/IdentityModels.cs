@@ -66,6 +66,7 @@ namespace WebAPI.Models
 
             modelBuilder.Entity<MailBox>().ToTable("MailBox");
             modelBuilder.Entity<MailBoxAttachments>().ToTable("MailBoxAttachments");
+            modelBuilder.Entity<QuickUploadAssign>().ToTable("QuickUploadAssign");
 
 
         }

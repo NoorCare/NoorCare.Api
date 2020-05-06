@@ -142,6 +142,12 @@ namespace NoorCare.Repository
                     {
                         return new MailBoxAttachmentsRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IQuickUploadAssignRepository))
+                    {
+                        return new QuickUploadAssignRepository() as TRepository;
+                    }
+
+                    //QuickUploadAssign
                     return null;
                 default:
                     return null;

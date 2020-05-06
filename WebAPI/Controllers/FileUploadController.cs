@@ -20,6 +20,7 @@ namespace WebAPI.Controllers
         IQuickUploadRepository _quickUploadRepo = RepositoryFactory.Create<IQuickUploadRepository>(ContextTypes.EntityFramework);
         IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
         IFacilityImagesRepository _facelityImagesRepo = RepositoryFactory.Create<IFacilityImagesRepository>(ContextTypes.EntityFramework);
+        IQuickUploadAssignRepository _QuickUploadAssignRepo= RepositoryFactory.Create<IQuickUploadAssignRepository>(ContextTypes.EntityFramework);
 
         [HttpPost]
         [Route("api/document/{clientId}/{diseaseId}")]
@@ -313,6 +314,39 @@ namespace WebAPI.Controllers
             var imageCount = _facelityImagesRepo.Find(x => x.FacilityNoorCareNumber == facilitynoorcarenumber && x.FacilityImageType == type).ToList().Count;
             return imageCount;
         }
+
+
+
+        #region Quick Upload Assign
+
+        [HttpPost]
+        [Route("api/document/assign")]
+        [AllowAnonymous]
+        public IHttpActionResult AssignDocs(QuickUploadAssign[] data)
+        {
+            try
+            {
+                int id = 0;
+                if (data != null)
+                {
+                    foreach (QuickUploadAssign element in data)
+                    {
+                        id= _QuickUploadAssignRepo.Insert(element);
+                    }
+                }
+                return Ok(id);
+
+            }
+            catch (Exception ex)
+            {
+                return Ok("Dharmendra");
+                //return InternalServerError(ex);
+            }
+            //return Ok(mailBoxid);
+        }
+
+        #endregion
+
         #region GetDisease
 
         [Route("api/GetUploadedDocInfo/{clientId}")]
@@ -368,6 +402,8 @@ namespace WebAPI.Controllers
                         {
                             var fileName = new FileName();
                             fileName.DocName = file.FilePath;
+                            fileName.HospitalId = file.HospitalId;
+                            fileName.Id = file.Id;
                             //baseURL/ClientDocument/ClientId/DesiseType/Year/Month/Files.jpg
                             fileName.DocUrl = host + "/ClientDocument/" + clientId + "/" + desiesTypeResult.DiseaseType + "/" + it.AddedYear
                                 + "/" + mo.AddedMonth + "/" + file.FilePath;
