@@ -35,7 +35,7 @@ namespace NoorCare.Repository
     public class FacilityImagesRepository : EFRepositoryBase<ApplicationDbContext, FacilityImages, int>, IFacilityImagesRepository { }
 
     public class HospitalDocumentsRepository : EFRepositoryBase<ApplicationDbContext, HospitalDocumentVerification, int>, IHospitalDocumentsRepository { }
-
+    public class EmailNotificationsRepository : EFRepositoryBase<ApplicationDbContext, EmailNotifications, int>, IEmailNotificationsRepository { }
 }
 
 
