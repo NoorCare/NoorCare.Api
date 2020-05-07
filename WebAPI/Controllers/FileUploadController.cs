@@ -331,7 +331,14 @@ namespace WebAPI.Controllers
                 {
                     foreach (QuickUploadAssign element in data)
                     {
-                        id= _QuickUploadAssignRepo.Insert(element);
+                        string assignId = element.AssignId;
+                        int quickUploadId = element.QuickUploadId;
+                        int count = _QuickUploadAssignRepo.Find(x => x.AssignId == assignId && x.QuickUploadId== quickUploadId).Count;
+                        if (count <= 0)
+                        {
+                            id = _QuickUploadAssignRepo.Insert(element);
+                        }
+                        
                     }
                 }
                 return Ok(id);
@@ -354,10 +361,43 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetUploadedDocInfo(string clientId)
         {
+            IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+
             var desiesTypeResultList = new List<DesiesTypeResult>();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
             string host = ConfigurationManager.AppSettings.Get("ImageBaseUrl");//HttpContext.Current.Request.Url.Host;
             var result = _quickUploadRepo.Find(x => x.ClientId == clientId);
+
+            int count = _doctorRepo.Find(doc => doc.DoctorId == clientId).Count;
+            if (count > 0)
+            {
+                var quickUp = _quickUploadRepo.GetAll().ToList();
+                var quickUpAssign = _QuickUploadAssignRepo.GetAll().ToList();
+
+                var appointDetail = (from a in quickUp
+                                    join t in quickUpAssign on a.Id equals t.QuickUploadId
+                                    where t.AssignId == clientId && t.IsActive == true
+                                    select a).ToList();
+                result = appointDetail;
+            }
+           
+
+
+            //            var robotDogs = result
+            //.Join(
+            //_QuickUploadAssignRepo,
+            //d => d.Id,
+            //f => f.AssignId,
+            //(d, f) => d)
+            //.ToList();
+
+            //var robotDogs = (from d in _QuickUploadAssignRepo.GetAll().
+            //                 join f in _QuickUploadAssignRepo
+            //                 on d.Id equals f.RobotFactoryId
+            //                 where f.Location == "Texas"
+            //                 select d).ToList();
+
+            //result.Union(doctorAssign);
             var list = result.ToList();
             var data = list.GroupBy(item => item.DesiesType)
                .Select(group => new { diseaseType = group.Key, Items = group.ToList() })
