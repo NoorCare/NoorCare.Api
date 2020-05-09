@@ -159,17 +159,18 @@ namespace WebAPI.Controllers
             DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "Booked").ToList().Count();
             DashboardTypeModel.CancelAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "Cancel").ToList().Count();
             var apDate = _appointmentRepo.Find(a => a.DoctorId == pageId ).ToList();
-           int appointMentCount = 0;
+           int TodayAppointmentCount = 0;
             foreach (var apt in apDate)
             {
                 var dbDate = Convert.ToDateTime(apt.AppointmentDate);
                 if (dbDate== DateTime.Today)
                 {
-                    appointMentCount = appointMentCount + 1;
+                    TodayAppointmentCount = TodayAppointmentCount + 1;
                 }
             }
-            DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.AppointmentDate.ToString() == DateTime.Today.ToString("yyyy-MM-dd")).ToList().Count();
-            DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "0").ToList().Count();
+            DashboardTypeModel.TodayAppointment = TodayAppointmentCount;
+           // DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.AppointmentDate.ToString() == DateTime.Today.ToString("yyyy-MM-dd")).ToList().Count();
+           DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "0").ToList().Count();
 
             foreach (var item in _appointmentRepo.Find(a => a.HospitalId == HospitalId).ToList())
             {

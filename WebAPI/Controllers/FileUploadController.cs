@@ -19,6 +19,7 @@ namespace WebAPI.Controllers
         IQuickUploadRepository _quickUploadRepo = RepositoryFactory.Create<IQuickUploadRepository>(ContextTypes.EntityFramework);
         IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
         IFacilityImagesRepository _facelityImagesRepo = RepositoryFactory.Create<IFacilityImagesRepository>(ContextTypes.EntityFramework);
+        IQuickUploadAssignRepository _QuickUploadAssignRepo = RepositoryFactory.Create<IQuickUploadAssignRepository>(ContextTypes.EntityFramework);
 
         [HttpPost]
         [Route("api/document/{clientId}/{diseaseId}")]
@@ -132,7 +133,7 @@ namespace WebAPI.Controllers
             //var postedFile = httpRequest.Files["Image"];
             string PostedFileName = string.Empty;
             string PostedFileExt = string.Empty;
-           // string fileName = "";
+            // string fileName = "";
             //for (int i = 0; i < httpRequest.Files.Count; i++)
             //{
             //    fileName = fileName + "," + httpRequest.Files[i].FileName;
@@ -311,6 +312,44 @@ namespace WebAPI.Controllers
             var imageCount = _facelityImagesRepo.Find(x => x.FacilityNoorCareNumber == facilitynoorcarenumber && x.FacilityImageType == type).ToList().Count;
             return imageCount;
         }
+
+        #region Quick Upload Assign
+
+        [HttpPost]
+        [Route("api/document/assign")]
+        [AllowAnonymous]
+        public IHttpActionResult AssignDocs(QuickUploadAssign[] data)
+        {
+            try
+            {
+                int id = 0;
+                if (data != null)
+                {
+                    foreach (QuickUploadAssign element in data)
+                    {
+                        string assignId = element.AssignId;
+                        int quickUploadId = element.QuickUploadId;
+                        int count = _QuickUploadAssignRepo.Find(x => x.AssignId == assignId && x.QuickUploadId == quickUploadId).Count;
+                        if (count <= 0)
+                        {
+                            id = _QuickUploadAssignRepo.Insert(element);
+                        }
+
+                    }
+                }
+                return Ok(id);
+
+            }
+            catch (Exception ex)
+            {
+                return Ok("Dharmendra");
+                //return InternalServerError(ex);
+            }
+            //return Ok(mailBoxid);
+        }
+
+        #endregion
+
         #region GetDisease
 
         [Route("api/GetUploadedDocInfo/{clientId}")]
@@ -318,21 +357,38 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetUploadedDocInfo(string clientId)
         {
+           // IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+
             var desiesTypeResultList = new List<DesiesTypeResult>();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
             string host = ConfigurationManager.AppSettings.Get("ImageBaseUrl");//HttpContext.Current.Request.Url.Host;
             var result = _quickUploadRepo.Find(x => x.ClientId == clientId);
+
+            //int count = _doctorRepo.Find(doc => doc.DoctorId == clientId).Count;
+            //if (count > 0)
+            //{
+            //    var quickUp = _quickUploadRepo.GetAll().ToList();
+            //    var quickUpAssign = _QuickUploadAssignRepo.GetAll().ToList();
+
+            //    var appointDetail = (from a in quickUp
+            //                         join t in quickUpAssign on a.Id equals t.QuickUploadId
+            //                         where t.AssignId == clientId && t.IsActive == true
+            //                         select a).ToList();
+            //    result = appointDetail;
+            //}
+
+
             var list = result.ToList();
             var data = list.GroupBy(item => item.DesiesType)
-               .Select(group => new { diseaseType = group.Key, Items = group.ToList() })
-               .ToList();
+            .Select(group => new { diseaseType = group.Key, Items = group.ToList() })
+            .ToList();
 
             foreach (var x in data)
             {
                 var desiesTypeResult = new DesiesTypeResult();
                 var listYear = x.Items.Select(xx => xx).ToList().GroupBy(p => p.AddedYear).
-                    Select(group => new { AddedYear = group.Key, Items = group.ToList() })
-               .ToList();
+                Select(group => new { AddedYear = group.Key, Items = group.ToList() })
+                .ToList();
                 desiesTypeResult.Years = new List<int?>();
                 if (x.diseaseType != 0)
                 {
@@ -349,7 +405,7 @@ namespace WebAPI.Controllers
 
                     var listMonth = it.Items.Select(xxp => xxp).ToList().GroupBy(ppp => ppp.AddedMonth).
                     Select(group => new { AddedMonth = group.Key, Items = group.ToList() })
-                  .ToList();
+                    .ToList();
                     yearList.Month = new List<int?>();
                     yearList.MonthList = new List<MonthList>();
                     foreach (var mo in listMonth)
@@ -366,9 +422,93 @@ namespace WebAPI.Controllers
                         {
                             var fileName = new FileName();
                             fileName.DocName = file.FilePath;
+                            fileName.HospitalId = file.HospitalId;
+                            fileName.Id = file.Id;
                             //baseURL/ClientDocument/ClientId/DesiseType/Year/Month/Files.jpg
                             fileName.DocUrl = host + "/ClientDocument/" + clientId + "/" + desiesTypeResult.DiseaseType + "/" + it.AddedYear
-                                + "/" + mo.AddedMonth + "/" + file.FilePath;
+                            + "/" + mo.AddedMonth + "/" + file.FilePath;
+                            monthList.FileList.Add(fileName);
+                        }
+                    }
+
+                    desiesTypeResult.YearList.Add(yearList);
+                }
+
+                desiesTypeResultList.Add(desiesTypeResult);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.Accepted, desiesTypeResultList);
+        }
+
+
+        [Route("api/GetUploadedDocInfo/{clientId}/{doctorId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetUploadedDocInfo(string clientId, string doctorId)
+        {
+            var desiesTypeResultList = new List<DesiesTypeResult>();
+            var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            string host = ConfigurationManager.AppSettings.Get("ImageBaseUrl");//HttpContext.Current.Request.Url.Host;
+
+            var quickUp = _quickUploadRepo.GetAll().ToList();
+            var quickUpAssign = _QuickUploadAssignRepo.GetAll().ToList();
+
+            var appointDetail = (from a in quickUp
+                                 join t in quickUpAssign on a.Id equals t.QuickUploadId
+                                 where t.AssignId == doctorId && t.AssignBy == clientId && t.IsActive == true
+                                 select a).ToList();
+            var result = appointDetail;
+
+
+            var list = result.ToList();
+            var data = list.GroupBy(item => item.DesiesType)
+            .Select(group => new { diseaseType = group.Key, Items = group.ToList() })
+            .ToList();
+
+            foreach (var x in data)
+            {
+                var desiesTypeResult = new DesiesTypeResult();
+                var listYear = x.Items.Select(xx => xx).ToList().GroupBy(p => p.AddedYear).
+                Select(group => new { AddedYear = group.Key, Items = group.ToList() })
+                .ToList();
+                desiesTypeResult.Years = new List<int?>();
+                if (x.diseaseType != 0)
+                {
+                    desiesTypeResult.DiseaseType = x.diseaseType;
+                    desiesTypeResult.DesiesName = disease.Where(c => c.Id == x.diseaseType).FirstOrDefault().DiseaseType;
+                }
+                desiesTypeResult.YearList = new List<YearList>();
+                foreach (var it in listYear)
+                {
+
+                    desiesTypeResult.Years.Add(it.AddedYear);
+                    var yearList = new YearList();
+                    yearList.Year = it.AddedYear;
+
+                    var listMonth = it.Items.Select(xxp => xxp).ToList().GroupBy(ppp => ppp.AddedMonth).
+                    Select(group => new { AddedMonth = group.Key, Items = group.ToList() })
+                    .ToList();
+                    yearList.Month = new List<int?>();
+                    yearList.MonthList = new List<MonthList>();
+                    foreach (var mo in listMonth)
+                    {
+                        yearList.Month.Add(mo.AddedMonth);
+                        var monthList = new MonthList();
+                        monthList.Month = mo.AddedMonth;
+
+                        yearList.MonthList.Add(monthList);
+                        //MonthList
+                        // To get Files details
+                        monthList.FileList = new List<FileName>();
+                        foreach (var file in mo.Items)
+                        {
+                            var fileName = new FileName();
+                            fileName.DocName = file.FilePath;
+                            fileName.HospitalId = file.HospitalId;
+                            fileName.Id = file.Id;
+                            //baseURL/ClientDocument/ClientId/DesiseType/Year/Month/Files.jpg
+                            fileName.DocUrl = host + "/ClientDocument/" + clientId + "/" + desiesTypeResult.DiseaseType + "/" + it.AddedYear
+                            + "/" + mo.AddedMonth + "/" + file.FilePath;
                             monthList.FileList.Add(fileName);
                         }
                     }
@@ -382,6 +522,8 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, desiesTypeResultList);
         }
         #endregion
+
+
 
     }
 }
