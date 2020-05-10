@@ -34,9 +34,7 @@ namespace WebAPI.Models
             //AspNetUserLogins -> UserLogin
             modelBuilder.Entity<IdentityUserLogin>().ToTable("UserLogin");
             modelBuilder.Entity<ClientDetail>().ToTable("ClientDetail");
-            modelBuilder.Entity<PatientPrescription>().ToTable("PatientPrescription");
-            
-
+            modelBuilder.Entity<PatientPrescription>().ToTable("PatientPrescription"); 
             modelBuilder.Entity<Facility>().ToTable("Facility");
             modelBuilder.Entity<Disease>().ToTable("DiseaseType");
             modelBuilder.Entity<EmergencyContact>().ToTable("EmergencyContact");

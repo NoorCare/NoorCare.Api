@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 namespace WebAPI.Models
 {
     public class DashboardModel
     {
         public DashboardTypeModel DashboardTypeModel { get; set; }
         public List<DashboardAppointmentListModel> DashboardAppointmentListModel { get; set; }
-
     }
 
     public class DashboardTypeModel
@@ -24,7 +24,7 @@ namespace WebAPI.Models
 
     public class DashboardAppointmentListModel
     {
-        public string AppointmentDate { get; set; }
+        public DateTime? AppointmentDate { get; set; }
         public string AppointmentTime { get; set; }
         public string AppointmentId { get; set; }
         public string TimeId { get; set; }

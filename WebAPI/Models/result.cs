@@ -116,8 +116,7 @@ namespace WebAPI.Models
         public List<TimeMaster> TimeAvailability { get; set; }
         public List<Feedback> Feedback { get; set; }
         public List<TblHospitalAmenities> Amenities { get; set; }
-        public List<TblHospitalServices> Services { get; set; }
-        
+        public List<TblHospitalServices> Services { get; set; }        
     }
 
     public class Facilities
@@ -155,8 +154,8 @@ namespace WebAPI.Models
         public bool IsDeleted { get; set; }
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
-        public string DateEntered { get; set; }
-        public string DateModified { get; set; }
+        public DateTime? DateEntered { get; set; }
+        public DateTime? DateModified { get; set; }
     }
 
 

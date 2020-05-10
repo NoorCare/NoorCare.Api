@@ -95,7 +95,7 @@ namespace WebAPI.Controllers
                 {
                     DashboardAppointmentListModel DashboardAppointmentListModel = new DashboardAppointmentListModel();
 
-                    DashboardAppointmentListModel.AppointmentDate = item.AppointmentDate;
+                    DashboardAppointmentListModel.AppointmentDate =Convert.ToDateTime(item.AppointmentDate);
                     DashboardAppointmentListModel.AppointmentId = item.AppointmentId;
                     DashboardAppointmentListModel.Status = item.Status;
                     DashboardAppointmentListModel.TimeId = item.TimingId;
@@ -176,7 +176,7 @@ namespace WebAPI.Controllers
             {
                 DashboardAppointmentListModel DashboardAppointmentListModel = new DashboardAppointmentListModel();
 
-                DashboardAppointmentListModel.AppointmentDate = item.AppointmentDate;
+                DashboardAppointmentListModel.AppointmentDate = Convert.ToDateTime(item.AppointmentDate);
                 DashboardAppointmentListModel.AppointmentId = item.AppointmentId;
                 DashboardAppointmentListModel.Status = item.Status;
                 DashboardAppointmentListModel.TimeId = item.TimingId;
