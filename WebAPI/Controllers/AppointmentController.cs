@@ -178,7 +178,7 @@ namespace WebAPI.Controllers
                 obj.Status = appointment.Status;
                 obj.Comment = appointment.Comment;
                 obj.DoctorId = appointment.DoctorId;
-                obj.DateModified = DateTime.Now.ToString();
+                obj.DateModified = DateTime.Now;
                 obj.AppointmentDate = appointment.AppointmentDate;
                 obj.TimingId = appointment.TimingId;
 
@@ -194,7 +194,7 @@ namespace WebAPI.Controllers
                 clientDetail.FirstName + " " + clientDetail.LastName == null ? "" : clientDetail.LastName, 
                 appointment.Status, 
                 doctorDetail.FirstName+" "+ doctorDetail.LastName, 
-                appointment.AppointmentDate,
+                appointment.AppointmentDate.ToString(),
                 clientDetail.ClientId, time.TimeFrom+"-"+ time.TimeTo);
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);

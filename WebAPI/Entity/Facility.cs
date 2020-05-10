@@ -102,7 +102,7 @@ namespace WebAPI.Entity
         public string ClientId { get; set; }
         public string CompanyName { get; set; }
         public int InsuraceNo { get; set; }
-        public string ExpiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
         public bool IsActive { get; set; }
     }
 

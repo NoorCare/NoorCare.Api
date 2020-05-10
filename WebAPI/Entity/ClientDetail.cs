@@ -54,10 +54,8 @@ public class PatientPrescription : IEntity<int>
     public string CreatedBy { get; set; }
     [MaxLength(50)]
     public string ModifiedBy { get; set; }
-    [MaxLength(50)]
-    public string DateEntered { get; set; }
-    [MaxLength(50)]
-    public string DateModified { get; set; }
+    public DateTime? DateEntered { get; set; }
+    public DateTime? DateModified { get; set; }
     //public WebAPI.Models.Doctors Doctors { get; set; }
 }
 

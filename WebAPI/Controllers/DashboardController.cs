@@ -81,7 +81,7 @@ namespace WebAPI.Controllers
                     int count = 0;
                     foreach (var item in appointment)
                     {
-                        var apdate = item.AppointmentDate;
+                        var apdate = Convert.ToDateTime(item.AppointmentDate).ToString("yyyy-MM-dd");
                         var tdate = System.DateTime.Today.ToString("yyyy-MM-dd");
                         if (apdate== tdate)
                         {

@@ -46,8 +46,8 @@ namespace WebAPI.Entity
         public string CreatedBy { get; set; }
         [MaxLength(128)]
         public string ModifiedBy { get; set; }
-        public string DateEntered { get; set; }
-        public string DateModified { get; set; }
+        public DateTime? DateEntered { get; set; }
+        public DateTime? DateModified { get; set; }
         public int? InsuranceId { get; set; }
         
     }
