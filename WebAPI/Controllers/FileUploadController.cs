@@ -229,7 +229,7 @@ namespace WebAPI.Controllers
                     {
                         FacilityImageType = facilityImageType,
                         FacilityNoorCareNumber = facilityNoorCareNumber,
-                        ExpiryDate = DateTime.Now.ToString(),
+                        ExpiryDate = DateTime.Now,
                         FileName = httpRequest.Files[i].FileName,
                         FilePath = "FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType + "/" + httpRequest.Files[i].FileName,
                         DateEntered = DateTime.Now,
