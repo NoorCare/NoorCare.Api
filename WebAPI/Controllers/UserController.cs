@@ -206,5 +206,20 @@ namespace WebAPI.Controllers
             _insuranceInformation.IsActive = insuranceInformation.IsActive;
             return Ok(_insuranceInformationRepository.Update(_insuranceInformation));
         }
+
+        //New lead
+
+        [HttpPost]
+        [Route("api/user/LeadRegister")]
+        [AllowAnonymous]
+        public HttpResponseMessage LeadRegister(Lead objLead)
+        {
+            ILeadRepository _leadRepo = RepositoryFactory.Create<ILeadRepository>(ContextTypes.EntityFramework);
+
+            _leadRepo.Insert(objLead);
+
+            return Request.CreateResponse(HttpStatusCode.Accepted, objLead.Id);
+        }
+
     }
 }

@@ -138,6 +138,12 @@ namespace NoorCare.Repository
                     {
                         return new QuickUploadAssignRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IQuickUploadAssignRepository))
+                    {
+                        return new LeadRepository() as TRepository;
+                        
+                    }
+                    
                     return null;
                 default:
                     return null;
