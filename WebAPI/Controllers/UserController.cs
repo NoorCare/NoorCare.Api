@@ -214,11 +214,20 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage LeadRegister(Lead objLead)
         {
-            ILeadRepository _leadRepo = RepositoryFactory.Create<ILeadRepository>(ContextTypes.EntityFramework);
+            string msg = "";
+            try
+            {
+                ILeadRepository _leadRepo = RepositoryFactory.Create<ILeadRepository>(ContextTypes.EntityFramework);
+                objLead.DateEntered = DateTime.Now;
+                msg= _leadRepo.Insert(objLead).ToString();
+            }
+            catch (Exception)
+            {
 
-            _leadRepo.Insert(objLead);
+                msg = "1";
+            }
 
-            return Request.CreateResponse(HttpStatusCode.Accepted, objLead.Id);
+            return Request.CreateResponse(HttpStatusCode.Accepted, msg);
         }
 
     }
