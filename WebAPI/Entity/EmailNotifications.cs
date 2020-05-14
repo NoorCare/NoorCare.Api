@@ -18,5 +18,11 @@ namespace WebAPI.Entity
         public bool IsDeleted { get; set; }
         public string Subject { get; set; }
         public string Attachments { get; set; }
+
+        public string DeletedBy { get; set; }
+
+        public string CreatedDate {get; set;}
+
+        public string CreatedTime { get; set; }
     }
 }

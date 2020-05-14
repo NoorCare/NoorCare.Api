@@ -31,17 +31,17 @@ namespace WebAPI.Controllers
 
             if (Type == "Inbox")
             {
-                var result = _emailNotificationsRepo.Find(x => x.To == userID && (x.IsDeleted == false)).OrderByDescending(x => x.Id).Take(10).ToList();
+                var result = _emailNotificationsRepo.Find(x => x.To == userID && ((x.DeletedBy.IndexOf(userID) == -1) || x.DeletedBy == null)).OrderByDescending(x => x.Id).Take(10).ToList();
                 return Request.CreateResponse(HttpStatusCode.Accepted, result);
             }
             else if (Type == "Sent")
             {
-                var result = _emailNotificationsRepo.Find(x => x.From == userID && (x.IsDeleted == false)).OrderByDescending(x => x.Id).Take(10).ToList();
+                var result = _emailNotificationsRepo.Find(x => x.From == userID && ((x.DeletedBy.IndexOf(userID) == -1) || x.DeletedBy == null)).OrderByDescending(x => x.Id).Take(10).ToList();
                 return Request.CreateResponse(HttpStatusCode.Accepted, result);
             }
             else
             {
-                var result = _emailNotificationsRepo.Find(x => (x.From == userID || x.To == userID) && (x.IsDeleted == true)).OrderByDescending(x => x.Id).Take(10).ToList();
+                var result = _emailNotificationsRepo.Find(x => (x.From == userID || x.To == userID) &&  (x.DeletedBy.IndexOf(userID) >= 0)).OrderByDescending(x => x.Id).Take(10).ToList();
                 return Request.CreateResponse(HttpStatusCode.Accepted, result);
             }
         }
@@ -51,6 +51,8 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage SaveEmail(EmailNotifications obj)
         {
+            obj.CreatedDate = DateTime.Now.ToString("dddd, dd MMMM yyyy") +" "+ DateTime.Now.ToString("hh:mm tt");
+            obj.CreatedTime = DateTime.Now.ToString("hh:mm tt");
             var _prescriptionCreated = _emailNotificationsRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
         }
@@ -67,6 +69,14 @@ namespace WebAPI.Controllers
                 {
                     var result = _emailNotificationsRepo.Get(Convert.ToInt32(emailNotifications.Attachments.Split(',')[i]));
                     result.IsDeleted = true;
+                    if(result.DeletedBy == null || result.DeletedBy == "")
+                    {
+                        result.DeletedBy = emailNotifications.DeletedBy;
+                    }
+                    else
+                    {
+                        result.DeletedBy = result.DeletedBy + "," + emailNotifications.DeletedBy;
+                    }
                     var msgString = _emailNotificationsRepo.Update(result);
                 }
             }
@@ -74,6 +84,14 @@ namespace WebAPI.Controllers
             {
                 var result = _emailNotificationsRepo.Get(Convert.ToInt32(emailNotifications.Attachments));
                 result.IsDeleted = true;
+                if (result.DeletedBy == null || result.DeletedBy == "")
+                {
+                    result.DeletedBy = emailNotifications.DeletedBy;
+                }
+                else
+                {
+                    result.DeletedBy = result.DeletedBy + "," + emailNotifications.DeletedBy;
+                }
                 var msgString = _emailNotificationsRepo.Update(result);
 
             }
