@@ -96,7 +96,9 @@ namespace WebAPI.Controllers
                 Disability = medicalInformation.Disability,
                 Smoke = medicalInformation.Smoke,
                 Drink = medicalInformation.Drink,
-                OtherDetails = medicalInformation.OtherDetails
+                OtherDetails = medicalInformation.OtherDetails,
+                CreatedBy = medicalInformation.CreatedBy,
+                CreatedDate = DateTime.Now
             };
             return Ok(_medicalInformationRepository.Insert(_medicalInformation));
         }
@@ -118,6 +120,8 @@ namespace WebAPI.Controllers
             mInfo.Smoke = medicalInformation.Smoke;
             mInfo.Drink = medicalInformation.Drink;
             mInfo.OtherDetails = medicalInformation.OtherDetails;
+            mInfo.ModifiedBy = medicalInformation.ModifiedBy;
+            mInfo.ModifiedDate = DateTime.Now;
             return Ok(_medicalInformationRepository.Update(mInfo));
         }
 
@@ -202,5 +206,28 @@ namespace WebAPI.Controllers
             _insuranceInformation.IsActive = insuranceInformation.IsActive;
             return Ok(_insuranceInformationRepository.Update(_insuranceInformation));
         }
+
+        //New lead
+
+        [HttpPost]
+        [Route("api/user/LeadRegister")]
+        [AllowAnonymous]
+        public HttpResponseMessage LeadRegister(Lead objLead)
+        {
+           try
+            {
+                ILeadRepository _leadRepo = RepositoryFactory.Create<ILeadRepository>(ContextTypes.EntityFramework);
+                objLead.DateEntered = DateTime.Now;
+                 _leadRepo.Insert(objLead);
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, ex.Message);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.Accepted,"success");
+        }
+
     }
 }

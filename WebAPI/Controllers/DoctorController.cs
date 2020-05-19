@@ -326,6 +326,9 @@ namespace WebAPI.Controllers
             List<Hospital> _hospitals = new List<Hospital>();
             List<HospitalDetails> hospitals = new List<HospitalDetails>();
             string searchtext = "null";
+            if (string.IsNullOrEmpty(type))
+                type = "0";
+
             int facilityid = Convert.ToInt32(type);
             if (searchName != null)
             {

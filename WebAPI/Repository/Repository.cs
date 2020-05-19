@@ -35,7 +35,9 @@ namespace NoorCare.Repository
     public class FacilityImagesRepository : EFRepositoryBase<ApplicationDbContext, FacilityImages, int>, IFacilityImagesRepository { }
 
     public class HospitalDocumentsRepository : EFRepositoryBase<ApplicationDbContext, HospitalDocumentVerification, int>, IHospitalDocumentsRepository { }
-
+    public class QuickUploadAssignRepository : EFRepositoryBase<ApplicationDbContext, QuickUploadAssign, int>, IQuickUploadAssignRepository { }
+    public class LeadRepository : EFRepositoryBase<ApplicationDbContext, Lead, int>, ILeadRepository { }
+    
 }
 
 

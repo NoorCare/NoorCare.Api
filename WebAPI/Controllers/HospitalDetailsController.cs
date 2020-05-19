@@ -477,6 +477,31 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        [Route("api/hospitaldetails/updateaddress")]
+        [HttpPost]
+        [AllowAnonymous]
+        public IHttpActionResult UpdateHospitalAddress()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            string hospitalId = httpRequest.Form["ClientId"];
+            string Address = httpRequest.Form["Address"];
+            string Country = httpRequest.Form["Country"];
+            string City = httpRequest.Form["City"];
+            string PinCode = httpRequest.Form["PinCode"];
+            HospitalDetails _hospitalDetails = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
+            if (_hospitalDetails != null)
+            {
+                _hospitalDetails.Address = Address;
+                _hospitalDetails.Country = Country;
+                _hospitalDetails.City = City;
+                _hospitalDetails.PostCode = PinCode;
+                var result = _hospitaldetailsRepo.Update(_hospitalDetails);
+                return Ok(result);
+            }
+
+            return Ok();
+        }
+
         [HttpPost]
         [Route("api/hospital/uploadhospitaldocuments")]
         [AllowAnonymous]

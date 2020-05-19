@@ -134,6 +134,15 @@ namespace NoorCare.Repository
                     {
                         return new HospitalDocumentsRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IQuickUploadAssignRepository))
+                    {
+                        return new QuickUploadAssignRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(ILeadRepository))
+                    {
+                        return new LeadRepository() as TRepository;
+                    }
+                    
                     return null;
                 default:
                     return null;

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace WebAPI.Models
 {
@@ -66,8 +63,8 @@ namespace WebAPI.Models
         public bool IsDeleted { get; set; }
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
-        public string DateEntered { get; set; }
-        public string DateModified { get; set; }
+        public DateTime? DateEntered { get; set; }
+        public DateTime? DateModified { get; set; }
     }
 
     public class ViewAccount
@@ -79,7 +76,6 @@ namespace WebAPI.Models
         public string LastName { get; set; }
         public string PhoneNo { get; set; }
         public string JobType { get; set; }
-
         public string ProfilePic { get; set; }
     }
 
@@ -87,8 +83,7 @@ namespace WebAPI.Models
     {
         public string UserName { get; set; }
         public string OldPassword { get; set; }
-        public string NewPassword { get; set; }
-      
+        public string NewPassword { get; set; }      
     }
 
     public class ForgetPassword
