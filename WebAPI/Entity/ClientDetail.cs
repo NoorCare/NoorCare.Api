@@ -54,10 +54,25 @@ public class PatientPrescription : IEntity<int>
     public string CreatedBy { get; set; }
     [MaxLength(50)]
     public string ModifiedBy { get; set; }
-    [MaxLength(50)]
-    public string DateEntered { get; set; }
-    [MaxLength(50)]
-    public string DateModified { get; set; }
+    public DateTime? DateEntered { get; set; }
+    public DateTime? DateModified { get; set; }
     //public WebAPI.Models.Doctors Doctors { get; set; }
+}
+
+
+[Serializable]
+[Table("LEAD")]
+public partial class Lead : IEntity<int>
+{
+    [Key]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Phone { get; set; }
+    public string Email { get; set; }
+    public string Address { get; set; }     
+    public string City { get; set; }
+    public string Country { get; set; }
+    public string Website { get; set; }
+    public DateTime DateEntered { get; set; }
 }
 

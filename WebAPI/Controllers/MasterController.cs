@@ -56,10 +56,20 @@ namespace WebAPI.Controllers
         [Route("api/city/{countryId}")]
         [HttpGet]
         [AllowAnonymous]
-        public List<TblCity> GetCity(int countryId)
+        public List<TblCity> GetCity(string countryId)
         {
+            int _countryId = 0;
+            if (countryId== "undefined" || countryId==null)
+            {
+                _countryId = 974;
+            }
+            else
+            {
+                _countryId=Convert.ToInt16(countryId);
+            }
+            
             ICityRepository _cityRepository = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
-            return _cityRepository.Find(x => x.CountryId == countryId).OrderBy(x => x.City).ToList();
+            return _cityRepository.Find(x => x.CountryId == _countryId).OrderBy(x => x.City).ToList();
         }
 
         [Route("api/citybycountrycode/{countrycode}")]

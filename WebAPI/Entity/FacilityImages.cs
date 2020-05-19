@@ -22,10 +22,9 @@ namespace WebAPI.Entity
         public string FileName { get; set; }
         [MaxLength(500)]
         public string FilePath { get; set; }
-        [MaxLength(50)]
-        public string ExpiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
 
-        public DateTime DateEntered { get; set; }
+        public DateTime? DateEntered { get; set; }
 
         public DateTime? DateModified { get; set; }
     }

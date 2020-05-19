@@ -102,7 +102,7 @@ namespace WebAPI.Entity
         public string ClientId { get; set; }
         public string CompanyName { get; set; }
         public int InsuraceNo { get; set; }
-        public string ExpiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
         public bool IsActive { get; set; }
     }
 
@@ -122,6 +122,10 @@ namespace WebAPI.Entity
         public string Weight { get; set; }
         public string Cholesterol { get; set; }
         public string Other { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public DateTime? ModifiedDate { get; set; }
     }
 
     //[Serializable]
@@ -169,6 +173,19 @@ namespace WebAPI.Entity
         public string DateModified { get; set; }
     }
 
-    
-   
+    [Serializable]
+    [Table("QuickUploadAssign")]
+    public class QuickUploadAssign : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public int QuickUploadId { get; set; }
+        public string AssignId { get; set; }
+        public string AssignBy { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime? AssignDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+    }
+
 }

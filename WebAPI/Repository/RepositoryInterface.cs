@@ -33,4 +33,7 @@ namespace WebAPI.Repository
     public interface IFacilityDetailRepository : IRepository<FacilityDetail, int> { }
     public interface IFacilityImagesRepository : IRepository<FacilityImages, int> { }
     public interface IHospitalDocumentsRepository : IRepository<HospitalDocumentVerification, int> { }
+    public interface IQuickUploadAssignRepository : IRepository<QuickUploadAssign, int> { }
+    public interface ILeadRepository : IRepository<Lead, int> { }
+    
 }

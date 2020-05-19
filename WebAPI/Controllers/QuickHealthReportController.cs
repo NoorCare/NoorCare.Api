@@ -76,8 +76,10 @@ namespace WebAPI.Controllers
             medicalInformation.Sugar = Convert.ToInt16(httpRequest.Form["Sugar"]);
             medicalInformation.Hight = Convert.ToInt16(httpRequest.Form["Length"]);
             medicalInformation.Wight = Convert.ToInt16(httpRequest.Form["Weight"]);
-                medicalInformation.Cholesterol = Convert.ToInt16(httpRequest.Form["Cholesterol"]);
+            medicalInformation.Cholesterol = Convert.ToInt16(httpRequest.Form["Cholesterol"]);
             medicalInformation.OtherDetails = httpRequest.Form["Other"];
+            medicalInformation.CreatedBy = httpRequest.Form["CreatedBy"];
+            medicalInformation.CreatedDate = DateTime.Now;
             int mId=this._medicalInformationRepository.Insert(medicalInformation);
             var objId = _quickHealthRepository.Insert(quickHeathDetails);
             //try
@@ -135,6 +137,8 @@ namespace WebAPI.Controllers
                 Weight = _quickHeathDetails.Weight,
                 Cholesterol = _quickHeathDetails.Cholesterol,
                 Other = _quickHeathDetails.Other,
+                CreatedBy= _quickHeathDetails.CreatedBy,
+                CreatedDate = DateTime.Now,
             };
             // _quickHealthRepository.Insert(quickHeathDetails);
 
@@ -148,7 +152,9 @@ namespace WebAPI.Controllers
             medicalInformation.Wight = _quickHeathDetails.Weight != null ? Convert.ToInt32(_quickHeathDetails.Weight) : 0;
             medicalInformation.Cholesterol = _quickHeathDetails.Cholesterol != null ? Convert.ToInt32(_quickHeathDetails.Cholesterol) : 0;
             medicalInformation.OtherDetails = _quickHeathDetails.Other;
-            
+            medicalInformation.CreatedBy = _quickHeathDetails.CreatedBy;
+            medicalInformation.CreatedDate = DateTime.Now;
+
             var objId = _medicalInformationRepository.Insert(medicalInformation);
             return Ok(_quickHealthRepository.Insert(quickHeathDetails));
 

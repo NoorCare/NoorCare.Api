@@ -116,8 +116,7 @@ namespace WebAPI.Models
         public List<TimeMaster> TimeAvailability { get; set; }
         public List<Feedback> Feedback { get; set; }
         public List<TblHospitalAmenities> Amenities { get; set; }
-        public List<TblHospitalServices> Services { get; set; }
-        
+        public List<TblHospitalServices> Services { get; set; }        
     }
 
     public class Facilities
@@ -155,8 +154,8 @@ namespace WebAPI.Models
         public bool IsDeleted { get; set; }
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
-        public string DateEntered { get; set; }
-        public string DateModified { get; set; }
+        public DateTime? DateEntered { get; set; }
+        public DateTime? DateModified { get; set; }
     }
 
 
@@ -166,7 +165,7 @@ namespace WebAPI.Models
         public string DesiesName { get; set; }
         public List<Int32?> Years { get; set; }
         public List<YearList> YearList { get; set; }
-       
+        public Boolean IsChecked { get; set; }
     }
 
 
@@ -176,18 +175,23 @@ namespace WebAPI.Models
         public Int32? Year { get; set; }
         public List<Int32?> Month { get; set; }
         public List<MonthList> MonthList { get; set; }
-        
+        public Boolean IsChecked { get; set; }
     }
 
     public class MonthList
     {
         public Int32? Month { get; set; }
         public List<FileName> FileList { get; set; }
+        public Boolean IsChecked { get; set; }
     }
 
     public class FileName
     {
         public string DocName { get; set; }
         public string DocUrl { get; set; }
+        public string HospitalId { get; set; }
+
+        public int Id { get; set; }
+        public Boolean IsChecked { get; set; }
     }
 }

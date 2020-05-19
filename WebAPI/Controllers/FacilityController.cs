@@ -44,10 +44,22 @@ namespace WebAPI.Controllers
             else
             {
                 _registration.AddFacilityDetail(user.Id, obj, _facilityDetailRepo);
-
-                _registration.sendRegistrationEmail(user);
-
-                _registration.sendRegistrationMessage(user);
+                try
+                {
+                    _registration.sendRegistrationEmail(user);
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+                try
+                {
+                    _registration.sendRegistrationMessage(user);
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
             }
 
             return "Registration has been done, And Account activation link" +
@@ -83,8 +95,6 @@ namespace WebAPI.Controllers
 
             return null;
         }
-
-
 
         [Route("api/GetFacilityDetail/{FacilityDetailId}")]
         [HttpGet]
@@ -134,8 +144,8 @@ namespace WebAPI.Controllers
                     IsDeleted = f.IsDeleted,
                     CreatedBy = f.CreatedBy,
                     ModifiedBy = f.ModifiedBy,
-                    DateEntered = f.DateEntered,
-                    DateModified = f.DateModified,
+                    DateEntered = Convert.ToDateTime(f.DateEntered),
+                    DateModified = Convert.ToDateTime(f.DateModified),
                 };
 
                 _faciltiess.Add(_facilties);
