@@ -382,22 +382,6 @@ namespace WebAPI.Controllers
             }
            
 
-
-            //            var robotDogs = result
-            //.Join(
-            //_QuickUploadAssignRepo,
-            //d => d.Id,
-            //f => f.AssignId,
-            //(d, f) => d)
-            //.ToList();
-
-            //var robotDogs = (from d in _QuickUploadAssignRepo.GetAll().
-            //                 join f in _QuickUploadAssignRepo
-            //                 on d.Id equals f.RobotFactoryId
-            //                 where f.Location == "Texas"
-            //                 select d).ToList();
-
-            //result.Union(doctorAssign);
             var list = result.ToList();
             var data = list.GroupBy(item => item.DesiesType)
                .Select(group => new { diseaseType = group.Key, Items = group.ToList() })

@@ -8,12 +8,15 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http.Cors;
 using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
 
 namespace WebAPI
 {
+    //[EnableCors("*","*","*")]
+    //[EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
@@ -29,11 +32,13 @@ namespace WebAPI
         bool isEmailConfirmed = false;
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
+            //context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
             context.Validated();
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
+            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             var userFindByEmail = manager.FindByEmail(context.UserName);
