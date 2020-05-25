@@ -15,6 +15,9 @@ namespace WebAPI.Controllers
     {
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
         IPatientPrescriptionRepository _prescriptionRepo = RepositoryFactory.Create<IPatientPrescriptionRepository>(ContextTypes.EntityFramework);
+        
+        IPatientPrescriptionAssignRepository _prescriptionAssignRepo = RepositoryFactory.Create<IPatientPrescriptionAssignRepository>(ContextTypes.EntityFramework);
+        
         IMedicalInformationRepository _medicalInformationRepo = RepositoryFactory.Create<IMedicalInformationRepository>(ContextTypes.EntityFramework);
         IInsuranceInformationRepository _insuranceInformationRepo = RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
@@ -343,6 +346,52 @@ namespace WebAPI.Controllers
             var diseasesList = diseases.Where(x => myInts.Contains(x.Id)).ToList();
             return diseasesList;
         }
+
+
+        #region Patient Prescription Assign
+
+        [HttpPost]
+        [Route("api/patient/presassign")]
+        [AllowAnonymous]
+        public IHttpActionResult AssignPrescription(PatientPrescriptionAssign data)
+        {
+            try
+            {
+                int id = 0;
+                if (data != null)
+                {
+                    string assignId = data.AssignId;
+                    int patientPresId = data.PatientPresId;
+                    int count = _prescriptionAssignRepo.Find(x => x.AssignId == assignId && x.PatientPresId == patientPresId).Count;
+                    if (count <= 0)
+                    {
+                        id = _prescriptionAssignRepo.Insert(data);
+                    }
+
+                    //foreach (PatientPrescriptionAssign element in data)
+                    //{
+                    //    string assignId = element.AssignId;
+                    //    int quickUploadId = element.QuickUploadId;
+                    //    int count = _QuickUploadAssignRepo.Find(x => x.AssignId == assignId && x.QuickUploadId == quickUploadId).Count;
+                    //    if (count <= 0)
+                    //    {
+                    //        id = _QuickUploadAssignRepo.Insert(element);
+                    //    }
+                    //}
+                }
+                return Ok(id);
+
+            }
+            catch (Exception ex)
+            {
+                return Ok("Dharmendra");
+                //return InternalServerError(ex);
+            }
+            //return Ok(mailBoxid);
+        }
+
+        #endregion
+
     }
 }
 
