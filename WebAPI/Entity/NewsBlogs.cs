@@ -26,10 +26,10 @@ namespace WebAPI.Entity
         public string CreatedBy { get; set; }
         [MaxLength(128)]
         public string ModifiedBy { get; set; }
-        [MaxLength(50)]
-        public string CreatedDate { get; set; }
-        [MaxLength(50)]
-        public string ModifiedDate { get; set; }
+        
+        public DateTime? CreatedDate { get; set; }
+        
+        public DateTime? ModifiedDate { get; set; }
 
 		public string NewsCategory { get; set; }
 

@@ -117,7 +117,7 @@ namespace WebAPI.Controllers
                     _newsBlog.NewsTitle = obj.NewsTitle;
                     _newsBlog.ImageURL = obj.ImageURL;
                     _newsBlog.ModifiedBy = obj.UserId;
-                    _newsBlog.ModifiedDate = System.DateTime.Now.ToString();
+                    _newsBlog.ModifiedDate = System.DateTime.Now;
                     _newsBlogsRepo.Update(_newsBlog);
                     return Request.CreateResponse(HttpStatusCode.Accepted, "Updated");
                 }
@@ -144,7 +144,7 @@ namespace WebAPI.Controllers
                 {
                     _newsBlog.IsDeleted = true;
                     _newsBlog.ModifiedBy = _newsBlog.UserId;
-                    _newsBlog.ModifiedDate = System.DateTime.Now.ToString();
+                    _newsBlog.ModifiedDate = System.DateTime.Now;
                     _newsBlogsRepo.Update(_newsBlog);
                     return Request.CreateResponse(HttpStatusCode.Accepted, "Success");
                 }
