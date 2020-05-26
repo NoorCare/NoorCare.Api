@@ -7,12 +7,16 @@ namespace WebAPI
 {
     public static class constant
     {
-        public static string emailidVerefactionUrl = "http://noorcare.net/user/EmailVerfication/CLIENTID";
-        public static string logoUrl = "http://noorcare.net/assets/images/logos/Logo.png";
-        public static string imgUrl = "http://API.noorcare.net/ProfilePic";
-        public static string baseUrl = "http://localhost:56833/";
-        
-        //public static string emailidVerefactionUrl = "http://localhost:4200/user/EmailVerfication/CLIENTID";
-        //public static string logoUrl = "http://localhost:4200/assets/images/logos/Logo.png";
+        //public static string clientBaseUrl = "http://noorcare.net/";
+        //public static string emailidVerefactionUrl = $"{clientBaseUrl}user/EmailVerfication/CLIENTID";
+        //public static string logoUrl = $"{clientBaseUrl}assets/images/logos/Logo.png";
+        //public static string apiBaseUrl = "http://api.noorcare.net/";
+        //public static string imgUrl = $"{apiBaseUrl}ProfilePic";
+
+        public static string clientBaseUrl = "http://test.noorcare.net/";
+        public static string emailidVerefactionUrl = $"{clientBaseUrl}user/EmailVerfication/CLIENTID";
+        public static string logoUrl = $"{clientBaseUrl}assets/images/logos/Logo.png";
+        public static string apiBaseUrl = "http://testapi.noorcare.net/";
+        public static string imgUrl = $"{apiBaseUrl}ProfilePic";
     }
 }
