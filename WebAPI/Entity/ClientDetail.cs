@@ -59,6 +59,23 @@ public class PatientPrescription : IEntity<int>
     //public WebAPI.Models.Doctors Doctors { get; set; }
 }
 
+[Serializable]
+[Table("PatientPrescriptionAssign")]
+public class PatientPrescriptionAssign : IEntity<int>
+{
+    [Key]
+    public int Id { get; set; }
+    public int PatientPresId { get; set; }
+
+    public string AssignId { get; set; }
+    public bool IsActive { get; set; }
+    public string AssignBy { get; set; }
+   
+    public DateTime? AssignDate { get; set; }
+    public string ModifiedBy { get; set; }
+    public DateTime? ModifiedDate { get; set; }
+}
+
 
 [Serializable]
 [Table("LEAD")]

@@ -15,6 +15,9 @@ namespace WebAPI.Controllers
     {
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
         IPatientPrescriptionRepository _prescriptionRepo = RepositoryFactory.Create<IPatientPrescriptionRepository>(ContextTypes.EntityFramework);
+
+        IPatientPrescriptionAssignRepository _prescriptionAssignRepo = RepositoryFactory.Create<IPatientPrescriptionAssignRepository>(ContextTypes.EntityFramework);
+
         IMedicalInformationRepository _medicalInformationRepo = RepositoryFactory.Create<IMedicalInformationRepository>(ContextTypes.EntityFramework);
         IInsuranceInformationRepository _insuranceInformationRepo = RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
@@ -125,7 +128,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage getPrescription(string patientId)
         {
-           List<PatientPrescription> lstPrescription = _prescriptionRepo.GetAll().Where(x=>x.PatientId== patientId).ToList<PatientPrescription>().OrderByDescending(x=>x.Id).ToList();
+            List<PatientPrescription> lstPrescription = _prescriptionRepo.GetAll().Where(x => x.PatientId == patientId).ToList<PatientPrescription>().OrderByDescending(x => x.Id).ToList();
             List<PatientPrescription> lstPrescriptionList = new List<PatientPrescription>();
             foreach (var item in lstPrescription)
             {
@@ -133,7 +136,29 @@ namespace WebAPI.Controllers
                 //item.DateEntered = Convert.ToDateTime(item.DateEntered).ToString();
                 lstPrescriptionList.Add(item);
             }
-            return Request.CreateResponse(HttpStatusCode.Accepted, lstPrescriptionList.OrderBy(x=>x.Id));
+            return Request.CreateResponse(HttpStatusCode.Accepted, lstPrescriptionList.OrderBy(x => x.Id));
+        }
+
+        [Route("api/patient/getPrescription/{patientId}/{doctorId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage getAssignPrescription(string patientId, string doctorId)
+        {
+            var prescription = _prescriptionRepo.GetAll().ToList();
+            var presAssign = _prescriptionAssignRepo.GetAll().ToList();
+            var result = (from PatientPrescription in prescription
+                          where PatientPrescription.DoctorId == doctorId  && PatientPrescription.PatientId==patientId||
+                          (from PatientPrescriptionAssign in presAssign
+                           where
+                             PatientPrescriptionAssign.AssignId == doctorId && PatientPrescriptionAssign.AssignBy==patientId &&
+                             Convert.ToString(PatientPrescriptionAssign.IsActive) == "True"
+                           select new
+                           {
+                               PatientPrescriptionAssign.PatientPresId
+                           }).Contains(new { PatientPresId = PatientPrescription.Id })
+                          select PatientPrescription).ToList();
+           
+            return Request.CreateResponse(HttpStatusCode.Accepted, result.OrderBy(x => x.Id));
         }
 
         [Route("api/patient/SavePatientPrescription")]
@@ -145,7 +170,7 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
         }
 
-       
+
 
         [Route("api/patient/IsValidNoorCare/{patientId}")]
         [HttpGet]
@@ -279,7 +304,8 @@ namespace WebAPI.Controllers
                                        join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
                                        join c in _clientDetailRepo.GetAll() on p.PatientId equals c.ClientId
                                        join mi in _medicalInformationRepo.GetAll() on p.PatientId equals mi.clientId
-                                       into mif from medi in mif.DefaultIfEmpty()
+                                       into mif
+                                       from medi in mif.DefaultIfEmpty()
                                        where (p.Id == prescriptionId)
                                        select new
                                        {
@@ -296,26 +322,26 @@ namespace WebAPI.Controllers
                                            Age = this.GetAge(c.DOB),
                                            Gender = c.Gender == 1 ? "Male" : "FeMale",
                                            Pressure = medi?.Pressure ?? 0,
-                                           Temperature = medi?.Temprature ?? 0 ,
-                                           Hight = medi?.Hight??0,
-                                           Weight = medi?.Wight??0,
-                                           Report=p.Report,
+                                           Temperature = medi?.Temprature ?? 0,
+                                           Hight = medi?.Hight ?? 0,
+                                           Weight = medi?.Wight ?? 0,
+                                           Report = p.Report,
                                            Cholesterol = medi?.Cholesterol ?? 0,
                                            Others = medi?.OtherDetails ?? "N/A",
-                                           Sugar = medi?.Sugar ?? 0 ,
+                                           Sugar = medi?.Sugar ?? 0,
                                            Heartbeat = medi?.Heartbeats ?? 0,
                                        };
 
-            
+
             return Request.CreateResponse(HttpStatusCode.Accepted, patientPrescriptions);
         }
         public string GetAge(string dateOfbirth)
         {
-            if (dateOfbirth==null)
+            if (dateOfbirth == null)
             {
                 return "N/A";
             }
-            DateTime dateOfBirth=(Convert.ToDateTime(dateOfbirth));
+            DateTime dateOfBirth = (Convert.ToDateTime(dateOfbirth));
             var today = DateTime.Today;
             var a = (today.Year * 100 + today.Month) * 100 + today.Day;
             var b = (dateOfBirth.Year * 100 + dateOfBirth.Month) * 100 + dateOfBirth.Day;
@@ -330,7 +356,7 @@ namespace WebAPI.Controllers
         //    {
         //        return medicalInformation.FirstOrDefault();
         //    }
-            
+
         //}
         private List<Disease> getSpecialization(string diesiesType, List<Disease> diseases)
         {
@@ -343,6 +369,52 @@ namespace WebAPI.Controllers
             var diseasesList = diseases.Where(x => myInts.Contains(x.Id)).ToList();
             return diseasesList;
         }
+
+
+        #region Patient Prescription Assign
+
+        [HttpPost]
+        [Route("api/patient/presassign")]
+        [AllowAnonymous]
+        public IHttpActionResult AssignPrescription(PatientPrescriptionAssign data)
+        {
+            try
+            {
+                int id = 0;
+                if (data != null)
+                {
+                    string assignId = data.AssignId;
+                    int patientPresId = data.PatientPresId;
+                    int count = _prescriptionAssignRepo.Find(x => x.AssignId == assignId && x.PatientPresId == patientPresId).Count;
+                    if (count <= 0)
+                    {
+                        id = _prescriptionAssignRepo.Insert(data);
+                    }
+
+                    //foreach (PatientPrescriptionAssign element in data)
+                    //{
+                    //    string assignId = element.AssignId;
+                    //    int quickUploadId = element.QuickUploadId;
+                    //    int count = _QuickUploadAssignRepo.Find(x => x.AssignId == assignId && x.QuickUploadId == quickUploadId).Count;
+                    //    if (count <= 0)
+                    //    {
+                    //        id = _QuickUploadAssignRepo.Insert(element);
+                    //    }
+                    //}
+                }
+                return Ok(id);
+
+            }
+            catch (Exception ex)
+            {
+                return Ok("Dharmendra");
+                //return InternalServerError(ex);
+            }
+            //return Ok(mailBoxid);
+        }
+
+        #endregion
+
     }
 }
 
