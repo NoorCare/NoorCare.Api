@@ -142,7 +142,11 @@ namespace NoorCare.Repository
                     {
                         return new LeadRepository() as TRepository;
                     }
-                    
+                    if (typeof(TRepository) == typeof(IPatientPrescriptionAssignRepository))
+                    {
+                        return new PatientPrescriptionAssignRepository() as TRepository;
+                    }
+
                     return null;
                 default:
                     return null;

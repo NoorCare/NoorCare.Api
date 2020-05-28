@@ -28,6 +28,7 @@ namespace NoorCare.Repository
     public class ContactUsRepository : EFRepositoryBase<ApplicationDbContext, ContactUs, int>, IContactUsRepository { }
     public class TimeMasterRepository : EFRepositoryBase<ApplicationDbContext, TimeMaster, int>, ITimeMasterRepository { }
     public class PatientPrescriptionRepository : EFRepositoryBase<ApplicationDbContext, PatientPrescription, int>, IPatientPrescriptionRepository { }
+    public class PatientPrescriptionAssignRepository : EFRepositoryBase<ApplicationDbContext, PatientPrescriptionAssign, int>, IPatientPrescriptionAssignRepository { }
     public class NewsBlogsRepository : EFRepositoryBase<ApplicationDbContext, NewsBlogs, int>, INewsBlogsRepository { }
     public class ReadLikeRepository : EFRepositoryBase<ApplicationDbContext, ReadLike, int>, IReadLikeRepository { }
     public class FacilityDetailRepository : EFRepositoryBase<ApplicationDbContext, FacilityDetail, int>, IFacilityDetailRepository { }

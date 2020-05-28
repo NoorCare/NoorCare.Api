@@ -33,6 +33,24 @@ namespace WebAPI.Controllers
         ITblHospitalAmenitiesRepository _hospitalAmenitieRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
         IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
+
+
+        [Route("api/doctor/IsValidNoorCare/{doctorId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage IsValidNoorCare(string doctorId)
+        {
+            var result = _doctorRepo.Find(x => x.DoctorId == doctorId);
+            if (result.Count > 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, true);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, false);
+            }
+        }
+
         [Route("api/doctor/getall")]
         [HttpGet]
         [AllowAnonymous]
@@ -645,5 +663,7 @@ namespace WebAPI.Controllers
                           };
             return Request.CreateResponse(HttpStatusCode.Accepted, docList.ToList().Distinct());
         }
+
+       
     }
 }
