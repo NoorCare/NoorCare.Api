@@ -73,6 +73,7 @@ namespace WebAPI.Controllers
                     PaymentType = h.PaymentType,
                     Emergency = h.Emergency,
                     FacilityId = h.FacilityId,
+                    JobType=h.jobType,
                     Address = h.Address,
                     Street = h.Street,
                     Country = h.Country,

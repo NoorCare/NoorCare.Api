@@ -429,6 +429,7 @@ namespace WebAPI.Controllers
                     _hospital.PaymentType = h.PaymentType;
                     _hospital.Emergency = h.Emergency;
                     _hospital.FacilityId = h.FacilityId;
+                    _hospital.JobType = h.jobType;
                     _hospital.Address = h.Address;
                     _hospital.Street = h.Street;
                     _hospital.Country = GetCountryName(Convert.ToInt16(h.Country));
@@ -470,6 +471,7 @@ namespace WebAPI.Controllers
                         PaymentType = h.PaymentType,
                         Emergency = h.Emergency,
                         FacilityId = h.FacilityId,
+                        JobType = h.jobType,
                         Address = h.Address,
                         Street = h.Street,
                         Country = GetCountryName(Convert.ToInt16(h.Country)),

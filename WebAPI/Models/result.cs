@@ -51,6 +51,7 @@ namespace WebAPI.Models
         public string PaymentType { get; set; }
         public bool Emergency { get; set; }
         public int FacilityId { get; set; }
+        public int JobType { get; set; }
         public string Address { get; set; }
         public string Street { get; set; }
         public string Country { get; set; }
