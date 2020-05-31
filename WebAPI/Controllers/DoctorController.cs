@@ -446,7 +446,7 @@ namespace WebAPI.Controllers
                     _hospital.Feedbacks = feedback.Count();
                     _hospital.BookingUrl = $"booking/{h.HospitalId}";
                     _hospital.ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}";
-                    _hospital.ImgUrl = h.ProfilePath == null ? $"{constant.baseUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg" : $"{constant.baseUrl}/{h.ProfilePath}";
+                    _hospital.ImgUrl = h.ProfilePath == null ? $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg" : $"{constant.imgUrl}/{h.ProfilePath}";
                     _hospitalServices.AddRange(_hospital.Services);
                     _hospitalAmenities.AddRange(_hospital.Amenities);
                     _hospitals.Add(_hospital);
@@ -488,7 +488,7 @@ namespace WebAPI.Controllers
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{h.HospitalId}",
                         ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                        ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                        ImgUrl = $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg"
                     };
                     _hospitalServices.AddRange(_hospital.Services);
                     _hospitalAmenities.AddRange(_hospital.Amenities);
