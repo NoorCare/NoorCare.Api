@@ -286,7 +286,7 @@ namespace WebAPI.Controllers
                     HospitalId = hospitals.HospitalId,
                     HospitalEmail = hospitals.Email,
                     HospitalAddress = hospitals.Address,
-                    HospitalPicUrl = $"{constant.baseUrl}/" + hospitals.ProfilePath,
+                    HospitalPicUrl = $"{constant.imgUrl}/" + hospitals.ProfilePath,
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),
@@ -611,7 +611,7 @@ namespace WebAPI.Controllers
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{d.DoctorId}",
                         ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                        ImgUrl = d.PhotoPath == null ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.baseUrl}/{d.PhotoPath}"
+                        ImgUrl = d.PhotoPath == null ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}"
                     };
 
                     // Add Filter Value

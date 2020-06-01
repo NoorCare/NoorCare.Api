@@ -107,7 +107,7 @@ namespace WebAPI.Controllers
                     {
                         if (fileName== Path.GetFileName(item))
                         {
-                            profilepic = $"{constant.baseUrl}/ProfilePic/{fileName}";
+                            profilepic = $"{constant.imgUrl}/ProfilePic/{fileName}";
                         }
                     }
                     
@@ -126,7 +126,7 @@ namespace WebAPI.Controllers
                     {
                         if (fileName == Path.GetFileName(item))
                         {
-                            profilepic = $"{constant.baseUrl}/ProfilePic/Doctor/{fileName}";
+                            profilepic = $"{constant.imgUrl}/ProfilePic/Doctor/{fileName}";
                         }
                     }
                     //profilepic = $"{constant.baseUrl}/ProfilePic/{doctor.PhotoPath}";
@@ -146,7 +146,7 @@ namespace WebAPI.Controllers
                     {
                         if (fileName == Path.GetFileName(item))
                         {
-                            profilepic = $"{constant.baseUrl}/ProfilePic/Secretary/{fileName}";
+                            profilepic = $"{constant.imgUrl}/ProfilePic/Secretary/{fileName}";
                         }
                     }
                 }
@@ -163,7 +163,7 @@ namespace WebAPI.Controllers
                     {
                         if (fileName == Path.GetFileName(item))
                         {
-                            profilepic = $"{constant.baseUrl}/ProfilePic/Hospital/{fileName}";
+                            profilepic = $"{constant.imgUrl}/ProfilePic/Hospital/{fileName}";
                         }
                     }
                     //profilepic = $"{constant.baseUrl}/{hospital.ProfilePath}";
