@@ -246,7 +246,7 @@ namespace WebAPI.Controllers
                     HospitalId = hospitals.HospitalId,
                     HospitalEmail = hospitals.Email,
                     HospitalAddress = hospitals.Address,
-                    HospitalPicUrl = $"{constant.baseUrl}/" + hospitals.ProfilePath,
+                    HospitalPicUrl = $"{constant.imgUrl}/" + hospitals.ProfilePath,
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),

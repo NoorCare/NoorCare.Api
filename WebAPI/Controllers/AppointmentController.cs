@@ -103,7 +103,7 @@ namespace WebAPI.Controllers
                                     HospitalName=h.HospitalName
                                     
                                 };
-            var todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm"));
+            DateTime todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm"));
             var appintmentresult = appointDetail.Where(x => x.Date >= todaydate);
             return Request.CreateResponse(HttpStatusCode.Accepted, appintmentresult);
         }
