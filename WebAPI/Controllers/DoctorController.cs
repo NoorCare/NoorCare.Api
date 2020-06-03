@@ -159,7 +159,7 @@ namespace WebAPI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw;
+                    
                 }
 
                 return Request.CreateResponse(HttpStatusCode.Accepted, obj.DoctorId);
@@ -295,7 +295,7 @@ namespace WebAPI.Controllers
                     Feedback = _feedbackRepo.Find(x => x.PageId == doctorid),
                     Likes = _feedbackRepo.Find(x => x.PageId == doctorid && x.ILike == true).Count(),
                     location = "",
-                    ImgUrl = $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg",
+                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Doctor/{d.DoctorId}.Jpeg",
                     website = hospitals.Website,
                     Address = hospitals.Address
                 };

@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{h.HospitalId}",
                     ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                    ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg"
                 };
 
                 _hospitals.Add(_hospital);
@@ -176,7 +176,7 @@ namespace WebAPI.Controllers
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{h.HospitalId}",
                     ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                    ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg"
                 };
 
                 _hospitals.Add(_hospital);
