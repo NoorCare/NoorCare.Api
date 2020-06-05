@@ -144,6 +144,11 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage getAssignPrescription(string patientId, string doctorId)
         {
+            //var doctors = _doctorRepo.GetAll().ToList();
+            //var hospitals = _hospitaldetailsRepo.GetAll().ToList();
+
+            List<PatientPrescriptionList> _patientPres = new List<PatientPrescriptionList>();
+
             var prescription = _prescriptionRepo.GetAll().ToList();
             var presAssign = _prescriptionAssignRepo.GetAll().ToList();
             var result = (from PatientPrescription in prescription
@@ -157,8 +162,33 @@ namespace WebAPI.Controllers
                                PatientPrescriptionAssign.PatientPresId
                            }).Contains(new { PatientPresId = PatientPrescription.Id })
                           select PatientPrescription).ToList();
-           
-            return Request.CreateResponse(HttpStatusCode.Accepted, result.OrderBy(x => x.Id));
+
+            foreach (var res in result )
+            {
+                Doctor doctor = _doctorRepo.Find(x => x.DoctorId == res.DoctorId).FirstOrDefault();
+                HospitalDetails hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == doctor.HospitalId).FirstOrDefault();
+                PatientPrescriptionList _pres = new PatientPrescriptionList();
+                _pres.DoctorFirstName = doctor.FirstName;
+                _pres.DoctorLastName = doctor.LastName;
+                _pres.DoctorEmail = doctor.Email;
+                _pres.DoctorPhoneNumber = doctor.PhoneNumber;
+                _pres.DoctorImgUrl = $"{constant.imgUrl}/ProfilePic/Doctor/{doctor.DoctorId}.Jpeg";
+                _pres.HospitalName = hospitals.HospitalName;
+                _pres.HospitalEmail = hospitals.Email;
+                _pres.HospitalAddress = hospitals.Address;
+                _pres.HospitalPicUrl = $"{constant.imgUrl}/" + hospitals.ProfilePath;
+
+                _pres.DoctorId = res.DoctorId;
+                _pres.Id = res.Id;
+                _pres.PatientId = res.PatientId;
+                _pres.Prescription = res.Prescription;
+                _pres.Report = res.Report;
+                _pres.CreatedBy = res.CreatedBy;
+                _pres.DateEntered = res.DateEntered;
+                _patientPres.Add(_pres);
+            }
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, _patientPres.OrderBy(x => x.Id));
         }
 
         [Route("api/patient/SavePatientPrescription")]
