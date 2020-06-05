@@ -93,82 +93,85 @@ namespace WebAPI.Controllers
             var usertype = id.Split('-')[0];
             
             string fileName = id + ".Jpeg";
-            if (usertype== "NCM"|| usertype == "NCF")
+            try
             {
-                var patient = this._clientDetailRepo.GetAll().Where(x=>x.ClientId== id).FirstOrDefault();
-                if (patient!=null)
+                if (usertype == "NCM" || usertype == "NCF")
                 {
-                    string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic"));
-                    firstname = patient.FirstName;
-                    lastname = patient.LastName;
-                    phoneno =Convert.ToString(patient.MobileNo);
-                    
-                    foreach (var item in fileEntries)
+                    var patient = this._clientDetailRepo.GetAll().Where(x => x.ClientId == id).FirstOrDefault();
+                    if (patient != null)
                     {
-                        if (fileName== Path.GetFileName(item))
-                        {
-                            profilepic = $"{constant.imgUrl}/ProfilePic/{fileName}";
-                        }
-                    }
-                    
-                }
-            }
-            else if (usertype == "NCD")
-            {
-                var doctor = this._doctorRepository.GetAll().Where(x => x.DoctorId == id).FirstOrDefault();
-                if (doctor != null)
-                {
-                    firstname = doctor.FirstName;
-                    lastname = doctor.LastName;
-                    phoneno = doctor.PhoneNumber;
-                    string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Doctor"));
-                    foreach (var item in fileEntries)
-                    {
-                        if (fileName == Path.GetFileName(item))
-                        {
-                            profilepic = $"{constant.imgUrl}/ProfilePic/Doctor/{fileName}";
-                        }
-                    }
-                    //profilepic = $"{constant.baseUrl}/ProfilePic/{doctor.PhotoPath}";
+                        string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic"));
+                        firstname = patient.FirstName;
+                        lastname = patient.LastName;
+                        phoneno = Convert.ToString(patient.MobileNo);
 
-                }
-            }
-            else if (usertype == "NCS")
-            {
-                var secretary = this._secretaryRepository.GetAll().Where(x => x.SecretaryId == id).FirstOrDefault();
-                if (secretary != null)
-                {
-                    firstname = secretary.FirstName;
-                    lastname = secretary.LastName;
-                    phoneno = secretary.PhoneNumber;
-                    string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Secretary"));
-                    foreach (var item in fileEntries)
-                    {
-                        if (fileName == Path.GetFileName(item))
+                        foreach (var item in fileEntries)
                         {
-                            profilepic = $"{constant.imgUrl}/ProfilePic/Secretary/{fileName}";
+                            if (fileName == Path.GetFileName(item))
+                            {
+                                profilepic = $"{constant.imgUrl}/ProfilePic/{fileName}";
+                            }
+                        }
+
+                    }
+                }
+                else if (usertype == "NCD")
+                {
+                    var doctor = this._doctorRepository.GetAll().Where(x => x.DoctorId == id).FirstOrDefault();
+                    if (doctor != null)
+                    {
+                        firstname = doctor.FirstName;
+                        lastname = doctor.LastName;
+                        phoneno = doctor.PhoneNumber;
+                        string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Doctor"));
+                        foreach (var item in fileEntries)
+                        {
+                            if (fileName == Path.GetFileName(item))
+                            {
+                                profilepic = $"{constant.imgUrl}/ProfilePic/Doctor/{fileName}";
+                            }
+                        }
+                        //profilepic = $"{constant.baseUrl}/ProfilePic/{doctor.PhotoPath}";
+
+                    }
+                }
+                else if (usertype == "NCS")
+                {
+                    var secretary = this._secretaryRepository.GetAll().Where(x => x.SecretaryId == id).FirstOrDefault();
+                    if (secretary != null)
+                    {
+                        firstname = secretary.FirstName;
+                        lastname = secretary.LastName;
+                        phoneno = secretary.PhoneNumber;
+                        string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Secretary"));
+                        foreach (var item in fileEntries)
+                        {
+                            if (fileName == Path.GetFileName(item))
+                            {
+                                profilepic = $"{constant.imgUrl}/ProfilePic/Secretary/{fileName}";
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                var hospital = this._hospitalDetailsRepository.GetAll().Where(x => x.HospitalId == id).FirstOrDefault();
-                if (hospital != null)
+                else
                 {
-                    firstname = hospital.HospitalName;
-                    phoneno = hospital.Mobile.ToString();
-                    string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Hospital"));
-                    foreach (var item in fileEntries)
+                    var hospital = this._hospitalDetailsRepository.GetAll().Where(x => x.HospitalId == id).FirstOrDefault();
+                    if (hospital != null)
                     {
-                        if (fileName == Path.GetFileName(item))
+                        firstname = hospital.HospitalName;
+                        phoneno = hospital.Mobile.ToString();
+                        string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Hospital"));
+                        foreach (var item in fileEntries)
                         {
-                            profilepic = $"{constant.imgUrl}/ProfilePic/Hospital/{fileName}";
+                            if (fileName == Path.GetFileName(item))
+                            {
+                                profilepic = $"{constant.imgUrl}/ProfilePic/Hospital/{fileName}";
+                            }
                         }
+                        //profilepic = $"{constant.baseUrl}/{hospital.ProfilePath}";
                     }
-                    //profilepic = $"{constant.baseUrl}/{hospital.ProfilePath}";
                 }
-            }
+            }catch(Exception ex) { }
             ViewAccount model = new ViewAccount()
             {
                 UserName = identityClaims.FindFirst("Username").Value,

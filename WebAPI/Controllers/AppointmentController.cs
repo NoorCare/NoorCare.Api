@@ -185,18 +185,20 @@ namespace WebAPI.Controllers
             }
             var result = _appointmentRepo.Update(obj);
             //Email sent on status change
-            int timeid = Convert.ToInt16(obj.TimingId);
-            var clientDetail = _clientDetailRepo.Find(x => x.ClientId == obj.ClientId).FirstOrDefault();
-            var doctorDetail = _doctorRepo.Find(x => x.DoctorId == obj.DoctorId).FirstOrDefault();
-            var time = _timeMasterRepo.Find(x => x.Id == timeid).FirstOrDefault();//clientDetail.EmailId
-            string html = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/appointmenttemplat.html"));
-            _emailSender.email_send_booked_reject_appointment(clientDetail.EmailId, 
-                clientDetail.FirstName + " " + clientDetail.LastName == null ? "" : clientDetail.LastName, 
-                appointment.Status, 
-                doctorDetail.FirstName+" "+ doctorDetail.LastName, 
-                appointment.AppointmentDate.ToString(),
-                clientDetail.ClientId, time.TimeFrom+"-"+ time.TimeTo);
-
+            try
+            {
+                int timeid = Convert.ToInt16(obj.TimingId);
+                var clientDetail = _clientDetailRepo.Find(x => x.ClientId == obj.ClientId).FirstOrDefault();
+                var doctorDetail = _doctorRepo.Find(x => x.DoctorId == obj.DoctorId).FirstOrDefault();
+                var time = _timeMasterRepo.Find(x => x.Id == timeid).FirstOrDefault();//clientDetail.EmailId
+                string html = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/appointmenttemplat.html"));
+                _emailSender.email_send_booked_reject_appointment(clientDetail.EmailId,
+                    clientDetail.FirstName + " " + clientDetail.LastName == null ? "" : clientDetail.LastName,
+                    appointment.Status,
+                    doctorDetail.FirstName + " " + doctorDetail.LastName,
+                    appointment.AppointmentDate.ToString(),
+                    clientDetail.ClientId, time.TimeFrom + "-" + time.TimeTo);
+            }catch(Exception ex) { }
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
