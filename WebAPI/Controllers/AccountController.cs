@@ -90,6 +90,7 @@ namespace WebAPI.Controllers
             string lastname = "";
             string phoneno = "";
             string profilepic = "";
+            string CountryCode = "";
             var usertype = id.Split('-')[0];
             
             string fileName = id + ".Jpeg";
@@ -104,7 +105,7 @@ namespace WebAPI.Controllers
                         firstname = patient.FirstName;
                         lastname = patient.LastName;
                         phoneno = Convert.ToString(patient.MobileNo);
-
+                        CountryCode = Convert.ToString(patient.CountryCode);
                         foreach (var item in fileEntries)
                         {
                             if (fileName == Path.GetFileName(item))
@@ -123,6 +124,7 @@ namespace WebAPI.Controllers
                         firstname = doctor.FirstName;
                         lastname = doctor.LastName;
                         phoneno = doctor.PhoneNumber;
+                        CountryCode = Convert.ToString(doctor.CountryCode);
                         string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Doctor"));
                         foreach (var item in fileEntries)
                         {
@@ -143,6 +145,7 @@ namespace WebAPI.Controllers
                         firstname = secretary.FirstName;
                         lastname = secretary.LastName;
                         phoneno = secretary.PhoneNumber;
+                        CountryCode = Convert.ToString(secretary.CountryCode);
                         string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Secretary"));
                         foreach (var item in fileEntries)
                         {
