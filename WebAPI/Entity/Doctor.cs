@@ -25,17 +25,17 @@ namespace WebAPI.Entity
         public bool EmailConfirmed { get; set; }
         public int Gender { get; set; }
 
-        [MaxLength(50)]     
+        [MaxLength(50)]
         public string Experience { get; set; }
         [Column(TypeName = "Money")]
         public decimal FeeMoney { get; set; }
         [MaxLength(100)]
         public string Language { get; set; }
-        [MaxLength(50)]
+        [MaxLength(500)]
         public string AgeGroupGender { get; set; }
         [MaxLength(50)]
         public string Degree { get; set; }
-        [MaxLength(200)]
+        [MaxLength(500)]
         public string Specialization { get; set; }
         [MaxLength(500)]
         public string PhotoPath { get; set; }
@@ -52,12 +52,11 @@ namespace WebAPI.Entity
         public string CreatedBy { get; set; }
         [MaxLength(128)]
         public string ModifiedBy { get; set; }
-        public DateTime? DateEntered { get; set; } 
+        public DateTime? DateEntered { get; set; }
         public DateTime? DateModified { get; set; }
 
         [MaxLength(1000)]
         public string AboutUs { get; set; }
-
     }
 
 
