@@ -63,6 +63,8 @@ namespace WebAPI.Models
             modelBuilder.Entity<HospitalDocumentVerification>().ToTable("HospitalDocumentVerification");
             modelBuilder.Entity<QuickUploadAssign>().ToTable("QuickUploadAssign");
             modelBuilder.Entity<PatientPrescriptionAssign>().ToTable("PatientPrescriptionAssign");
+            modelBuilder.Entity<EmailNotifications>().ToTable("EmailNotifications");
+
         }
     }
 }

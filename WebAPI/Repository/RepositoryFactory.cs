@@ -147,6 +147,10 @@ namespace NoorCare.Repository
                         return new PatientPrescriptionAssignRepository() as TRepository;
                     }
 
+                    if (typeof(TRepository) == typeof(IEmailNotificationsRepository))
+                    {
+                        return new EmailNotificationsRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;

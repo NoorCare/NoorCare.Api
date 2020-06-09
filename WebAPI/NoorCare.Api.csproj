@@ -189,6 +189,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="ClientDocument\" />
+    <Folder Include="EmailNotifications\" />
     <Folder Include="ImgNewsBlog\" />
     <Folder Include="ProfilePic\Doctor\" />
     <Folder Include="ProfilePic\Hospital\" />
@@ -219,6 +220,7 @@
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AppointmentController.cs" />
+    <Compile Include="Controllers\EmailNotificationsController.cs" />
     <Compile Include="Controllers\NewsBlogsController.cs" />
     <Compile Include="Controllers\PatientController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
@@ -233,6 +235,7 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Entity\Appointment.cs" />
+    <Compile Include="Entity\EmailNotifications.cs" />
     <Compile Include="Entity\FacilityImages.cs" />
     <Compile Include="Entity\FacilityDetail.cs" />
     <Compile Include="Entity\HospitalDocuments.cs" />
