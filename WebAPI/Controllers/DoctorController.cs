@@ -132,42 +132,45 @@ namespace WebAPI.Controllers
         [HttpPost]
         [AllowAnonymous]
         // POST: api/Doctor
-        public HttpResponseMessage Register(Doctor obj)
+        public HttpResponseMessage Register([FromBody]Doctor obj)
         {
-            ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
-            CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
-            if (countryCode != null)
-            {
-                EmailSender _emailSender = new EmailSender();
-                var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
-                var manager = new UserManager<ApplicationUser>(userStore);
-                string password = _registration.RandomPassword(6);
-                ApplicationUser user = _registration.UserAccount(obj, Convert.ToInt16(countryCode.CountryCodes));
-                IdentityResult result = manager.Create(user, password);
-                user.PasswordHash = password;
-                
-                obj.DoctorId = user.Id;
-                obj.EmailConfirmed = true;
-                IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
- 
-                var _doctorCreated = _doctorRepo.Insert(obj);
+            //ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
+            //CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
+            //if (countryCode != null)
+            //{
 
-                try
-                {
-                    _registration.sendRegistrationEmail(user);
-                    _registration.sendRegistrationMessage(user);
-                }
-                catch (Exception ex)
-                {
-                    
-                }
+            EmailSender _emailSender = new EmailSender();
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var manager = new UserManager<ApplicationUser>(userStore);
+            string password = _registration.RandomPassword(6);
+            //user registration
+            ApplicationUser user = _registration.UserAccount(obj, Convert.ToInt32(obj.CountryCode));
+            IdentityResult result = manager.Create(user, password);
+            user.PasswordHash = password;
 
-                return Request.CreateResponse(HttpStatusCode.Accepted, obj.DoctorId);
-            }
-            else
+            obj.DoctorId = user.Id;
+            obj.EmailConfirmed = true;
+            //doctor registration
+            IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+            var _doctorCreated = _doctorRepo.Insert(obj);
+
+            //send Email
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.Accepted, "Wrong country code");
+                _registration.sendRegistrationEmail(user);
+                _registration.sendRegistrationMessage(user);
             }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "email");
+            }
+
+            return Request.CreateResponse(HttpStatusCode.Accepted, obj.DoctorId);
+            //}
+            //else
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.Accepted, "Wrong country code");
+            //}
         }
 
         [HttpPost]
@@ -238,10 +241,19 @@ namespace WebAPI.Controllers
         [Route("api/doctor/doctorAvailablity")]
         [HttpPost]
         [AllowAnonymous]
-        public HttpResponseMessage DoctorAvailablity(DoctorAvailableTime obj)
+        public HttpResponseMessage DoctorAvailablity(DoctorAvailableTime[] obj)
         {
-            var _Created = _doctorAvailabilityRepo.Insert(obj);
-            return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
+            int id = 0;
+            if (obj != null)
+            {
+                foreach (DoctorAvailableTime element in obj)
+                {
+                    id = _doctorAvailabilityRepo.Insert(element);
+
+                }
+            }
+            //var _Created = _doctorAvailabilityRepo.Insert(obj);
+            return Request.CreateResponse(HttpStatusCode.Accepted, id);
         }
 
         [Route("api/doctor/getDoctorAvailablity/{doctorid}")]

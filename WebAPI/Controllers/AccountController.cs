@@ -163,6 +163,7 @@ namespace WebAPI.Controllers
                     {
                         firstname = hospital.HospitalName;
                         phoneno = hospital.Mobile.ToString();
+                        CountryCode = Convert.ToString(hospital.Country);
                         string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Hospital"));
                         foreach (var item in fileEntries)
                         {
@@ -184,7 +185,8 @@ namespace WebAPI.Controllers
                 ClientId = identityClaims.FindFirst("UserId").Value,
                 PhoneNo = phoneno.ToString(), //identityClaims.FindFirst("PhoneNo").Value,
                 JobType = identityClaims.FindFirst("JobType").Value,
-                ProfilePic= profilepic
+                ProfilePic= profilepic,
+                CountryCode=CountryCode
             };
             return model;
         }
