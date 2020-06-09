@@ -51,6 +51,7 @@ namespace WebAPI.Models
         public string PaymentType { get; set; }
         public bool Emergency { get; set; }
         public int FacilityId { get; set; }
+        public int JobType { get; set; }
         public string Address { get; set; }
         public string Street { get; set; }
         public string Country { get; set; }
@@ -193,5 +194,38 @@ namespace WebAPI.Models
 
         public int Id { get; set; }
         public Boolean IsChecked { get; set; }
+    }
+
+    public class PatientPrescriptionList 
+    {
+        
+        public int Id { get; set; }
+       
+        public string PatientId { get; set; }
+
+        
+        public string DoctorId { get; set; }
+
+        public string Prescription { get; set; }
+
+        public string Report { get; set; }
+
+        public bool IsDeleted { get; set; }
+        
+        public string CreatedBy { get; set; }
+        
+        public string ModifiedBy { get; set; }
+        public DateTime? DateEntered { get; set; }
+        public DateTime? DateModified { get; set; }
+
+        public string DoctorImgUrl { get; set; }
+        public string DoctorFirstName { get; set; }
+        public string DoctorLastName { get; set; }
+        public string DoctorPhoneNumber { get; set; }
+        public string DoctorEmail { get; set; }
+        public string HospitalPicUrl { get; set; }
+        public string HospitalName { get; set; }
+        public string HospitalAddress { get; set; }
+        public string HospitalEmail { get; set; }
     }
 }

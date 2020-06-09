@@ -159,7 +159,7 @@ namespace WebAPI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw;
+                    
                 }
 
                 return Request.CreateResponse(HttpStatusCode.Accepted, obj.DoctorId);
@@ -286,7 +286,7 @@ namespace WebAPI.Controllers
                     HospitalId = hospitals.HospitalId,
                     HospitalEmail = hospitals.Email,
                     HospitalAddress = hospitals.Address,
-                    HospitalPicUrl = $"{constant.baseUrl}/" + hospitals.ProfilePath,
+                    HospitalPicUrl = $"{constant.imgUrl}/" + hospitals.ProfilePath,
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),
@@ -295,7 +295,7 @@ namespace WebAPI.Controllers
                     Feedback = _feedbackRepo.Find(x => x.PageId == doctorid),
                     Likes = _feedbackRepo.Find(x => x.PageId == doctorid && x.ILike == true).Count(),
                     location = "",
-                    ImgUrl = $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg",
+                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Doctor/{d.DoctorId}.Jpeg",
                     website = hospitals.Website,
                     Address = hospitals.Address
                 };
@@ -429,6 +429,7 @@ namespace WebAPI.Controllers
                     _hospital.PaymentType = h.PaymentType;
                     _hospital.Emergency = h.Emergency;
                     _hospital.FacilityId = h.FacilityId;
+                    _hospital.JobType = h.jobType;
                     _hospital.Address = h.Address;
                     _hospital.Street = h.Street;
                     _hospital.Country = GetCountryName(Convert.ToInt16(h.Country));
@@ -445,7 +446,7 @@ namespace WebAPI.Controllers
                     _hospital.Feedbacks = feedback.Count();
                     _hospital.BookingUrl = $"booking/{h.HospitalId}";
                     _hospital.ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}";
-                    _hospital.ImgUrl = h.ProfilePath == null ? $"{constant.baseUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg" : $"{constant.baseUrl}/{h.ProfilePath}";
+                    _hospital.ImgUrl = h.ProfilePath == null ? $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg" : $"{constant.imgUrl}/{h.ProfilePath}";
                     _hospitalServices.AddRange(_hospital.Services);
                     _hospitalAmenities.AddRange(_hospital.Amenities);
                     _hospitals.Add(_hospital);
@@ -470,6 +471,7 @@ namespace WebAPI.Controllers
                         PaymentType = h.PaymentType,
                         Emergency = h.Emergency,
                         FacilityId = h.FacilityId,
+                        JobType = h.jobType,
                         Address = h.Address,
                         Street = h.Street,
                         Country = GetCountryName(Convert.ToInt16(h.Country)),
@@ -486,7 +488,7 @@ namespace WebAPI.Controllers
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{h.HospitalId}",
                         ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                        ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                        ImgUrl = $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg"
                     };
                     _hospitalServices.AddRange(_hospital.Services);
                     _hospitalAmenities.AddRange(_hospital.Amenities);
@@ -609,7 +611,7 @@ namespace WebAPI.Controllers
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{d.DoctorId}",
                         ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                        ImgUrl = d.PhotoPath == null ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.baseUrl}/{d.PhotoPath}"
+                        ImgUrl = d.PhotoPath == null ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}"
                     };
 
                     // Add Filter Value

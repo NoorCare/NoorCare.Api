@@ -73,6 +73,7 @@ namespace WebAPI.Controllers
                     PaymentType = h.PaymentType,
                     Emergency = h.Emergency,
                     FacilityId = h.FacilityId,
+                    JobType=h.jobType,
                     Address = h.Address,
                     Street = h.Street,
                     Country = h.Country,
@@ -93,7 +94,7 @@ namespace WebAPI.Controllers
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{h.HospitalId}",
                     ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                    ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg"
                 };
 
                 _hospitals.Add(_hospital);
@@ -175,7 +176,7 @@ namespace WebAPI.Controllers
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{h.HospitalId}",
                     ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                    ImgUrl = $"{constant.imgUrl}/Hospital/{h.HospitalId}.Jpeg"
+                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg"
                 };
 
                 _hospitals.Add(_hospital);
@@ -224,7 +225,7 @@ namespace WebAPI.Controllers
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{d.DoctorId}",
                     ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                    ImgUrl = $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg"
+                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Doctor/{d.DoctorId}.Jpeg"
                 };
 
                 _doctors.Add(_doctor);
@@ -283,7 +284,7 @@ namespace WebAPI.Controllers
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{d.DoctorId}",
                     ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                    ImgUrl = $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg"
+                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Doctor/{d.DoctorId}.Jpeg"
                 };
 
                 _doctors.Add(_doctor);
@@ -520,10 +521,10 @@ namespace WebAPI.Controllers
                 var directoryFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "FrontView"));
                 var directoryCRFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "CRFrontView"));
                 var directoryLicenseFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "LicenseFrontView"));
-                string IdBackView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/BackView/"+ httpRequest.Files["IdBackView"].FileName;
-                string IdFrontView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/IdFrontView/" + httpRequest.Files["IdFrontView"].FileName;
-                string CrFrontView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/CrFrontView/"+ httpRequest.Files["CrFrontView"].FileName;
-                string LicenseFrontView = constant.baseUrl + "HospitalDoc/" + hospitalId + "/LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName;
+                string IdBackView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/BackView/"+ httpRequest.Files["IdBackView"].FileName;
+                string IdFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/IdFrontView/" + httpRequest.Files["IdFrontView"].FileName;
+                string CrFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/CrFrontView/"+ httpRequest.Files["CrFrontView"].FileName;
+                string LicenseFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName;
                 HospitalDocumentVerification hospitalDocuments = new HospitalDocumentVerification
                 {
                     HospitalId = hospitalId,
