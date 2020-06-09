@@ -39,6 +39,7 @@ namespace NoorCare.Repository
     public class QuickUploadAssignRepository : EFRepositoryBase<ApplicationDbContext, QuickUploadAssign, int>, IQuickUploadAssignRepository { }
     public class LeadRepository : EFRepositoryBase<ApplicationDbContext, Lead, int>, ILeadRepository { }
     
+    public class EmailNotificationsRepository : EFRepositoryBase<ApplicationDbContext, EmailNotifications, int>, IEmailNotificationsRepository { }
 }
 
 

@@ -37,4 +37,6 @@ namespace WebAPI.Repository
     public interface IQuickUploadAssignRepository : IRepository<QuickUploadAssign, int> { }
     public interface ILeadRepository : IRepository<Lead, int> { }
     
+
+    public interface IEmailNotificationsRepository : IRepository<EmailNotifications, int> { }
 }
