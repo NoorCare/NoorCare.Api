@@ -64,6 +64,7 @@ namespace WebAPI.Models
             modelBuilder.Entity<QuickUploadAssign>().ToTable("QuickUploadAssign");
             modelBuilder.Entity<PatientPrescriptionAssign>().ToTable("PatientPrescriptionAssign");
             modelBuilder.Entity<EmailNotifications>().ToTable("EmailNotifications");
+            modelBuilder.Entity<Enquiry>().ToTable("Enquiry");
 
         }
     }

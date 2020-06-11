@@ -40,6 +40,7 @@ namespace NoorCare.Repository
     public class LeadRepository : EFRepositoryBase<ApplicationDbContext, Lead, int>, ILeadRepository { }
     
     public class EmailNotificationsRepository : EFRepositoryBase<ApplicationDbContext, EmailNotifications, int>, IEmailNotificationsRepository { }
+    public class EnquiryRepository : EFRepositoryBase<ApplicationDbContext, Enquiry, int>, IEnquiryRepository { }
 }
 
 
