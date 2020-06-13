@@ -46,27 +46,39 @@ namespace WebAPI.Controllers
         [HttpPost]
         [AllowAnonymous]
         // POST: api/Secretary
-        public HttpResponseMessage Register(Secretary obj)
+        public HttpResponseMessage Register([FromBody]Secretary obj)
         {
-            ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
-            CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
-            int country_Code = 0;
-            if (countryCode!=null)
-            {
-                country_Code = Convert.ToInt16(countryCode.CountryCodes);
-            }
+            //ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
+            //CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
+            //int country_Code = 0;
+            //if (countryCode!=null)
+            //{
+            //    country_Code = Convert.ToInt16(countryCode.CountryCodes);
+            //}
             EmailSender _emailSender = new EmailSender();
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             string password = _registration.RandomPassword(6);
-            ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(country_Code));
+            //user registration
+            ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt32(obj.CountryCode));
             IdentityResult result = manager.Create(user, password);
             user.PasswordHash = password;
-            _registration.sendRegistrationEmail(user);
-            _registration.sendRegistrationMessage(user);
             obj.SecretaryId = user.Id;
             obj.EmailConfirmed = true;
+            //Secretary registration
             var _sectiryCreated = _secretaryRepo.Insert(obj);
+
+            //send Email
+            try
+            {
+                _registration.sendRegistrationEmail(user);
+                _registration.sendRegistrationMessage(user);
+
+            }catch(Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "email");
+            }
+          
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.SecretaryId);
         }
 
