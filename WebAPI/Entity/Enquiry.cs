@@ -21,8 +21,18 @@ namespace WebAPI.Entity
         public string EmailId { get; set; }
         [Required]
         public string ContactNo { get; set; }
-        [Required]
+       
         public string Comments { get; set; }
+
+        public string Type { get; set; }
+
+        public string Website { get; set; }
+
+        public string Country { get; set; }
+
+        public string City { get; set; }
+
+        public string Address { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string ModifiedBy { get; set; }

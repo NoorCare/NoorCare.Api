@@ -130,6 +130,7 @@ namespace WebAPI.Controllers
             string hospitalId = httpRequest.Form["HospitalId"];
             string clientId = httpRequest.Form["ClientId"];
             string diseaseType = httpRequest.Form["diseaseType"];
+            string createdBy= httpRequest.Form["createdBy"];
             //var postedFile = httpRequest.Files["Image"];
             string PostedFileName = string.Empty;
             string PostedFileExt = string.Empty;
@@ -156,6 +157,8 @@ namespace WebAPI.Controllers
                         AddedYear = DateTime.Now.Year,
                         AddedMonth = DateTime.Now.Month,
                         FilePath = httpRequest.Files[i].FileName,
+                        CreatedBy = createdBy,
+                        DateEntered = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")
                     };
                     objId = _quickUploadRepo.Insert(quickHeathDetails);
                     FileInfo fi = new FileInfo(httpRequest.Files[i].FileName.Replace(" ", "_"));
