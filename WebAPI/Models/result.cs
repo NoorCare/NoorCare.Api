@@ -192,6 +192,8 @@ namespace WebAPI.Models
         public string DocUrl { get; set; }
         public string HospitalId { get; set; }
 
+        public string UploadedBy { get; set; }
+
         public int Id { get; set; }
         public Boolean IsChecked { get; set; }
     }

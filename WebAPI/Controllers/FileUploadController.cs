@@ -158,7 +158,7 @@ namespace WebAPI.Controllers
                         AddedMonth = DateTime.Now.Month,
                         FilePath = httpRequest.Files[i].FileName,
                         CreatedBy = createdBy,
-                        DateEntered = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")
+                        DateEntered = DateTime.Now
                     };
                     objId = _quickUploadRepo.Insert(quickHeathDetails);
                     FileInfo fi = new FileInfo(httpRequest.Files[i].FileName.Replace(" ", "_"));
@@ -363,6 +363,7 @@ namespace WebAPI.Controllers
             var desiesTypeResultList = new List<DesiesTypeResult>();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
             string host = ConfigurationManager.AppSettings.Get("ImageBaseUrl");//HttpContext.Current.Request.Url.Host;
+            //var result = _quickUploadRepo.GetAll();
             var result = _quickUploadRepo.Find(x => x.ClientId == clientId);
 
             //int count = _doctorRepo.Find(doc => doc.DoctorId == clientId).Count;
@@ -425,6 +426,7 @@ namespace WebAPI.Controllers
                             fileName.DocName = file.FilePath;
                             fileName.HospitalId = file.HospitalId;
                             fileName.Id = file.Id;
+                            fileName.UploadedBy = file.CreatedBy;
                             //baseURL/ClientDocument/ClientId/DesiseType/Year/Month/Files.jpg
                             fileName.DocUrl = constant.imgUrl + "ClientDocument/" + clientId + "/" + desiesTypeResult.DiseaseType + "/" + it.AddedYear
                             + "/" + mo.AddedMonth + "/" + file.FilePath;
@@ -508,6 +510,7 @@ namespace WebAPI.Controllers
                             fileName.DocName = file.FilePath;
                             fileName.HospitalId = file.HospitalId;
                             fileName.Id = file.Id;
+                            fileName.UploadedBy = file.CreatedBy;
                             //baseURL/ClientDocument/ClientId/DesiseType/Year/Month/Files.jpg
                             fileName.DocUrl = host + "ClientDocument/" + clientId + "/" + desiesTypeResult.DiseaseType + "/" + it.AddedYear
                             + "/" + mo.AddedMonth + "/" + file.FilePath;

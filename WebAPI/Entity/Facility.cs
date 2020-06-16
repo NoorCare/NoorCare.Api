@@ -169,8 +169,8 @@ namespace WebAPI.Entity
         public bool IsDeleted { get; set; }
         public string CreatedBy { get; set; }
         public string ModifiedBy { get; set; }
-        public string DateEntered { get; set; }
-        public string DateModified { get; set; }
+        public DateTime? DateEntered { get; set; }
+        public DateTime? DateModified { get; set; }
     }
 
     [Serializable]
