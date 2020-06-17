@@ -503,6 +503,25 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        [Route("api/hospitaldetails/aboutus")]
+        [HttpPost]
+        [AllowAnonymous]
+        public IHttpActionResult UpdateAboutus()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            string hospitalId = httpRequest.Form["ClientId"];
+            string aboutus = httpRequest.Form["Aboutus"];
+            HospitalDetails _hospitalDetails = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
+            if (_hospitalDetails != null)
+            {
+                _hospitalDetails.AboutUs = aboutus;
+                var result = _hospitaldetailsRepo.Update(_hospitalDetails);
+                return Ok(result);
+            }
+
+            return Ok();
+        }
+
         [HttpPost]
         [Route("api/hospital/uploadhospitaldocuments")]
         [AllowAnonymous]

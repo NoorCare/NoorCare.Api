@@ -366,19 +366,6 @@ namespace WebAPI.Controllers
             //var result = _quickUploadRepo.GetAll();
             var result = _quickUploadRepo.Find(x => x.ClientId == clientId);
 
-            //int count = _doctorRepo.Find(doc => doc.DoctorId == clientId).Count;
-            //if (count > 0)
-            //{
-            //    var quickUp = _quickUploadRepo.GetAll().ToList();
-            //    var quickUpAssign = _QuickUploadAssignRepo.GetAll().ToList();
-
-            //    var appointDetail = (from a in quickUp
-            //                         join t in quickUpAssign on a.Id equals t.QuickUploadId
-            //                         where t.AssignId == clientId && t.IsActive == true
-            //                         select a).ToList();
-            //    result = appointDetail;
-            //}
-
 
             var list = result.ToList();
             var data = list.GroupBy(item => item.DesiesType)
