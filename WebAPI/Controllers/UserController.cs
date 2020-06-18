@@ -139,7 +139,7 @@ namespace WebAPI.Controllers
         [Route("api/user/get/insuranceinfo/{ClientId}")]
         public IHttpActionResult getInsurancenformationt(string ClientId)
         {
-            InsuranceInformation _insuranceContact = _insuranceInformationRepository.Find(x => x.ClientId == ClientId).FirstOrDefault();
+            InsuranceInformation _insuranceContact = _insuranceInformationRepository.Find(x => x.ClientId == ClientId && x.Type=="Patient").FirstOrDefault();
             return Ok(_insuranceContact);
         }
         [HttpGet]
@@ -181,8 +181,9 @@ namespace WebAPI.Controllers
                 CompanyName = insuranceInformation.CompanyName,
                 InsuraceNo = insuranceInformation.InsuraceNo,
                 ExpiryDate = insuranceInformation.ExpiryDate,
-                IsActive = true
-                
+                IsActive = true,
+                Type = "Patient"
+
             };
             return Ok(_insuranceInformationRepository.Insert(_insuranceInformation));
         }

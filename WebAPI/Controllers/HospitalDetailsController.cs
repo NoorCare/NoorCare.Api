@@ -8,10 +8,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.OData;
 using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
+using System.Web.Http.OData;
 
 namespace WebAPI.Controllers
 {
@@ -30,7 +30,8 @@ namespace WebAPI.Controllers
         ISecretaryRepository _secretaryRepo = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
         IHospitalDocumentsRepository _hospitalDocumentsRepo = RepositoryFactory.Create<IHospitalDocumentsRepository>(ContextTypes.EntityFramework);
         ITblHospitalSpecialtiesRepository _hospitalSpecialtiesRepo = RepositoryFactory.Create<ITblHospitalSpecialtiesRepository>(ContextTypes.EntityFramework);
-
+        IInsuranceInformationRepository _insuranceInformationRepository =
+            RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
         [Route("api/hospitaldetails/getall")]
         [HttpGet]
         [AllowAnonymous]
@@ -566,6 +567,61 @@ namespace WebAPI.Controllers
             {
             }
             return Ok(objId);
+        }
+
+        [HttpGet]
+        [Route("api/hospital/get/insuranceinfo/{HospitalId}")]
+        public IHttpActionResult getInsurancenformationt(string HospitalId)
+        {
+            InsuranceInformation _insuranceContact = _insuranceInformationRepository.Find(x => x.ClientId == HospitalId && x.Type == "Hospital").FirstOrDefault();
+            return Ok(_insuranceContact);
+        }
+
+        [HttpGet]
+        [Route("api/hospital/get/insurancedetail/{insuranceId}")]
+        public IHttpActionResult getinsurancedetail(int insuranceId)
+        {
+            InsuranceInformation _insuranceContact = _insuranceInformationRepository.Find(x => x.Id == insuranceId).FirstOrDefault();
+            return Ok(_insuranceContact);
+        }
+
+        [HttpPost]
+        [Route("api/hospital/add/insuranceinfo/{ClientId}")]
+        [AllowAnonymous]
+        public IHttpActionResult AddInsurancenformationt(string ClientId, InsuranceInformation insuranceInformation)
+        {
+            InsuranceInformation _insuranceInformation = new InsuranceInformation
+            {
+                ClientId = ClientId,
+                CompanyName = insuranceInformation.CompanyName,
+                InsuraceNo = insuranceInformation.InsuraceNo,
+                ExpiryDate = insuranceInformation.ExpiryDate,
+                IsActive = true,
+                Type="Hospital"
+                
+
+            };
+            return Ok(_insuranceInformationRepository.Insert(_insuranceInformation));
+        }
+
+        [HttpPost]
+        [Route("api/hospital/update/insuranceinfo")]
+        public IHttpActionResult UpdateInsurancenformationt(InsuranceInformation insuranceInformation)
+        {
+            InsuranceInformation _insuranceInformation = _insuranceInformationRepository.Find(x => x.Id == insuranceInformation.Id).FirstOrDefault();
+            _insuranceInformation.CompanyName = insuranceInformation.CompanyName;
+            _insuranceInformation.InsuraceNo = insuranceInformation.InsuraceNo;
+            _insuranceInformation.ExpiryDate = insuranceInformation.ExpiryDate;
+            return Ok(_insuranceInformationRepository.Update(_insuranceInformation));
+        }
+
+        [HttpPost]
+        [Route("api/hospital/delete/insuranceinfo")]
+        public IHttpActionResult DeleteInsurancenformationt(InsuranceInformation insuranceInformation)
+        {
+            InsuranceInformation _insuranceInformation = _insuranceInformationRepository.Find(x => x.Id == insuranceInformation.Id).FirstOrDefault();
+            _insuranceInformation.IsActive = insuranceInformation.IsActive;
+            return Ok(_insuranceInformationRepository.Update(_insuranceInformation));
         }
     }
 }

@@ -101,9 +101,10 @@ namespace WebAPI.Entity
         public int Id { get; set; }
         public string ClientId { get; set; }
         public string CompanyName { get; set; }
-        public int InsuraceNo { get; set; }
+        public  Int64 InsuraceNo { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public bool IsActive { get; set; }
+        public string Type { get; set; }
     }
 
     [Serializable]
