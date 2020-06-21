@@ -24,5 +24,6 @@ namespace WebAPI.Models
     public class AutocompleteData
     {
         public string Name { get; set; }
+        public string Id { get; set; }
     }
 }

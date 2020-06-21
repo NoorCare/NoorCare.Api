@@ -132,6 +132,44 @@ namespace WebAPI.Controllers
 
             return amenities;
         }
+        [Route("api/autocomplete/{searchtype}/{autosearchtext}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<AutocompleteData> autocomplete(string searchtype, string autosearchtext)
+        {
+            //List<string> autodatalist = new List<string>();
+            List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
+            if (searchtype == "1")
+            {
+                var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => x.HospitalName.ToLower().Contains(autosearchtext.ToLower()))
+                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + "( " + h.HospitalId + "-" + h.Address + ")" };
+                //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
+                foreach (var item in hospitals)
+                {
+                    var autocomp = new AutocompleteData();
+                    autocomp.Id = item.Id;
+                    autocomp.Name = item.Name;
+                    autocompleteData.Add(autocomp);
+                }
+                return autocompleteData;
+            }
+            else
+            {
+                var doctors = from d in _doctorRepo.GetAll()
+                              join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
+                              where d.FirstName.ToLower().Contains(autosearchtext.ToLower()) || d.LastName.ToLower().Contains(autosearchtext.ToLower())
+                              select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " + h.HospitalName };
+                //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
+                foreach (var item in doctors)
+                {
+                    var autocomp = new AutocompleteData();
+                    autocomp.Id = item.Id;
+                    autocomp.Name = item.Name;
+                    autocompleteData.Add(autocomp);
+                }
+                return autocompleteData;
+            }
+        }
 
         [Route("api/autocompletedata/{searchtype}/{autosearchtext}")]
         [HttpGet]

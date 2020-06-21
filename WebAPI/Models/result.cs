@@ -10,6 +10,8 @@ namespace WebAPI.Models
     public class result
     {
         public List<Hospital> Hospitals { get; set; }
+
+        public List<Doctors> Doctors { get; set; }
         public FilterHospital FilterHospital { get; set; }
         public FilterDoctor FilterDoctor { get; set; }
     }
@@ -110,7 +112,11 @@ namespace WebAPI.Models
         public string Address { get; set; }
         public string HospitalPicUrl { get; set; }
         public string HospitalEmail { get; set; }
+        public string HospitalWebsite { get; set; }
         public string HospitalAddress { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
+        public long Mobile { get; set; }
         public List<DoctorAvailableTime> DoctorAvilability { get; set; }
         public FilterDoctor FilterDoctor { get; set; }
         public List<Disease> Specialization { get; set; }
@@ -229,5 +235,26 @@ namespace WebAPI.Models
         public string HospitalName { get; set; }
         public string HospitalAddress { get; set; }
         public string HospitalEmail { get; set; }
+    }
+
+
+    public class SearchFilter
+    {
+        public int CountryId { get; set; }
+        public int CityID { get; set; }
+        public int HealthProvider { get; set; }
+        public string DiseaseType { get; set; }
+        public int Type { get; set; }
+
+        public int FacilityId { get; set; }
+        public string HospitalID { get; set; }
+        public string HospitalName { get; set; }
+        public string DoctorID { get; set; }
+        public string DoctorName { get; set; }
+        public int ByPriceMax { get; set; }
+        public int ByPriceMin { get; set; }
+        public string LookingFor { get; set; }
+        public int DoctorGender { get; set; }
+        public string DoctorLanguage { get; set; }
     }
 }
