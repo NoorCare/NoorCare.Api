@@ -58,7 +58,7 @@ namespace WebAPI.Controllers
         // GET: api/Doctor
         public HttpResponseMessage GetAll()
         {
-            var result = _doctorRepo.GetAll().ToList();
+            var result = _doctorRepo.Find(x=> x.EmailConfirmed == true).ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 

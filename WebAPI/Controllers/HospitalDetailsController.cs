@@ -32,13 +32,15 @@ namespace WebAPI.Controllers
         ITblHospitalSpecialtiesRepository _hospitalSpecialtiesRepo = RepositoryFactory.Create<ITblHospitalSpecialtiesRepository>(ContextTypes.EntityFramework);
         IInsuranceInformationRepository _insuranceInformationRepository =
             RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
+        IFacilityRepository _facilityRepo = RepositoryFactory.Create<IFacilityRepository>(ContextTypes.EntityFramework);
+
         [Route("api/hospitaldetails/getall")]
         [HttpGet]
         [AllowAnonymous]
         // GET: api/HospitalDetails
         public HttpResponseMessage GetAll()
         {
-            var result = _hospitaldetailsRepo.GetAll().ToList();
+            var result = _hospitaldetailsRepo.Find(x=> x.EmailConfirmed == true).ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -59,6 +61,7 @@ namespace WebAPI.Controllers
             foreach (var h in hospitals ?? new List<HospitalDetails>())
             {
                 var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
+                var facility = _facilityRepo.Find(x => x.JobType == h.jobType).FirstOrDefault();
 
                 _hospital = new Hospital
                 {
@@ -75,6 +78,7 @@ namespace WebAPI.Controllers
                     Emergency = h.Emergency,
                     FacilityId = h.FacilityId,
                     JobType=h.jobType,
+                    JobTypePermission= facility.Permission,
                     Address = h.Address,
                     Street = h.Street,
                     Country = h.Country,
@@ -141,7 +145,7 @@ namespace WebAPI.Controllers
             foreach (var h in hospitals ?? new List<HospitalDetails>())
             {
                 var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
-
+                var facility = _facilityRepo.Find(x => x.JobType == h.jobType).FirstOrDefault();
                 _hospital = new Hospital
                 {
                     Id = h.Id,
@@ -165,6 +169,8 @@ namespace WebAPI.Controllers
                     Landmark = h.Landmark,
                     AboutUs = h.AboutUs,
                     InsuranceCompanies = h.InsuranceCompanies,
+                    JobType=h.jobType,
+                    JobTypePermission = facility.Permission,
 
                     // AmenitiesIds = Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
                     Amenities = getHospitalAmenities(h.Amenities, hospitalAmenitie),

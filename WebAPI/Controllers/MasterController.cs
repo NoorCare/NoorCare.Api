@@ -139,21 +139,7 @@ namespace WebAPI.Controllers
         {
             //List<string> autodatalist = new List<string>();
             List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
-            if (searchtype == "1")
-            {
-                var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => x.HospitalName.ToLower().Contains(autosearchtext.ToLower()))
-                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + "( " + h.HospitalId + "-" + h.Address + ")" };
-                //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
-                foreach (var item in hospitals)
-                {
-                    var autocomp = new AutocompleteData();
-                    autocomp.Id = item.Id;
-                    autocomp.Name = item.Name;
-                    autocompleteData.Add(autocomp);
-                }
-                return autocompleteData;
-            }
-            else
+            if (searchtype == "0")
             {
                 var doctors = from d in _doctorRepo.GetAll()
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
@@ -161,6 +147,22 @@ namespace WebAPI.Controllers
                               select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " + h.HospitalName };
                 //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in doctors)
+                {
+                    var autocomp = new AutocompleteData();
+                    autocomp.Id = item.Id;
+                    autocomp.Name = item.Name;
+                    autocompleteData.Add(autocomp);
+                }
+                return autocompleteData;
+
+               
+            }
+            else
+            {
+                var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => x.HospitalName.ToLower().Contains(autosearchtext.ToLower()))
+                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + "( " + h.HospitalId + "-" + h.Address + ")" };
+                //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
+                foreach (var item in hospitals)
                 {
                     var autocomp = new AutocompleteData();
                     autocomp.Id = item.Id;

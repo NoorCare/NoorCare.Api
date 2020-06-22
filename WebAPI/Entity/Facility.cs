@@ -18,6 +18,8 @@ namespace WebAPI.Entity
 
 		public int JobType { get; set; }
 
+        public int Permission { get; set; }
+
     }
 
     [Serializable]

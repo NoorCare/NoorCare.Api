@@ -76,6 +76,7 @@ namespace WebAPI.Models
         public string LastName { get; set; }
         public string PhoneNo { get; set; }
         public string JobType { get; set; }
+        public string JobTypePermission { get; set; }
         public string CountryCode { get; set; }
         public string ProfilePic { get; set; }
     }

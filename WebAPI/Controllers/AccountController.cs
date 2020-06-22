@@ -185,7 +185,8 @@ namespace WebAPI.Controllers
                 ClientId = identityClaims.FindFirst("UserId").Value,
                 PhoneNo = phoneno.ToString(), //identityClaims.FindFirst("PhoneNo").Value,
                 JobType = identityClaims.FindFirst("JobType").Value,
-                ProfilePic= profilepic,
+                JobTypePermission = identityClaims.FindFirst("JobTypePermission").Value,
+                ProfilePic = profilepic,
                 CountryCode=CountryCode
             };
             return model;
