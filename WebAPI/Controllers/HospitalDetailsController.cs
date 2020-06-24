@@ -40,7 +40,7 @@ namespace WebAPI.Controllers
         // GET: api/HospitalDetails
         public HttpResponseMessage GetAll()
         {
-            var result = _hospitaldetailsRepo.Find(x=> x.EmailConfirmed == true).ToList();
+            var result = _hospitaldetailsRepo.Find(x=> x.EmailConfirmed == true && x.IsDocumentApproved==1 && x.IsDeleted==false).ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 

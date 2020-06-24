@@ -58,7 +58,7 @@ namespace WebAPI.Controllers
         // GET: api/Doctor
         public HttpResponseMessage GetAll()
         {
-            var result = _doctorRepo.Find(x=> x.EmailConfirmed == true).ToList();
+            var result = _doctorRepo.Find(x=> x.EmailConfirmed == true && x.IsDeleted == false).ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -732,7 +732,7 @@ namespace WebAPI.Controllers
                 //by doctorname
                 if (searchFilter.DoctorName !=null &&  searchFilter.DoctorName.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.FirstName.Contains(searchFilter.DoctorName) || x.LastName.Contains(searchFilter.DoctorName)).ToList();
+                    docObj = docObj.Where(x => x.FirstName.ToLower().Contains(searchFilter.DoctorName.ToLower()) || x.LastName.ToLower().Contains(searchFilter.DoctorName.ToLower())).ToList();
                 }
                 //by gender
                 if (searchFilter.DoctorGender > 0)
@@ -742,17 +742,17 @@ namespace WebAPI.Controllers
                 //looking for
                 if (searchFilter.LookingFor !=null && searchFilter.LookingFor.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.AgeGroupGender.Contains(searchFilter.LookingFor)).ToList();
+                    docObj = docObj.Where(x => x.AgeGroupGender.ToLower().Contains(searchFilter.LookingFor.ToLower())).ToList();
                 }
                 //by language
                 if (searchFilter.DoctorLanguage !=null && searchFilter.DoctorLanguage.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.Language.Contains(searchFilter.DoctorLanguage)).ToList();
+                    docObj = docObj.Where(x => x.Language.ToLower().Contains(searchFilter.DoctorLanguage.ToLower())).ToList();
                 }
                 //by diesiesTypes
                 if (searchFilter.DiseaseType !=null && searchFilter.DiseaseType.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.Specialization.Contains(searchFilter.DiseaseType)).ToList();
+                    docObj = docObj.Where(x => x.Specialization.ToLower().Contains(searchFilter.DiseaseType.ToLower())).ToList();
                 }
 
                 //by price 
@@ -851,7 +851,7 @@ namespace WebAPI.Controllers
                 //hospitalname
                 if (searchFilter.HospitalName !=null && searchFilter.HospitalName.Length > 0)
                 {
-                    objHosp = objHosp.Where(x => x.HospitalName.Contains(searchFilter.HospitalName)).ToList();
+                    objHosp = objHosp.Where(x => x.HospitalName.ToLower().Contains(searchFilter.HospitalName.ToLower())).ToList();
                 }
                 hospitalDtls = objHosp.ToList();
                 int[] a = new int[0];
