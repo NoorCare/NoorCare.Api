@@ -721,7 +721,13 @@ namespace WebAPI.Controllers
                               where (d.City == searchFilter.CityID.ToString())
                               select p).ToList();
                 }
-               
+
+                //hospitalid
+                if (searchFilter.HospitalID != null && searchFilter.HospitalID.Length > 0)
+                {
+                    docObj = docObj.Where(x => x.HospitalId == searchFilter.HospitalID).ToList();
+                }
+
                 //by doctorid
                 if (searchFilter.DoctorID !=null && searchFilter.DoctorID.Length > 0)
                 {
@@ -759,6 +765,24 @@ namespace WebAPI.Controllers
                 if (searchFilter.ByPriceMax > 0 && searchFilter.ByPriceMin >= 0)
                 {
                     docObj = docObj.Where(x => x.FeeMoney >= searchFilter.ByPriceMin && x.FeeMoney <= searchFilter.ByPriceMax).ToList();
+                }
+                //by Exp 
+                try
+                {
+                    if (searchFilter.ByMaxExp > 0 && searchFilter.ByMinExp >= 0)
+                    {
+                        docObj = docObj.Where(x => Convert.ToInt32(x.Experience) >= searchFilter.ByMinExp && Convert.ToInt32(x.Experience) <= searchFilter.ByPriceMax).ToList();
+                    }
+                }
+                catch(Exception ex) { }
+
+                //by services
+                if (searchFilter.Services != null && searchFilter.Services.Length > 0)
+                {
+                    docObj = (from p in docObj
+                              join d in _doctorAvailabilityRepo.GetAll() on p.DoctorId equals d.DoctorId
+                              where (d.TimeId == null)
+                              select p).ToList();
                 }
 
                 var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
@@ -818,7 +842,7 @@ namespace WebAPI.Controllers
             List<Hospital> _hospitals = new List<Hospital>();
             List<HospitalDetails> hospitalDtls = new List<HospitalDetails>();
             //country
-            var objHosp = _hospitaldetailsRepo.Find(x => x.Country == searchFilter.CountryId.ToString() && x.EmailConfirmed == true).ToList();
+            var objHosp = _hospitaldetailsRepo.Find(x => (x.HospitalId == searchFilter.HospitalID || x.Country == searchFilter.CountryId.ToString()) && x.EmailConfirmed == true).ToList();
             try
             {
                 //city
@@ -853,6 +877,19 @@ namespace WebAPI.Controllers
                 {
                     objHosp = objHosp.Where(x => x.HospitalName.ToLower().Contains(searchFilter.HospitalName.ToLower())).ToList();
                 }
+
+                //by diesiesTypes
+                if (searchFilter.DiseaseType != null && searchFilter.DiseaseType.Length > 0)
+                {
+                    objHosp = objHosp.Where(x => x.Specialization.ToLower().Contains(searchFilter.DiseaseType.ToLower())).ToList();
+                }
+
+                //by services
+                if (searchFilter.Services != null && searchFilter.Services.Length > 0)
+                {
+                    objHosp = objHosp.Where(x => x.Services.ToLower().Contains(searchFilter.Services.ToLower())).ToList();
+                }
+
                 hospitalDtls = objHosp.ToList();
                 int[] a = new int[0];
                 List<TblHospitalServices> _hospitalServices = new List<TblHospitalServices>();

@@ -257,5 +257,11 @@ namespace WebAPI.Models
         public string LookingFor { get; set; }
         public int DoctorGender { get; set; }
         public string DoctorLanguage { get; set; }
+        public int ByMinExp { get; set; }
+        public int ByMaxExp { get; set; }
+        public string Services { get; set; }
+
+        //insurance
+        //Quick Specialtie
     }
 }
