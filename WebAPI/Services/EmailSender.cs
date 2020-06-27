@@ -9,42 +9,47 @@ using WebAPI;
 namespace AngularJSAuthentication.API.Services
 {
     public class EmailSender
-    {
-        private WebProxy objProxy1 = null;
-        private int _InternalCounter = 0;
+    {        
         string SMTP = ConfigurationManager.AppSettings.Get("SMTP");
         string SMTPUserId = ConfigurationManager.AppSettings.Get("SMTPUserId");
         string SMTPPassword = ConfigurationManager.AppSettings.Get("SMTPPassword");
         string From = ConfigurationManager.AppSettings.Get("From");
-        string SMTPPORT = ConfigurationManager.AppSettings.Get("SMTPPORT");
+        int SMTPPORT =Convert.ToInt32(ConfigurationManager.AppSettings.Get("SMTPPORT"));
 
         string SMSUserId = ConfigurationManager.AppSettings.Get("SMSUserId");
         string SMSPassword = ConfigurationManager.AppSettings.Get("SMSPassword");
         string SMSSid = ConfigurationManager.AppSettings.Get("SMSSid");
         string customMessage = ConfigurationManager.AppSettings.Get("customSMSMessage");
 
-        public void email_send(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care New",
+        public void email_send(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care",
             string ClientId = "Test", int jobType = 0, string password = null)
         {
-            string prifix = jobType == 3 ? "Dr " : "";
-            string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
-            MailMessage mail = new MailMessage();
-            SmtpClient SmtpServer = new SmtpClient(SMTP);
-            //mail.From = new MailAddress("NoorCareNew@gmail.com");
-            mail.From = new MailAddress(From);
-            mail.To.Add(mailTo);
-            mail.IsBodyHtml = true;
-            mail.Subject = "Registration Successfully ";
-            mail.Body = html.Replace("CLIENTNAME", prifix + clientName + "(" + ClientId + ")");
-            mail.Body = getLogoUrl(mail.Body);
-            mail.Body = getVereficationUrl(mail.Body, ClientId);
-            mail.Body = tempPassword(mail.Body, password, jobType);
-            SmtpServer.Port = 587;
-            SmtpServer.EnableSsl = true;
-            SmtpServer.UseDefaultCredentials = false;
-            SmtpServer.Credentials = new NetworkCredential(From, SMTPPassword);
-            SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
-            SmtpServer.Send(mail);
+            try
+            {
+                string prifix = jobType == 3 ? "Dr " : "";
+                string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient(SMTP);
+                mail.From = new MailAddress(From);
+                mail.To.Add(mailTo);
+                mail.IsBodyHtml = true;
+                mail.Subject = "Registration Successfully ";
+                mail.Body = html.Replace("CLIENTNAME", prifix + clientName + "(" + ClientId + ")");
+                mail.Body = getLogoUrl(mail.Body);
+                mail.Body = getVereficationUrl(mail.Body, ClientId);
+                mail.Body = tempPassword(mail.Body, password, jobType);
+
+                SmtpServer.Port = SMTPPORT; // 25; // 587;
+                SmtpServer.EnableSsl = true;
+                
+                SmtpServer.UseDefaultCredentials = false;
+                SmtpServer.Credentials = new NetworkCredential(From, SMTPPassword);
+                SmtpServer.DeliveryMethod = SmtpDeliveryMethod.Network;
+                SmtpServer.Send(mail);
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         public void email_sendforgotpassword(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care New",
@@ -85,6 +90,8 @@ namespace AngularJSAuthentication.API.Services
 
         public string Get()
         {
+            int _InternalCounter = 0;
+
             var now = DateTime.Now;
 
             var days = (int)(now - new DateTime(2000, 1, 1)).TotalDays;
@@ -154,8 +161,6 @@ namespace AngularJSAuthentication.API.Services
         string ClientId = "Test", int jobType = 0, string password = null, string sSubject = "", string html = "" )
         {
             string prifix = jobType == 3 ? "Dr " : "";
-          
-
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient(SMTP);
             mail.From = new MailAddress(From);
@@ -167,6 +172,7 @@ namespace AngularJSAuthentication.API.Services
             mail.Body = getVereficationUrl(mail.Body, ClientId);
             mail.Body = tempPassword(mail.Body, password, jobType);
             SmtpServer.Port = 587;
+           //465
             SmtpServer.EnableSsl = true;
             SmtpServer.UseDefaultCredentials = false;
             SmtpServer.Credentials = new NetworkCredential(From, SMTPPassword);

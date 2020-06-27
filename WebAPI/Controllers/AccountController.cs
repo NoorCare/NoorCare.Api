@@ -408,6 +408,11 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult GetUserEmailId(AccountModel model)
         {
+            if(model.Email == null)
+            {
+                return Ok();
+            }
+
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
 
