@@ -89,6 +89,15 @@ namespace WebAPI
                 else
                 {
                     var facility = _facilityRepo.Find(x => x.JobType == user.JobType).FirstOrDefault();
+                    string Jtype = "";
+                    if(user.JobType==0 || user.JobType == 1)
+                    {
+                        Jtype = user.JobType.ToString();
+                    }
+                    else
+                    {
+                        Jtype = facility.Permission.ToString();
+                    }
                     var identity = new ClaimsIdentity(context.Options.AuthenticationType);
                     identity.AddClaim(new Claim("UserId", user.Id));
                     identity.AddClaim(new Claim("Username", user.UserName));
@@ -97,7 +106,7 @@ namespace WebAPI
                     identity.AddClaim(new Claim("LastName", user.LastName == null ? "" : user.LastName));
                     identity.AddClaim(new Claim("LoggedOn", DateTime.Now.ToString()));
                     identity.AddClaim(new Claim("PhoneNo", user.PhoneNumber == null ? " " : user.PhoneNumber));
-                    identity.AddClaim(new Claim("JobTypePermission", facility.Permission.ToString()));
+                    identity.AddClaim(new Claim("JobTypePermission", Jtype));
                     identity.AddClaim(new Claim("JobType", user.JobType.ToString()));
                     context.Validated(identity);
                 }
