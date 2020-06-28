@@ -90,13 +90,14 @@ namespace WebAPI
                 {
                     var facility = _facilityRepo.Find(x => x.JobType == user.JobType).FirstOrDefault();
                     string Jtype = "";
-                    if(user.JobType==0 || user.JobType == 1)
+                    if(user.JobType==1 || user.JobType == 3 || user.JobType == 4)
                     {
                         Jtype = user.JobType.ToString();
                     }
                     else
                     {
-                        Jtype = facility.Permission.ToString();
+
+                        Jtype = facility!=null? facility.Permission.ToString():"";
                     }
                     var identity = new ClaimsIdentity(context.Options.AuthenticationType);
                     identity.AddClaim(new Claim("UserId", user.Id));
