@@ -34,6 +34,7 @@ namespace WebAPI
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
+            bool isError = false;
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             var userFindByEmail = manager.FindByEmail(context.UserName);
@@ -42,6 +43,10 @@ namespace WebAPI
             if (user == null)
             {
                 context.SetError("Please check username and password");
+            }
+            else if (user.IsBlocked == true || user.IsDeleted == true)
+            {
+                context.SetError("Your account has been blocked or deleted. Please contact to admin");
             }
             else
             {
@@ -58,13 +63,20 @@ namespace WebAPI
                     clientDetailRepo = _clientDetailRepo.Find(x => x.ClientId.Trim() == user.Id.Trim()).FirstOrDefault();
                     jobType = clientDetailRepo.Jobtype;
                     isEmailConfirmed = clientDetailRepo.EmailConfirmed;
+
                 }
                 else if (user.JobType == 3)
                 {
                     _doctorRepository = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
                     doctor = _doctorRepository.Find(x => x.DoctorId.Trim() == user.Id.Trim()).FirstOrDefault();
                     jobType = doctor.jobType;
+                    var usermanager = new UserManager<ApplicationUser>(userStore);
+                    var userFindById = usermanager.FindById(doctor.HospitalId);
                     isEmailConfirmed = true;
+                    if (userFindById.IsBlocked == true || userFindById.IsDeleted == true)
+                    {
+                        isError = true;
+                    }
                 }
                 else if (user.JobType == 4)
                 {
@@ -72,6 +84,12 @@ namespace WebAPI
                     secretary = _secretaryRepository.Find(x => x.SecretaryId.Trim() == user.Id.Trim()).FirstOrDefault();
                     jobType = secretary.jobType;
                     isEmailConfirmed = true;
+                    var usermanager = new UserManager<ApplicationUser>(userStore);
+                    var userFindById = usermanager.FindById(secretary.HospitalId);
+                    if (userFindById.IsBlocked == true || userFindById.IsDeleted == true)
+                    {
+                        isError = true;
+                    }
                 }
                 else
                 {
@@ -88,28 +106,35 @@ namespace WebAPI
                 }
                 else
                 {
-                    var facility = _facilityRepo.Find(x => x.JobType == user.JobType).FirstOrDefault();
-                    string Jtype = "";
-                    if(user.JobType==1 || user.JobType == 3 || user.JobType == 4)
+                    if (isError == true)
                     {
-                        Jtype = user.JobType.ToString();
+                        context.SetError("Your account has been blocked or deleted. Please contact to admin");
                     }
                     else
                     {
+                        var facility = _facilityRepo.Find(x => x.JobType == user.JobType).FirstOrDefault();
+                        string Jtype = "";
+                        if (user.JobType == 1 || user.JobType == 3 || user.JobType == 4)
+                        {
+                            Jtype = user.JobType.ToString();
+                        }
+                        else
+                        {
 
-                        Jtype = facility!=null? facility.Permission.ToString():"";
+                            Jtype = facility != null ? facility.Permission.ToString() : "";
+                        }
+                        var identity = new ClaimsIdentity(context.Options.AuthenticationType);
+                        identity.AddClaim(new Claim("UserId", user.Id));
+                        identity.AddClaim(new Claim("Username", user.UserName));
+                        identity.AddClaim(new Claim("Email", user.Email));
+                        identity.AddClaim(new Claim("FirstName", user.FirstName));
+                        identity.AddClaim(new Claim("LastName", user.LastName == null ? "" : user.LastName));
+                        identity.AddClaim(new Claim("LoggedOn", DateTime.Now.ToString()));
+                        identity.AddClaim(new Claim("PhoneNo", user.PhoneNumber == null ? " " : user.PhoneNumber));
+                        identity.AddClaim(new Claim("JobTypePermission", Jtype));
+                        identity.AddClaim(new Claim("JobType", user.JobType.ToString()));
+                        context.Validated(identity);
                     }
-                    var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-                    identity.AddClaim(new Claim("UserId", user.Id));
-                    identity.AddClaim(new Claim("Username", user.UserName));
-                    identity.AddClaim(new Claim("Email", user.Email));
-                    identity.AddClaim(new Claim("FirstName", user.FirstName));
-                    identity.AddClaim(new Claim("LastName", user.LastName == null ? "" : user.LastName));
-                    identity.AddClaim(new Claim("LoggedOn", DateTime.Now.ToString()));
-                    identity.AddClaim(new Claim("PhoneNo", user.PhoneNumber == null ? " " : user.PhoneNumber));
-                    identity.AddClaim(new Claim("JobTypePermission", Jtype));
-                    identity.AddClaim(new Claim("JobType", user.JobType.ToString()));
-                    context.Validated(identity);
                 }
             }
         }

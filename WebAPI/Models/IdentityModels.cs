@@ -11,6 +11,8 @@ namespace WebAPI.Models
         public int JobType { get; set; }
         public int CountryCodes { get; set; }
         public int? Gender { get; set; }
+        public bool IsBlocked { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
