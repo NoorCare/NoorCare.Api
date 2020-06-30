@@ -626,7 +626,7 @@ namespace WebAPI.Controllers
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{d.DoctorId}",
                         ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                        ImgUrl = d.PhotoPath == null ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}"
+                        ImgUrl = String.IsNullOrWhiteSpace(d.PhotoPath) ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}"
                     };
 
                     // Add Filter Value
@@ -813,7 +813,7 @@ namespace WebAPI.Controllers
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{d.DoctorId}",
                         ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                        ImgUrl = d.PhotoPath == null ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}",
+                        ImgUrl = String.IsNullOrWhiteSpace(d.PhotoPath) ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}",
                         HospitalEmail = hospRepo.Email,
                         HospitalName = hospRepo.HospitalName,
                         HospitalId = d.HospitalId,
