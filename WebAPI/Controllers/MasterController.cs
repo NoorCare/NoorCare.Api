@@ -139,7 +139,7 @@ namespace WebAPI.Controllers
         {
             //List<string> autodatalist = new List<string>();
             List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
-            if (searchtype == "0")
+            if (searchtype == "3")
             {
                 var doctors = from d in _doctorRepo.GetAll()
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
