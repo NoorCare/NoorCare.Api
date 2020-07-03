@@ -16,6 +16,7 @@ namespace WebAPI.Controllers
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+        IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
 
         [Route("api/GetTimeMaster")]
         [HttpGet]
@@ -59,15 +60,15 @@ namespace WebAPI.Controllers
         public List<TblCity> GetCity(string countryId)
         {
             int _countryId = 0;
-            if (countryId== "undefined" || countryId==null)
+            if (countryId == "undefined" || countryId == null)
             {
                 _countryId = 974;
             }
             else
             {
-                _countryId=Convert.ToInt16(countryId);
+                _countryId = Convert.ToInt16(countryId);
             }
-            
+
             ICityRepository _cityRepository = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
             return _cityRepository.Find(x => x.CountryId == _countryId).OrderBy(x => x.City).ToList();
         }
@@ -77,9 +78,9 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public List<TblCity> GetCityByCountryCode(int countrycode)
         {
-            
+
             ICityRepository _cityRepository = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
-            var citylist= _cityRepository.Find(x => x.CountryId == countrycode).OrderBy(x => x.City).ToList();
+            var citylist = _cityRepository.Find(x => x.CountryId == countrycode).OrderBy(x => x.City).ToList();
             return citylist;
         }
 
@@ -139,12 +140,51 @@ namespace WebAPI.Controllers
         {
             //List<string> autodatalist = new List<string>();
             List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
-            if (searchtype == "3")
+            if (searchtype == "Email")
+            {
+                var doctors = from d in _doctorRepo.GetAll()
+                              join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
+                              where (d.DoctorId.ToLower().Contains(autosearchtext.ToLower()) ||
+                              d.FirstName.ToLower().Contains(autosearchtext.ToLower()) || d.LastName.ToLower().Contains(autosearchtext.ToLower()))
+                              && d.EmailConfirmed == true && d.IsDeleted == false
+                              select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " };
+
+                var patient = this._clientDetailRepo.GetAll().Where(x => (x.ClientId.ToLower().Contains(autosearchtext.ToLower()) ||
+                              x.FirstName.ToLower().Contains(autosearchtext.ToLower()) || x.LastName.ToLower().Contains(autosearchtext.ToLower()))
+                              && x.EmailConfirmed == true && x.IsActive == true).ToList();
+
+                var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => (x.HospitalId.ToLower().Contains(autosearchtext.ToLower()) || x.HospitalName.ToLower().Contains(autosearchtext.ToLower()))
+                                && x.IsDeleted == false && x.IsDocumentApproved == 1 && x.EmailConfirmed == true)
+                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + "(" + h.HospitalId + ")" };
+                foreach (var item in doctors)
+                {
+                    var autocomp = new AutocompleteData();
+                    autocomp.Id = item.Id;
+                    autocomp.Name = item.Name;
+                    autocompleteData.Add(autocomp);
+                }
+                foreach (var item in hospitals)
+                {
+                    var autocomp = new AutocompleteData();
+                    autocomp.Id = item.Id;
+                    autocomp.Name = item.Name;
+                    autocompleteData.Add(autocomp);
+                }
+                foreach (var item in patient)
+                {
+                    var autocomp = new AutocompleteData();
+                    autocomp.Id = item.ClientId;
+                    autocomp.Name = item.FirstName + ' ' + item.LastName + "(" + item.ClientId + ")";
+                    autocompleteData.Add(autocomp);
+                }
+                return autocompleteData;
+            }
+            else if (searchtype == "3")
             {
                 var doctors = from d in _doctorRepo.GetAll()
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
                               where (d.FirstName.ToLower().Contains(autosearchtext.ToLower()) || d.LastName.ToLower().Contains(autosearchtext.ToLower()))
-                              && d.EmailConfirmed==true && d.IsDeleted==false
+                              && d.EmailConfirmed == true && d.IsDeleted == false
                               select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " + h.HospitalName };
                 //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in doctors)
@@ -156,12 +196,12 @@ namespace WebAPI.Controllers
                 }
                 return autocompleteData;
 
-               
+
             }
             else
             {
-                var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => x.HospitalName.ToLower().Contains(autosearchtext.ToLower()) 
-                                && x.IsDeleted==false && x.IsDocumentApproved==1 && x.EmailConfirmed==true)
+                var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => x.HospitalName.ToLower().Contains(autosearchtext.ToLower())
+                                && x.IsDeleted == false && x.IsDocumentApproved == 1 && x.EmailConfirmed == true)
                                 select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + "( " + h.HospitalId + "-" + h.Address + ")" };
                 //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in hospitals)
@@ -197,9 +237,9 @@ namespace WebAPI.Controllers
             {
                 var doctors = from d in _doctorRepo.GetAll()
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
-                              where (d.FirstName.ToLower().Contains(autosearchtext.ToLower() )|| d.LastName.ToLower().Contains(autosearchtext.ToLower()))
+                              where (d.FirstName.ToLower().Contains(autosearchtext.ToLower()) || d.LastName.ToLower().Contains(autosearchtext.ToLower()))
                               && d.EmailConfirmed == true && d.IsDeleted == false
-                              select new { Name = d.FirstName +" "+d.LastName + "(" + d.DoctorId + ") " + h.HospitalName };
+                              select new { Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " + h.HospitalName };
                 List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in doctors)
                 {

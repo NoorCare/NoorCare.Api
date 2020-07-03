@@ -31,6 +31,8 @@ public partial class ClientDetail : IEntity<int>
     public int PinCode { get; set; }
 
     public string ImageUrl { get; set; }
+
+    public bool IsActive { get; set; }
 }
 
 [Serializable]
