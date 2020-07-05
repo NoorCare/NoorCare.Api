@@ -244,8 +244,10 @@ namespace WebAPI.Models
         public int CountryId { get; set; }
         public int CityID { get; set; }
         public int HealthProvider { get; set; }
+
+        //Specialties
         public string DiseaseType { get; set; }
-        public int Type { get; set; }
+        public string Type { get; set; }
 
         public int FacilityId { get; set; }
         public string HospitalID { get; set; }
@@ -255,13 +257,14 @@ namespace WebAPI.Models
         public int ByPriceMax { get; set; }
         public int ByPriceMin { get; set; }
         public string LookingFor { get; set; }
-        public int DoctorGender { get; set; }
+        public string DoctorGender { get; set; }
         public string DoctorLanguage { get; set; }
         public int ByMinExp { get; set; }
         public int ByMaxExp { get; set; }
         public string Services { get; set; }
 
         //insurance
+        public string InsuranceId { get; set; }
         //Quick Specialtie
     }
 }

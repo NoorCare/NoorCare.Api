@@ -51,6 +51,8 @@ public class PatientPrescription : IEntity<int>
 
     public string Report { get; set; }
 
+    public string InsuranceId { get; set; }
+
     public bool IsDeleted { get; set; }
     [MaxLength(50)]
     public string CreatedBy { get; set; }

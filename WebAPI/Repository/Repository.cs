@@ -41,6 +41,8 @@ namespace NoorCare.Repository
     
     public class EmailNotificationsRepository : EFRepositoryBase<ApplicationDbContext, EmailNotifications, int>, IEmailNotificationsRepository { }
     public class EnquiryRepository : EFRepositoryBase<ApplicationDbContext, Enquiry, int>, IEnquiryRepository { }
+
+    public class InsuranceMasterRepository : EFRepositoryBase<ApplicationDbContext, InsuranceMaster, int>, IInsuranceMasterRepository { }
 }
 
 

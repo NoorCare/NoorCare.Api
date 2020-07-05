@@ -16,7 +16,7 @@ namespace WebAPI.Entity
         public int Id { get; set; }
         public string facility { get; set; }
 
-		public int JobType { get; set; }
+        public int JobType { get; set; }
 
         public int Permission { get; set; }
 
@@ -103,7 +103,7 @@ namespace WebAPI.Entity
         public int Id { get; set; }
         public string ClientId { get; set; }
         public string CompanyName { get; set; }
-        public  Int64 InsuraceNo { get; set; }
+        public Int64 InsuraceNo { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public bool IsActive { get; set; }
         public string Type { get; set; }
@@ -159,7 +159,7 @@ namespace WebAPI.Entity
     public class QuickUpload : IEntity<int>
     {
         [Key]
-        public int Id { get; set; }      
+        public int Id { get; set; }
         public string ClientId { get; set; }
         public string HospitalId { get; set; }
         public Int32 DesiesType { get; set; }
@@ -189,6 +189,17 @@ namespace WebAPI.Entity
         public DateTime? AssignDate { get; set; }
         public string ModifiedBy { get; set; }
         public DateTime? ModifiedDate { get; set; }
+    }
+
+    [Serializable]
+    [Table("InsuranceMaster")]
+    public class InsuranceMaster : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public string InsuranceCompanyName { get; set; }
+        public string InsuranceCompanyCode { get; set; }
+        public bool InUsed { get; set; }
     }
 
 }

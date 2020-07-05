@@ -76,6 +76,8 @@ public partial class HospitalDetails : IEntity<int>
     public int IsDocumentApproved { get; set; }
     public string AboutUs { get; set; }
 
+    public string InsuranceId { get; set; }
+
     public bool IsDeleted { get; set; }
     [MaxLength(50)]
     public string CreatedBy { get; set; }

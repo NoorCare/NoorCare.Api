@@ -41,4 +41,5 @@ namespace WebAPI.Repository
     public interface IEmailNotificationsRepository : IRepository<EmailNotifications, int> { }
 
     public interface IEnquiryRepository : IRepository<Enquiry, int> { }
+    public interface IInsuranceMasterRepository : IRepository<InsuranceMaster, int> { }
 }

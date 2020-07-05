@@ -155,6 +155,10 @@ namespace NoorCare.Repository
                     {
                         return new EnquiryRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IInsuranceMasterRepository))
+                    {
+                        return new InsuranceMasterRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;

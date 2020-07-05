@@ -731,13 +731,17 @@ namespace WebAPI.Controllers
                 //hospitalid
                 if (searchFilter.HospitalID != null && searchFilter.HospitalID.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.HospitalId == searchFilter.HospitalID).ToList();
+                    //docObj = docObj.Where(x => x.HospitalId == searchFilter.HospitalID).ToList();
+                    docObj = docObj.Where(x => x.HospitalId.Split(',').Select(ele => ele.Trim()).
+                        Any(ele => searchFilter.HospitalID.Contains(ele))).ToList();
                 }
 
                 //by doctorid
                 if (searchFilter.DoctorID != null && searchFilter.DoctorID.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.DoctorId == searchFilter.DoctorID).ToList();
+                    //docObj = docObj.Where(x => x.DoctorId == searchFilter.DoctorID).ToList();
+                    docObj = docObj.Where(x => x.DoctorId.Split(',').Select(ele => ele.Trim()).
+                        Any(ele => searchFilter.DoctorID.Contains(ele))).ToList();
                 }
 
 
@@ -747,24 +751,32 @@ namespace WebAPI.Controllers
                     docObj = docObj.Where(x => x.FirstName.ToLower().Contains(searchFilter.DoctorName.ToLower()) || x.LastName.ToLower().Contains(searchFilter.DoctorName.ToLower())).ToList();
                 }
                 //by gender
-                if (searchFilter.DoctorGender > 0)
+                if (searchFilter.DoctorGender != null && searchFilter.DoctorGender.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.Gender == searchFilter.DoctorGender).ToList();
+                    //docObj = docObj.Where(x => x.Gender == searchFilter.DoctorGender).ToList();
+                    docObj = docObj.Where(x => x.Gender.ToString() != null && x.Gender.ToString().Split(',').Select(ele => ele.Trim()).
+                        Any(ele => searchFilter.DoctorGender.Contains(ele))).ToList();
                 }
                 //looking for
                 if (searchFilter.LookingFor != null && searchFilter.LookingFor.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.AgeGroupGender.ToLower().Contains(searchFilter.LookingFor.ToLower())).ToList();
+                    //docObj = docObj.Where(x => x.AgeGroupGender.ToLower().Contains(searchFilter.LookingFor.ToLower())).ToList();
+                    docObj = docObj.Where(x => x.AgeGroupGender != null && x.AgeGroupGender.Split(',').Select(ele => ele.Trim()).
+                       Any(ele => searchFilter.LookingFor.Contains(ele))).ToList();
                 }
                 //by language
                 if (searchFilter.DoctorLanguage != null && searchFilter.DoctorLanguage.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.Language.ToLower().Contains(searchFilter.DoctorLanguage.ToLower())).ToList();
+                    //docObj = docObj.Where(x => x.Language.ToLower().Contains(searchFilter.DoctorLanguage.ToLower())).ToList();
+                    docObj = docObj.Where(x => x.Language != null && x.Language.Split(',').Select(ele => ele.Trim()).
+                      Any(ele => searchFilter.DoctorLanguage.Contains(ele))).ToList();
                 }
                 //by diesiesTypes
                 if (searchFilter.DiseaseType != null && searchFilter.DiseaseType.Length > 0)
                 {
-                    docObj = docObj.Where(x => x.Specialization.ToLower().Contains(searchFilter.DiseaseType.ToLower())).ToList();
+                    //docObj = docObj.Where(x => x.Specialization.ToLower().Contains(searchFilter.DiseaseType.ToLower())).ToList();
+                    docObj = docObj.Where(x => x.Specialization != null && x.Specialization.Split(',').Select(ele => ele.Trim()).
+                      Any(ele => searchFilter.DiseaseType.Contains(ele))).ToList();
                 }
 
                 //by price 
@@ -790,6 +802,22 @@ namespace WebAPI.Controllers
                               where (d.TimeId == null)
                               select p).ToList();
                 }
+
+                //by insurance
+                if (searchFilter.InsuranceId != null && searchFilter.InsuranceId.Length > 0)
+                {
+                    //objHosp = objHosp.Where(x => x.Services.ToLower().Contains(searchFilter.Services.ToLower())).ToList();
+                    var hospObj = _hospitaldetailsRepo.GetAll().Where(x => x.InsuranceId != null && x.InsuranceId.Split(',').Select(ele => ele.Trim()).
+                     Any(ele => searchFilter.InsuranceId.Contains(ele))).ToList();
+
+                    docObj = (from p in docObj
+                              join d in hospObj on p.HospitalId equals d.HospitalId
+                              select p).ToList();
+
+                    // docObj = docObj.Where(x => x.InsuranceId.Split(',').Select(ele => ele.Trim()).
+                    //Any(ele => searchFilter.InsuranceId.Contains(ele))).ToList();
+                }
+
 
                 var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
 
@@ -849,7 +877,7 @@ namespace WebAPI.Controllers
             List<Hospital> _hospitals = new List<Hospital>();
             List<HospitalDetails> hospitalDtls = new List<HospitalDetails>();
             //country
-            var objHosp = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true).ToList();
+            var objHosp = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1).ToList();
             try
             {
                 //city
@@ -866,22 +894,26 @@ namespace WebAPI.Controllers
 
 
                 //type 0
-                if (searchFilter.Type == 0)
+                if (searchFilter.Type == "0")
                 {
                     objHosp = objHosp.Where(x => x.IsDocumentApproved == 1).ToList();
                 }
-
-                //type not 0 and not2
-                if (searchFilter.Type > 0)
+                else if (searchFilter.Type != null && searchFilter.Type.Length > 0)
                 {
-                    objHosp = objHosp.Where(x => x.IsDocumentApproved == 1 && x.Type == searchFilter.Type.ToString() && x.FacilityId == searchFilter.FacilityId).ToList();
+                    //type not 0 and not2
+                    //objHosp = objHosp.Where(x => x.IsDocumentApproved == 1 && x.Type == searchFilter.Type.ToString() && x.FacilityId == searchFilter.FacilityId).ToList();
+                    objHosp = objHosp.Where(x => x.FacilityId == searchFilter.FacilityId).ToList();
+                    objHosp = objHosp.Where(x => x.Type != null && x.Type.Split(',').Select(ele => ele.Trim()).
+                    Any(ele => searchFilter.Type.Contains(ele))).ToList();
                 }
 
 
-                //hopital id
+                //hospital id
                 if (searchFilter.HospitalID != null && searchFilter.HospitalID.Length > 0)
                 {
-                    objHosp = objHosp.Where(x => x.HospitalId == searchFilter.HospitalID).ToList();
+                    //objHosp = objHosp.Where(x => x.HospitalId == searchFilter.HospitalID).ToList();
+                    objHosp = objHosp.Where(x => x.HospitalId.Split(',').Select(ele => ele.Trim()).
+                   Any(ele => searchFilter.HospitalID.Contains(ele))).ToList();
                 }
 
 
@@ -894,14 +926,27 @@ namespace WebAPI.Controllers
                 //by diesiesTypes
                 if (searchFilter.DiseaseType != null && searchFilter.DiseaseType.Length > 0)
                 {
-                    objHosp = objHosp.Where(x => x.Specialization.ToLower().Contains(searchFilter.DiseaseType.ToLower())).ToList();
+                    //objHosp = objHosp.Where(x => x.Specialization.ToLower().Contains(searchFilter.DiseaseType.ToLower())).ToList();
+                    objHosp = objHosp.Where(x => x.Specialization != null && x.Specialization.Split(',').Select(ele => ele.Trim()).
+                   Any(ele => searchFilter.DiseaseType.Contains(ele))).ToList();
                 }
 
                 //by services
                 if (searchFilter.Services != null && searchFilter.Services.Length > 0)
                 {
-                    objHosp = objHosp.Where(x => x.Services.ToLower().Contains(searchFilter.Services.ToLower())).ToList();
+                    //objHosp = objHosp.Where(x => x.Services.ToLower().Contains(searchFilter.Services.ToLower())).ToList();
+                    objHosp = objHosp.Where(x => x.Services != null && x.Services.Split(',').Select(ele => ele.Trim()).
+                   Any(ele => searchFilter.Services.Contains(ele))).ToList();
                 }
+
+                //by insurance
+                if (searchFilter.InsuranceId != null && searchFilter.InsuranceId.Length > 0)
+                {
+                    //objHosp = objHosp.Where(x => x.Services.ToLower().Contains(searchFilter.Services.ToLower())).ToList();
+                    objHosp = objHosp.Where(x => x.InsuranceId != null && x.InsuranceId.Split(',').Select(ele => ele.Trim()).
+                   Any(ele => searchFilter.InsuranceId.Contains(ele))).ToList();
+                }
+
 
                 hospitalDtls = objHosp.ToList();
                 int[] a = new int[0];

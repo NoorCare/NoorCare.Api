@@ -95,6 +95,16 @@ namespace WebAPI.Controllers
             return country;
         }
 
+        [Route("api/insuranceMaster")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<InsuranceMaster> GetInsurance()
+        {
+            IInsuranceMasterRepository _insuRepository = RepositoryFactory.Create<IInsuranceMasterRepository>(ContextTypes.EntityFramework);
+            var insur = _insuRepository.GetAll().Where(x => x.InUsed == true).OrderBy(x => x.InsuranceCompanyName).ToList();
+            return insur;
+        }
+
         [Route("api/state")]
         [HttpGet]
         [AllowAnonymous]
@@ -179,7 +189,7 @@ namespace WebAPI.Controllers
                 }
                 return autocompleteData;
             }
-            else if (searchtype == "3")
+            else if (searchtype == "3" || searchtype == "0")
             {
                 var doctors = from d in _doctorRepo.GetAll()
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
@@ -202,7 +212,7 @@ namespace WebAPI.Controllers
             {
                 var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => x.HospitalName.ToLower().Contains(autosearchtext.ToLower())
                                 && x.IsDeleted == false && x.IsDocumentApproved == 1 && x.EmailConfirmed == true)
-                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + "( " + h.HospitalId + "-" + h.Address + ")" };
+                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + "( " + h.HospitalId + ")" };
                 //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in hospitals)
                 {
@@ -225,7 +235,7 @@ namespace WebAPI.Controllers
             {
                 var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => x.HospitalName.ToLower().Contains(autosearchtext.ToLower())
                                 && x.IsDeleted == false && x.IsDocumentApproved == 1 && x.EmailConfirmed == true)
-                                select new { Name = h.HospitalName.ToString() + "( " + h.HospitalId + "-" + h.Address + ")" };
+                                select new { Name = h.HospitalName.ToString() + "( " + h.HospitalId + ")" };
                 List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in hospitals)
                 {
