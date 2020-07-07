@@ -80,7 +80,8 @@ namespace WebAPI.Models
         public string BookingUrl { get; set; }
         public string ProfileDetailUrl { get; set; }
         public string ImgUrl { get; set; }
-        
+        public string IsDocumentApproved { get; set; }
+
     }
 
     public class Doctors

@@ -99,7 +99,8 @@ namespace WebAPI.Controllers
                     Feedbacks = feedback.Count(),
                     BookingUrl = $"booking/{h.HospitalId}",
                     ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
-                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg"
+                    ImgUrl = $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg",
+                    IsDocumentApproved=h.IsDocumentApproved.ToString()
                 };
 
                 _hospitals.Add(_hospital);
@@ -528,6 +529,15 @@ namespace WebAPI.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        [Route("api/hospital/latlong/{hospitalId}")]
+        [AllowAnonymous]
+        public IHttpActionResult getHospitalLatLong(string hospitalId)
+        {
+            return Ok(_hospitalDocumentsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault());
+        }
+
 
         [HttpPost]
         [Route("api/hospital/uploadhospitaldocuments")]
