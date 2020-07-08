@@ -157,7 +157,7 @@ namespace WebAPI.Controllers
                               where (d.DoctorId.ToLower().Contains(autosearchtext.ToLower()) ||
                               d.FirstName.ToLower().Contains(autosearchtext.ToLower()) || d.LastName.ToLower().Contains(autosearchtext.ToLower()))
                               && d.EmailConfirmed == true && d.IsDeleted == false
-                              select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " };
+                              select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + " " + d.DoctorId.Replace('-', ' ') };
 
                 var patient = this._clientDetailRepo.GetAll().Where(x => (x.ClientId.ToLower().Contains(autosearchtext.ToLower()) ||
                               x.FirstName.ToLower().Contains(autosearchtext.ToLower()) || x.LastName.ToLower().Contains(autosearchtext.ToLower()))
@@ -165,7 +165,7 @@ namespace WebAPI.Controllers
 
                 var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => (x.HospitalId.ToLower().Contains(autosearchtext.ToLower()) || x.HospitalName.ToLower().Contains(autosearchtext.ToLower()))
                                 && x.IsDeleted == false && x.IsDocumentApproved == 1 && x.EmailConfirmed == true)
-                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + "(" + h.HospitalId + ")" };
+                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + " " + h.HospitalId.Replace('-', ' ') };
                 foreach (var item in doctors)
                 {
                     var autocomp = new AutocompleteData();
@@ -184,7 +184,7 @@ namespace WebAPI.Controllers
                 {
                     var autocomp = new AutocompleteData();
                     autocomp.Id = item.ClientId;
-                    autocomp.Name = item.FirstName + ' ' + item.LastName + "(" + item.ClientId + ")";
+                    autocomp.Name = item.FirstName + ' ' + item.LastName + " " + item.ClientId.Replace('-', ' ');
                     autocompleteData.Add(autocomp);
                 }
                 return autocompleteData;
@@ -195,7 +195,7 @@ namespace WebAPI.Controllers
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
                               where (d.FirstName.ToLower().Contains(autosearchtext.ToLower()) || d.LastName.ToLower().Contains(autosearchtext.ToLower()))
                               && d.EmailConfirmed == true && d.IsDeleted == false
-                              select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " + h.HospitalName };
+                              select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + " " + d.DoctorId.Replace('-', ' ') +" " + h.HospitalName };
                 //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in doctors)
                 {
@@ -212,7 +212,7 @@ namespace WebAPI.Controllers
             {
                 var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => x.HospitalName.ToLower().Contains(autosearchtext.ToLower())
                                 && x.IsDeleted == false && x.IsDocumentApproved == 1 && x.EmailConfirmed == true)
-                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + "( " + h.HospitalId + ")" };
+                                select new { Id = h.HospitalId, Name = h.HospitalName.ToString() + " " + h.HospitalId.Replace('-', ' ') };
                 //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in hospitals)
                 {
@@ -235,7 +235,7 @@ namespace WebAPI.Controllers
             {
                 var hospitals = from h in _hospitaldetailsRepo.GetAll().Where(x => x.HospitalName.ToLower().Contains(autosearchtext.ToLower())
                                 && x.IsDeleted == false && x.IsDocumentApproved == 1 && x.EmailConfirmed == true)
-                                select new { Name = h.HospitalName.ToString() + "( " + h.HospitalId + ")" };
+                                select new { Name = h.HospitalName.ToString() + " " + h.HospitalId.Replace('-', ' ') };
                 List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in hospitals)
                 {
@@ -249,7 +249,7 @@ namespace WebAPI.Controllers
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
                               where (d.FirstName.ToLower().Contains(autosearchtext.ToLower()) || d.LastName.ToLower().Contains(autosearchtext.ToLower()))
                               && d.EmailConfirmed == true && d.IsDeleted == false
-                              select new { Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " + h.HospitalName };
+                              select new { Name = d.FirstName + " " + d.LastName + " " + d.DoctorId.Replace('-', ' ') + " " + h.HospitalName };
                 List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in doctors)
                 {
