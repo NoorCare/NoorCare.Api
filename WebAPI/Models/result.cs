@@ -204,6 +204,12 @@ namespace WebAPI.Models
 
         public int Id { get; set; }
         public Boolean IsChecked { get; set; }
+
+        public string HospitalName { get; set; }
+        public string HospitalEmail { get; set; }
+        public string HospitalAddress { get; set; }
+        public string HospitalWebsite { get; set; }
+        public string HospitalMobile { get; set; }
     }
 
     public class PatientPrescriptionList 
