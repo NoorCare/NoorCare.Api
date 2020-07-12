@@ -319,6 +319,24 @@ namespace WebAPI.Controllers
 
         }
 
+        [Route("api/doctor/aboutus")]
+        [HttpPost]
+        [AllowAnonymous]
+        public IHttpActionResult UpdateAboutus()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            string doctorId = httpRequest.Form["ClientId"];
+            string aboutus = httpRequest.Form["Aboutus"];
+            Doctor _doctor = _doctorRepo.Find(x => x.DoctorId == doctorId).FirstOrDefault();
+            if (_doctor != null)
+            {
+                _doctor.AboutUs = aboutus;
+                var result = _doctorRepo.Update(_doctor);
+                return Ok(result);
+            }
+
+            return Ok();
+        }
 
         [Route("api/searchdoctor/{searchType?}/{searchName?}")]
         [HttpGet]
