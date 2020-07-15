@@ -35,15 +35,26 @@ namespace WebAPI.Controllers
         [Route("api/enquiry/add")]
         [HttpPost]
         [AllowAnonymous]
-        public IHttpActionResult add([FromBody]Enquiry enquiry)
+        public IHttpActionResult add([FromBody] Enquiry enquiry)
         {
-            if (enquiry!=null)
+            if (enquiry != null)
             {
-                //insert 
-                enquiry.CreatedBy = enquiry.Name;
-                enquiry.CreatedDate = DateTime.Now;
-                var _enquiryCreated = _enquiryRepository.Insert(enquiry);
-                return Ok(_enquiryCreated);
+                int enqCount = _enquiryRepository.GetAll().Where(x => x.EmailId.ToLower().Trim() == enquiry.EmailId.ToLower().Trim()
+                || x.ContactNo.Trim() == enquiry.ContactNo.Trim()).Count();
+                if (enqCount >= 2)
+                {
+                    return Ok("LimitExceeded");
+                }
+                else
+                {
+                    //insert 
+                    enquiry.CreatedBy = enquiry.Name;
+                    enquiry.CreatedDate = DateTime.Now;
+                    var _enquiryCreated = _enquiryRepository.Insert(enquiry);
+                    return Ok(_enquiryCreated);
+                }
+
+
             }
             return InternalServerError();
         }
