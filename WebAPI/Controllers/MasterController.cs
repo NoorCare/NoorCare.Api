@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
         public List<TblCity> GetCity(string countryId)
         {
             int _countryId = 0;
-            if (countryId == "undefined" || countryId == null)
+            if (countryId == "undefined" || countryId == "null" || string.IsNullOrWhiteSpace(countryId))
             {
                 _countryId = 974;
             }
