@@ -5,7 +5,7 @@ namespace NoorCare.Repository
     public static class RepositoryFactory
     {
 
-        public static TRepository Create<TRepository>(ContextTypes ctype) where TRepository: class
+        public static TRepository Create<TRepository>(ContextTypes ctype) where TRepository : class
         {
             switch (ctype)
             {
@@ -62,7 +62,7 @@ namespace NoorCare.Repository
                     {
                         return new CountryRepository() as TRepository;
                     }
-                    if(typeof(TRepository) == typeof(IDoctorRepository))
+                    if (typeof(TRepository) == typeof(IDoctorRepository))
                     {
                         return new DoctorRepository() as TRepository;
                     }
@@ -158,6 +158,10 @@ namespace NoorCare.Repository
                     if (typeof(TRepository) == typeof(IInsuranceMasterRepository))
                     {
                         return new InsuranceMasterRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(ILikeVisitorRepository))
+                    {
+                        return new LikeVisitorRepository() as TRepository;
                     }
                     return null;
                 default:

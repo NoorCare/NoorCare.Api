@@ -42,4 +42,6 @@ namespace WebAPI.Repository
 
     public interface IEnquiryRepository : IRepository<Enquiry, int> { }
     public interface IInsuranceMasterRepository : IRepository<InsuranceMaster, int> { }
+
+    public interface ILikeVisitorRepository : IRepository<LikeVisitor, int> { }
 }

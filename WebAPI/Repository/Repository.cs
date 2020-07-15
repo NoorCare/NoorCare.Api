@@ -43,6 +43,7 @@ namespace NoorCare.Repository
     public class EnquiryRepository : EFRepositoryBase<ApplicationDbContext, Enquiry, int>, IEnquiryRepository { }
 
     public class InsuranceMasterRepository : EFRepositoryBase<ApplicationDbContext, InsuranceMaster, int>, IInsuranceMasterRepository { }
+    public class LikeVisitorRepository : EFRepositoryBase<ApplicationDbContext, LikeVisitor, int>, ILikeVisitorRepository { }
 }
 
 
