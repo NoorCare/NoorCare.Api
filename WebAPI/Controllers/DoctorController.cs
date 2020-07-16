@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
         ITblHospitalAmenitiesRepository _hospitalAmenitieRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
         IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
-
+        ILikeVisitorRepository _likeVisitorRepo = RepositoryFactory.Create<ILikeVisitorRepository>(ContextTypes.EntityFramework);
 
         [Route("api/doctor/IsValidNoorCare/{doctorId}")]
         [HttpGet]
@@ -844,6 +844,7 @@ namespace WebAPI.Controllers
                 {
                     var hospRepo = _hospitaldetailsRepo.Find(x => x.HospitalId == d.HospitalId).FirstOrDefault();
                     var feedback = _feedbackRepo.Find(x => x.PageId == d.DoctorId);
+                    int likeCount = _likeVisitorRepo.Find(x => x.HFP_DOC_NCID.Trim() == d.DoctorId && x.IsDelete == false && x.Like_Dislike == true).Count();
                     _doctor = new Doctors
                     {
                         DoctorId = d.DoctorId,
@@ -861,7 +862,8 @@ namespace WebAPI.Controllers
                         SpecializationIds = Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
                         Specialization = getSpecialization(d.Specialization, disease),
                         aboutMe = d.AboutUs,
-                        Likes = feedback.Where(x => x.ILike == true).Count(),
+                        //Likes = feedback.Where(x => x.ILike == true).Count(),
+                        Likes = likeCount,
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{d.DoctorId}",
                         ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
