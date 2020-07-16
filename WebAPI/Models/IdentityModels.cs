@@ -68,6 +68,7 @@ namespace WebAPI.Models
             modelBuilder.Entity<EmailNotifications>().ToTable("EmailNotifications");
             modelBuilder.Entity<Enquiry>().ToTable("Enquiry");
             modelBuilder.Entity<InsuranceMaster>().ToTable("InsuranceMaster");
+            modelBuilder.Entity<LikeVisitor>().ToTable("LikeVisitor");
 
         }
     }
