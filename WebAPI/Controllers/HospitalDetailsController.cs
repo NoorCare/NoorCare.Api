@@ -33,6 +33,7 @@ namespace WebAPI.Controllers
         IInsuranceInformationRepository _insuranceInformationRepository =
             RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
         IFacilityRepository _facilityRepo = RepositoryFactory.Create<IFacilityRepository>(ContextTypes.EntityFramework);
+        IFacilityImagesRepository _facilityImagesRepo = RepositoryFactory.Create<IFacilityImagesRepository>(ContextTypes.EntityFramework);
 
         [Route("api/hospitaldetails/getall")]
         [HttpGet]
@@ -639,5 +640,23 @@ namespace WebAPI.Controllers
             _insuranceInformation.IsActive = insuranceInformation.IsActive;
             return Ok(_insuranceInformationRepository.Update(_insuranceInformation));
         }
+        [HttpGet]
+        [Route("api/hospital/facilityimages/{hospitalId}")]
+        [AllowAnonymous]
+        public IHttpActionResult FacilityImages(string hospitalId)
+        {
+            var facilityimages = _facilityImagesRepo.Find(x => x.FacilityNoorCareNumber == hospitalId);
+            return Ok(facilityimages);
+        }
+
+        [HttpGet]
+        [Route("api/hospital/facilityimages/delete/{id}")]
+        [AllowAnonymous]
+        public IHttpActionResult DeleteFacilityImages(int id)
+        {
+            _facilityImagesRepo.Delete(id);
+            return Ok("");
+        }
+
     }
 }
