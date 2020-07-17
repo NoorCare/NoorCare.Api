@@ -210,50 +210,83 @@ namespace WebAPI.Controllers
             var httpRequest = HttpContext.Current.Request;
             string facilityImageType = httpRequest.Form["FacilityImageType"];
             string facilityNoorCareNumber = httpRequest.Form["FacilityNoorCareNumber"];
-            //var postedFile = httpRequest.Files["Image"];
+            HospitalDetails limitCount = _hospitaldetailsRepo.Find(x => x.HospitalId == facilityNoorCareNumber).FirstOrDefault();
+            int imageCount = _facelityImagesRepo.Find(x => x.FacilityNoorCareNumber == facilityNoorCareNumber && x.FacilityImageType == facilityImageType).ToList().Count;
+            string message = string.Empty;
 
-            var imageCount = _facelityImagesRepo.Find(x => x.FacilityNoorCareNumber == facilityNoorCareNumber).ToList().Count;
-            string PostedFileName = string.Empty;
-            string PostedFileExt = string.Empty;
-            int objId = 0;
-            try
+            if (facilityImageType.ToLower() == "banner")
             {
-                string year = DateTime.Now.Year.ToString();
-                string month = DateTime.Now.Month.ToString();
-                string directoryPath = string.Empty;
-                if (!Directory.Exists(HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType)))
+                var bannerlimitCount = limitCount.LimitBannerCount == null ? 0 : limitCount.LimitBannerCount;
+                int diffLimit = Convert.ToInt32(bannerlimitCount - imageCount);
+                if (diffLimit <= 0)
                 {
-                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType));
+                    message = "Your have no limit for upload banner. Please delete banner and upload again";
                 }
-
-                for (int i = 0; i < httpRequest.Files.Count; i++)
+                else if (diffLimit > 0 && httpRequest.Files.Count > diffLimit)
                 {
-                    var filePath = HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType);
-                    filePath = filePath + "/" + httpRequest.Files[i].FileName;
-                    FacilityImages facilityImages = new FacilityImages
+                    message = "You have only " + diffLimit + " banner limit . Please delete banner and upload again";
+                }
+            }
+            else if (facilityImageType.ToLower() == "gallery")
+            {
+                var gallerylimitCount = limitCount.LimitGallaryCount == null ? 0 : limitCount.LimitGallaryCount;
+                int diffLimit = Convert.ToInt32(gallerylimitCount - imageCount);
+                if (diffLimit <= 0)
+                {
+                    message = "Your have no limit for upload gallery. Please delete gallery and upload again";
+                }
+                else if (diffLimit > 0 && httpRequest.Files.Count > diffLimit)
+                {
+                    message = "You have only " + diffLimit + " gallery limit . Please delete gallery and upload again";
+                }
+            }
+
+            if (message==string.Empty)
+            {
+                string PostedFileName = string.Empty;
+                string PostedFileExt = string.Empty;
+                int objId = 0;
+                try
+                {
+                    string year = DateTime.Now.Year.ToString();
+                    string month = DateTime.Now.Month.ToString();
+                    string directoryPath = string.Empty;
+                    if (!Directory.Exists(HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType)))
                     {
-                        FacilityImageType = facilityImageType,
-                        FacilityNoorCareNumber = facilityNoorCareNumber,
-                        ExpiryDate = DateTime.Now,
-                        FileName = httpRequest.Files[i].FileName,
-                        FilePath = "FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType + "/" + httpRequest.Files[i].FileName,
-                        DateEntered = DateTime.Now,
-                    };
-                    objId = _facelityImagesRepo.Insert(facilityImages);
-                    FileInfo fi = new FileInfo(httpRequest.Files[i].FileName.Replace(" ", "_"));
-                    if (fi != null)
-                    {
-                        PostedFileName = fi.Name;
-                        PostedFileExt = fi.Extension;
+                        Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType));
                     }
-                    imageName = objId + i + PostedFileExt;
-                    httpRequest.Files[i].SaveAs(filePath);
+
+                    for (int i = 0; i < httpRequest.Files.Count; i++)
+                    {
+                        var filePath = HttpContext.Current.Server.MapPath("~/FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType);
+                        filePath = filePath + "/" + httpRequest.Files[i].FileName;
+                        FacilityImages facilityImages = new FacilityImages
+                        {
+                            FacilityImageType = facilityImageType,
+                            FacilityNoorCareNumber = facilityNoorCareNumber,
+                            ExpiryDate = DateTime.Now,
+                            FileName = httpRequest.Files[i].FileName,
+                            FilePath = "FacilityImages/" + facilityNoorCareNumber + "/" + facilityImageType + "/" + httpRequest.Files[i].FileName,
+                            DateEntered = DateTime.Now,
+                        };
+                        objId = _facelityImagesRepo.Insert(facilityImages);
+                        FileInfo fi = new FileInfo(httpRequest.Files[i].FileName.Replace(" ", "_"));
+                        if (fi != null)
+                        {
+                            PostedFileName = fi.Name;
+                            PostedFileExt = fi.Extension;
+                        }
+                        imageName = objId + i + PostedFileExt;
+                        httpRequest.Files[i].SaveAs(filePath);
+                    }
+                    message = "success";
+                }
+                catch (Exception ex)
+                {
+                    message = ex.Message;
                 }
             }
-            catch (Exception ex)
-            {
-            }
-            return Ok(objId);
+            return Ok(message);
         }
 
         [HttpPost]
@@ -311,11 +344,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("api/facilityimagescount/{type}/{facilitynoorcarenumber}")]
-        public int Gefacilityimagescount(string facilitynoorcarenumber, string type)
+        [Route("api/hospitaldetail/{facilitynoorcarenumber}")]
+        public HospitalDetails Getfacilityimagescount(string facilitynoorcarenumber)
         {
-            var imageCount = _facelityImagesRepo.Find(x => x.FacilityNoorCareNumber == facilitynoorcarenumber && x.FacilityImageType == type).ToList().Count;
-            return imageCount;
+            HospitalDetails hospital = _hospitaldetailsRepo.Find(x => x.HospitalId == facilitynoorcarenumber).FirstOrDefault();
+            return hospital;
         }
 
         #region Quick Upload Assign
