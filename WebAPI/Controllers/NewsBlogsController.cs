@@ -24,13 +24,23 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetAllNewsBlogs([FromUri] NewsBlogs newsBlogs, string Type)
         {
-		
-			var result =  _newsBlogsRepo.Find(
-				 x => x.Category == Type
-				 && (newsBlogs.UserId == null || newsBlogs.UserId.Contains(x.UserId))
-				 && (newsBlogs.NewsCategory == null || x.NewsCategory.ToUpper().Contains(newsBlogs.NewsCategory.ToUpper()))
-				 && (newsBlogs.NewsTitle == null || x.NewsTitle.ToUpper().Contains(newsBlogs.NewsTitle.ToUpper()))).OrderByDescending(x => x.Id).Take(15).ToList(); 
-			return Request.CreateResponse(HttpStatusCode.Accepted, result);
+
+            var result = _newsBlogsRepo.Find(
+                 x => x.Category == Type
+                 && (newsBlogs.UserId == null || newsBlogs.UserId.Contains(x.UserId))
+                 && (newsBlogs.NewsCategory == null || x.NewsCategory.ToUpper().Contains(newsBlogs.NewsCategory.ToUpper()))
+                 && (newsBlogs.NewsTitle == null || x.NewsTitle.ToUpper().Contains(newsBlogs.NewsTitle.ToUpper()))).OrderByDescending(x => x.Id).Take(15).ToList();
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
+        [Route("api/NewsBlogs/{clientId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetNewsBlog(string clientId)
+        {
+            var result = _newsBlogsRepo.GetAll().Where(x => x.UserId == clientId).ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
         [Route("api/NewsBlogs/GetNewsBlog/{id}")]
@@ -43,41 +53,41 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
-		[HttpPost]
-		[Route("api/NewsBlogs/UploadNewsImage")]
-		[AllowAnonymous]
-		public HttpResponseMessage AddNews()
-		{
-			string imageName = null;
-			var httpRequest = HttpContext.Current.Request;
-			string clientId = httpRequest.Form["ClientId"];
-			var postedFile = httpRequest.Files["Image"];
-			try
-			{
-				if (postedFile != null)
-				{
-					imageName = clientId + DateTime.Now.ToFileTime() + "_" +postedFile.FileName;
-					var filePath = HttpContext.Current.Server.MapPath("~/ImgNewsBlog/" + imageName);
-					postedFile.SaveAs(filePath);
-				}
-			}
-			catch (Exception ex)
-			{
-				return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
-			}
-			return Request.CreateResponse(HttpStatusCode.Accepted, imageName);
-		}
+        [HttpPost]
+        [Route("api/NewsBlogs/UploadNewsImage")]
+        [AllowAnonymous]
+        public HttpResponseMessage AddNews()
+        {
+            string imageName = null;
+            var httpRequest = HttpContext.Current.Request;
+            string clientId = httpRequest.Form["ClientId"];
+            var postedFile = httpRequest.Files["Image"];
+            try
+            {
+                if (postedFile != null)
+                {
+                    imageName = clientId + DateTime.Now.ToFileTime() + "_" + postedFile.FileName;
+                    var filePath = HttpContext.Current.Server.MapPath("~/ImgNewsBlog/" + imageName);
+                    postedFile.SaveAs(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+            return Request.CreateResponse(HttpStatusCode.Accepted, imageName);
+        }
 
-		[Route("api/NewsBlogs/SaveNewsBlog")]
-		[HttpPost]
-		[AllowAnonymous]
-		public HttpResponseMessage SavePatientPrescription(NewsBlogs obj)
-		{
-			var _prescriptionCreated = _newsBlogsRepo.Insert(obj);
-			return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
-		}
+        [Route("api/NewsBlogs/SaveNewsBlog")]
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage SavePatientPrescription(NewsBlogs obj)
+        {
+            var _prescriptionCreated = _newsBlogsRepo.Insert(obj);
+            return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
+        }
 
-		[Route("api/NewsBlogs/UpdateNewsBlog/{userid}/{id}")]
+        [Route("api/NewsBlogs/UpdateNewsBlog/{userid}/{id}")]
         [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage UpdateNewsBlog(string userid, int id)
@@ -159,29 +169,29 @@ namespace WebAPI.Controllers
             }
         }
 
-		[Route("api/NewsBlogs/Like/{id}")]
-		[HttpPost]
-		[AllowAnonymous]
-		public HttpResponseMessage Update(int id)
-		{
-			var result = _newsBlogsRepo.Get(id);
-			result.NoOfLikes = (result.NoOfLikes) + 1;
-			var msgString = _newsBlogsRepo.Update(result);
-			return Request.CreateResponse(HttpStatusCode.Accepted, msgString);
-		}
+        [Route("api/NewsBlogs/Like/{id}")]
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage Update(int id)
+        {
+            var result = _newsBlogsRepo.Get(id);
+            result.NoOfLikes = (result.NoOfLikes) + 1;
+            var msgString = _newsBlogsRepo.Update(result);
+            return Request.CreateResponse(HttpStatusCode.Accepted, msgString);
+        }
 
-		[Route("api/NewsBlogs/Read/{id}")]
-		[HttpPost]
-		[AllowAnonymous]
-		public HttpResponseMessage UpdateRead(int id)
-		{
-			var result = _newsBlogsRepo.Get(id);
-			result.NoOfRead = (result.NoOfRead) + 1;
-			var msgString = _newsBlogsRepo.Update(result);
-			return Request.CreateResponse(HttpStatusCode.Accepted, msgString);
-		}
+        [Route("api/NewsBlogs/Read/{id}")]
+        [HttpPost]
+        [AllowAnonymous]
+        public HttpResponseMessage UpdateRead(int id)
+        {
+            var result = _newsBlogsRepo.Get(id);
+            result.NoOfRead = (result.NoOfRead) + 1;
+            var msgString = _newsBlogsRepo.Update(result);
+            return Request.CreateResponse(HttpStatusCode.Accepted, msgString);
+        }
 
 
-	}
+    }
 }
 
