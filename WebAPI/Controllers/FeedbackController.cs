@@ -69,6 +69,32 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result.OrderByDescending(x => x.DateEntered));
         }
 
+        [Route("api/GetAllFeedbackBypageId/{pageId}")]
+        [HttpGet]
+        [AllowAnonymous]
+        // GET: api/Feedback
+        public HttpResponseMessage GetAllFeedbackBypageId(string pageId)
+        {
+            //var result = _feedbackRepo.GetAll().Where(x => x.ClientID == ClientId).ToList();
+            var feedbacks = _feedbackRepo.GetAll().ToList();
+            var users = _clientDetailRepo.GetAll().ToList();
+            var result = from f in feedbacks
+                         join
+                         u in users on f.ClientID equals u.ClientId
+                         where f.PageId == pageId.Trim()
+                         select new
+                         {
+                             PatientName = u.FirstName + ' ' + u.LastName,
+                             ClientId = f.ClientID,
+                             FeedbackID = f.FeedbackID,
+                             FeedbackDetails = f.FeedbackDetails,
+                             Recommended = f.Recommended,
+                             DateEntered = f.DateEntered,
+                             Ilike=f.ILike
+                         };
+            return Request.CreateResponse(HttpStatusCode.Accepted, result.OrderByDescending(x => x.DateEntered));
+        }
+
         [Route("api/feedback/getdetail/{feedbackId}/{pageId}")]
         [HttpGet]
         [AllowAnonymous]
@@ -185,17 +211,17 @@ namespace WebAPI.Controllers
         [Route("api/feedback/PatientPrescription/{ClientId}/{DoctorId}")]
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage PatientPrescription(string ClientId,string DoctorId)
+        public HttpResponseMessage PatientPrescription(string ClientId, string DoctorId)
         {
             Dictionary<string, int> PrescriptionFeedbackCount = new Dictionary<string, int>();
             var feedbackCount = _feedbackRepo.GetAll().Where(x => x.ClientID == ClientId && x.PageId == DoctorId).ToList();
             PrescriptionFeedbackCount.Add("FeedBackCount", feedbackCount.Count);
-            
+
             var result = from a in _appointmentRepo.GetAll()
                          join
                         d in _doctorRepo.GetAll() on a.DoctorId equals d.DoctorId
                          join pp in _patientPrescriptionRepo.GetAll() on a.ClientId equals pp.PatientId
-                         where a.ClientId == ClientId && a.Status == "Booked" && a.DoctorId==DoctorId
+                         where a.ClientId == ClientId && a.Status == "Booked" && (a.DoctorId == DoctorId || a.HospitalId == DoctorId)
                          select pp;
             PrescriptionFeedbackCount.Add("PrescriptionCount", result.ToList().Count);
             return Request.CreateResponse(HttpStatusCode.Accepted, PrescriptionFeedbackCount);

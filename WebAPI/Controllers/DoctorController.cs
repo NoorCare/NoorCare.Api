@@ -106,6 +106,24 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result.Distinct());
         }
 
+        [Route("api/hospitalbypatient/{ClientID}")]
+        [HttpGet]
+        [AllowAnonymous]
+        // GET: api/Doctor
+        public HttpResponseMessage hospitalbypatient(string ClientID)
+        {
+            var result = from a in _appointmentRepo.GetAll()
+                         join
+            d in _hospitaldetailsRepo.GetAll() on a.HospitalId equals d.HospitalId
+                         where a.ClientId == ClientID && a.Status.ToLower() == "booked"
+                         select new
+                         {
+                             Name = d.HospitalName,
+                             Value = d.HospitalId
+                         };
+            return Request.CreateResponse(HttpStatusCode.Accepted, result.Distinct());
+        }
+
 
         [Route("api/doctorDetails/{doctorid}")]
         [HttpGet]
