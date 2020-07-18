@@ -1,4 +1,6 @@
-﻿using NoorCare.Repository;
+﻿using Microsoft.Ajax.Utilities;
+using Microsoft.AspNet.Identity.EntityFramework;
+using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.SqlServer;
@@ -13,6 +15,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using WebAPI.Entity;
+using WebAPI.Models;
 using WebAPI.Repository;
 
 namespace WebAPI.Controllers
@@ -28,21 +31,71 @@ namespace WebAPI.Controllers
         // GET: api/Doctor
         public HttpResponseMessage GetAll([FromUri] EmailNotifications emailNotifications, string userID, string Type)
         {
-
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var users = userStore.Users.ToList();
             if (Type == "Inbox")
             {
                 var result = _emailNotificationsRepo.Find(x => x.To == userID && ((x.DeletedBy.IndexOf(userID) == -1) || x.DeletedBy == null)).OrderByDescending(x => x.Id).Take(10).ToList();
-                return Request.CreateResponse(HttpStatusCode.Accepted, result);
+                var data = (from r in result
+                           join u in users on r.From equals u.Id
+                           select new
+                           {
+                               Id = r.Id,
+                               To = r.To,
+                               From = r.From,
+                               FromName = u.FirstName + ' ' + u.LastName,
+                               Description = r.Description,
+                               IsDeleted = r.IsDeleted,
+                               Subject = r.Subject,
+                               Attachments = r.Attachments,
+                               DeletedBy = r.DeletedBy,
+                               CreatedDate = r.CreatedDate,
+                               CreatedTime = r.CreatedTime
+                           }).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, data);
             }
             else if (Type == "Sent")
             {
                 var result = _emailNotificationsRepo.Find(x => x.From == userID && ((x.DeletedBy.IndexOf(userID) == -1) || x.DeletedBy == null)).OrderByDescending(x => x.Id).Take(10).ToList();
-                return Request.CreateResponse(HttpStatusCode.Accepted, result);
+                var data = (from r in result
+                            join u in users on r.To equals u.Id
+                            select new
+                            {
+                                Id = r.Id,
+                                To = r.To,
+                                From = r.From,
+                                ToName = u.FirstName + ' ' + u.LastName,
+                                Description = r.Description,
+                                IsDeleted = r.IsDeleted,
+                                Subject = r.Subject,
+                                Attachments = r.Attachments,
+                                DeletedBy = r.DeletedBy,
+                                CreatedDate = r.CreatedDate,
+                                CreatedTime = r.CreatedTime
+                            }).ToList();
+                return Request.CreateResponse(HttpStatusCode.Accepted, data);
             }
             else
             {
-                var result = _emailNotificationsRepo.Find(x => (x.From == userID || x.To == userID) &&  (x.DeletedBy.IndexOf(userID) >= 0)).OrderByDescending(x => x.Id).Take(10).ToList();
-                return Request.CreateResponse(HttpStatusCode.Accepted, result);
+                var result = _emailNotificationsRepo.Find(x => (x.From == userID || x.To == userID) && (x.DeletedBy.IndexOf(userID) >= 0)).OrderByDescending(x => x.Id).Take(10).ToList();
+                var data = (from r in result
+                            join u in users on r.From equals u.Id
+                            select new
+                            {
+                                Id = r.Id,
+                                To = r.To,
+                                From = r.From,
+                                FromName = u.FirstName + ' ' + u.LastName,
+                                Description = r.Description,
+                                IsDeleted = r.IsDeleted,
+                                Subject = r.Subject,
+                                Attachments = r.Attachments,
+                                DeletedBy = r.DeletedBy,
+                                CreatedDate = r.CreatedDate,
+                                CreatedTime = r.CreatedTime
+                            }).ToList();
+                return Request.CreateResponse(HttpStatusCode.Accepted, data);
             }
         }
 
@@ -51,7 +104,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage SaveEmail(EmailNotifications obj)
         {
-            obj.CreatedDate = DateTime.Now.ToString("dddd, dd MMMM yyyy") +" "+ DateTime.Now.ToString("hh:mm tt");
+            obj.CreatedDate = DateTime.Now.ToString("dddd, dd MMMM yyyy") + " " + DateTime.Now.ToString("hh:mm tt");
             obj.CreatedTime = DateTime.Now.ToString("hh:mm tt");
             var _prescriptionCreated = _emailNotificationsRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
@@ -69,7 +122,7 @@ namespace WebAPI.Controllers
                 {
                     var result = _emailNotificationsRepo.Get(Convert.ToInt32(emailNotifications.Attachments.Split(',')[i]));
                     result.IsDeleted = true;
-                    if(result.DeletedBy == null || result.DeletedBy == "")
+                    if (result.DeletedBy == null || result.DeletedBy == "")
                     {
                         result.DeletedBy = emailNotifications.DeletedBy;
                     }
