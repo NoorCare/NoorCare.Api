@@ -87,5 +87,6 @@ public partial class HospitalDetails : IEntity<int>
     public DateTime? CreatedDate { get; set; }
     public int? LimitBannerCount { get; set; }
     public int? LimitGallaryCount { get; set; }
+    public int? LimitVedioCount { get; set; }
 }
 

@@ -41,7 +41,7 @@ namespace WebAPI.Controllers
         // GET: api/HospitalDetails
         public HttpResponseMessage GetAll()
         {
-            var result = _hospitaldetailsRepo.Find(x=> x.EmailConfirmed == true && x.IsDocumentApproved==1 && x.IsDeleted==false).ToList();
+            var result = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted == false).ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -78,8 +78,8 @@ namespace WebAPI.Controllers
                     PaymentType = h.PaymentType,
                     Emergency = h.Emergency,
                     FacilityId = h.FacilityId,
-                    JobType=h.jobType,
-                    JobTypePermission= facility.Permission,
+                    JobType = h.jobType,
+                    JobTypePermission = facility.Permission,
                     Address = h.Address,
                     Street = h.Street,
                     Country = h.Country,
@@ -101,7 +101,7 @@ namespace WebAPI.Controllers
                     BookingUrl = $"booking/{h.HospitalId}",
                     ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}",
                     ImgUrl = $"{constant.imgUrl}/ProfilePic/Hospital/{h.HospitalId}.Jpeg",
-                    IsDocumentApproved=h.IsDocumentApproved.ToString()
+                    IsDocumentApproved = h.IsDocumentApproved.ToString()
                 };
 
                 _hospitals.Add(_hospital);
@@ -171,7 +171,7 @@ namespace WebAPI.Controllers
                     Landmark = h.Landmark,
                     AboutUs = h.AboutUs,
                     InsuranceCompanies = h.InsuranceCompanies,
-                    JobType=h.jobType,
+                    JobType = h.jobType,
                     JobTypePermission = facility.Permission,
 
                     // AmenitiesIds = Array.ConvertAll(h.Amenities.Split(','), s => int.Parse(s)),
@@ -558,9 +558,9 @@ namespace WebAPI.Controllers
                 var directoryFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "FrontView"));
                 var directoryCRFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "CRFrontView"));
                 var directoryLicenseFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "LicenseFrontView"));
-                string IdBackView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/BackView/"+ httpRequest.Files["IdBackView"].FileName;
+                string IdBackView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/BackView/" + httpRequest.Files["IdBackView"].FileName;
                 string IdFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/IdFrontView/" + httpRequest.Files["IdFrontView"].FileName;
-                string CrFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/CrFrontView/"+ httpRequest.Files["CrFrontView"].FileName;
+                string CrFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/CrFrontView/" + httpRequest.Files["CrFrontView"].FileName;
                 string LicenseFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName;
                 HospitalDocumentVerification hospitalDocuments = new HospitalDocumentVerification
                 {
@@ -614,8 +614,8 @@ namespace WebAPI.Controllers
                 InsuraceNo = insuranceInformation.InsuraceNo,
                 ExpiryDate = insuranceInformation.ExpiryDate,
                 IsActive = true,
-                Type="Hospital"
-                
+                Type = "Hospital"
+
 
             };
             return Ok(_insuranceInformationRepository.Insert(_insuranceInformation));
