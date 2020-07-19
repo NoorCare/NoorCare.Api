@@ -706,15 +706,35 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult HospitalInsurance(string HospitalId)
         {
-            List<HospitalInsurance> hospitalInsurancesList = new List<HospitalInsurance>();
-            var _hospitalInsuranceList = _hospitalInsuranceRepo.GetAll().Where(x => x.HospitalId == HospitalId).ToList();
+            List<HospitaInsuranceModel> hospitalInsurancesList = new List<HospitaInsuranceModel>();
+            var _hospitalInsuranceList = _hospitalInsuranceRepo.GetAll().Where(x => x.HospitalId == HospitalId && x.IsActive==true).ToList();
             var _insuranceMaster = _insuranceMasterRepo.GetAll().Where(x => x.IsDeleted == false).ToList();
-            var query = from hi in _hospitalInsuranceList.ToList()
-                        join i in _insuranceMaster.ToList()
-                        on hi.InsuranceId equals i.Id
-                        where hi.HospitalId == HospitalId
-                        select new { Name = i.InsuranceCompanyName, Code = i.InsuranceCompanyCode, i.Id, hi.HospitalId };
-            return Ok(query);
+            foreach (var item in _insuranceMaster.ToList())
+            {
+                HospitaInsuranceModel hospitaInsuranceModel = new HospitaInsuranceModel();
+                foreach (var hi in _hospitalInsuranceList)
+                {
+                    if (hi.InsuranceId == item.Id)
+                    {
+                        hospitaInsuranceModel.InsuranceId = hi.InsuranceId.ToString();
+                        hospitaInsuranceModel.HospitalId = hi.HospitalId;
+                        hospitaInsuranceModel.IsHospital = Convert.ToBoolean(hi.IsActive);
+                        hospitaInsuranceModel.Name = item.InsuranceCompanyName;
+                        hospitalInsurancesList.Add(hospitaInsuranceModel);
+                    }
+                }
+            }
+
+            return Ok(hospitalInsurancesList);
+            //List<HospitalInsurance> hospitalInsurancesList = new List<HospitalInsurance>();
+            //var _hospitalInsuranceList = _hospitalInsuranceRepo.GetAll().Where(x => x.HospitalId == HospitalId).ToList();
+            //var _insuranceMaster = _insuranceMasterRepo.GetAll().Where(x => x.IsDeleted == false).ToList();
+            //var query = from hi in _hospitalInsuranceList.ToList()
+            //            join i in _insuranceMaster.ToList()
+            //            on hi.InsuranceId equals i.Id
+            //            where hi.HospitalId == HospitalId
+            //            select new { Name = i.InsuranceCompanyName, Code = i.InsuranceCompanyCode, i.Id, hi.HospitalId };
+            //return Ok(query);
         }
 
         [HttpGet]
@@ -742,11 +762,6 @@ namespace WebAPI.Controllers
                 hospitaInsuranceModel.InsuranceId = item.Id.ToString();
                 hospitalInsurancesList.Add(hospitaInsuranceModel);
             }
-            
-            //var query = from i in _insuranceMaster.ToList() 
-            //            join hi in _hospitalInsuranceList.ToList() on i.Id equals hi.InsuranceId  into gj
-            //            from his in gj.DefaultIfEmpty()
-            //            select  new { Name = i.InsuranceCompanyName, Code = i.InsuranceCompanyCode,Id= i.Id, HospitalId=his.HospitalId==null?"0": his.HospitalId};
 
             return Ok(hospitalInsurancesList);
         }
