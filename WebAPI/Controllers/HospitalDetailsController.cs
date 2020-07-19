@@ -31,9 +31,11 @@ namespace WebAPI.Controllers
         IHospitalDocumentsRepository _hospitalDocumentsRepo = RepositoryFactory.Create<IHospitalDocumentsRepository>(ContextTypes.EntityFramework);
         ITblHospitalSpecialtiesRepository _hospitalSpecialtiesRepo = RepositoryFactory.Create<ITblHospitalSpecialtiesRepository>(ContextTypes.EntityFramework);
         IInsuranceInformationRepository _insuranceInformationRepository =
-            RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
+        RepositoryFactory.Create<IInsuranceInformationRepository>(ContextTypes.EntityFramework);
         IFacilityRepository _facilityRepo = RepositoryFactory.Create<IFacilityRepository>(ContextTypes.EntityFramework);
         IFacilityImagesRepository _facilityImagesRepo = RepositoryFactory.Create<IFacilityImagesRepository>(ContextTypes.EntityFramework);
+        IHospitalInsuranceRepository _hospitalInsuranceRepo = RepositoryFactory.Create<IHospitalInsuranceRepository>(ContextTypes.EntityFramework);
+        IInsuranceMasterRepository _insuranceMasterRepo = RepositoryFactory.Create<IInsuranceMasterRepository>(ContextTypes.EntityFramework);
 
         [Route("api/hospitaldetails/getall")]
         [HttpGet]
@@ -658,5 +660,143 @@ namespace WebAPI.Controllers
             return Ok("");
         }
 
+        [HttpPost]
+        [Route("api/hospital/assign/insurance")]
+        public IHttpActionResult AssignInsurance(string InsuranceIds, string HospitalId)
+        {
+            string message = string.Empty;
+            try
+            {
+                var insuranceIdsList = InsuranceIds.Trim(',').Split(',');
+                foreach (var insuranceid in insuranceIdsList)
+                {
+                    Int32 _insuranceid = Convert.ToInt32(insuranceid);
+                    HospitalInsurance hpli = _hospitalInsuranceRepo.Find(x => x.HospitalId == HospitalId && x.InsuranceId == _insuranceid).FirstOrDefault();
+                    if (hpli != null)
+                    {
+                        hpli.IsActive = false;
+                        hpli.ModifiedBy = HospitalId;
+                        hpli.ModifiedDate = DateTime.Now;
+                        _hospitalInsuranceRepo.Update(hpli);
+                    }
+
+                    if (insuranceid != "")
+                    {
+                        HospitalInsurance hospitalInsurance = new HospitalInsurance();
+                        hospitalInsurance = new HospitalInsurance();
+                        hospitalInsurance.HospitalId = HospitalId;
+                        hospitalInsurance.InsuranceId = Convert.ToInt32(insuranceid);
+                        hospitalInsurance.CreatedBy = HospitalId;
+                        _hospitalInsuranceRepo.Insert(hospitalInsurance);
+                    }
+                }
+                message = "success";
+            }
+            catch (Exception ex)
+            {
+
+                message = ex.Message;
+            }
+
+            return Ok(message);
+        }
+
+        [HttpGet]
+        [Route("api/hospital/get/HospitalInsurance/{HospitalId}")]
+        [AllowAnonymous]
+        public IHttpActionResult HospitalInsurance(string HospitalId)
+        {
+            List<HospitalInsurance> hospitalInsurancesList = new List<HospitalInsurance>();
+            var _hospitalInsuranceList = _hospitalInsuranceRepo.GetAll().Where(x => x.HospitalId == HospitalId).ToList();
+            var _insuranceMaster = _insuranceMasterRepo.GetAll().Where(x => x.IsDeleted == false).ToList();
+            var query = from hi in _hospitalInsuranceList.ToList()
+                        join i in _insuranceMaster.ToList()
+                        on hi.InsuranceId equals i.Id
+                        where hi.HospitalId == HospitalId
+                        select new { Name = i.InsuranceCompanyName, Code = i.InsuranceCompanyCode, i.Id, hi.HospitalId };
+            return Ok(query);
+        }
+
+        [HttpGet]
+        [Route("api/hospital/get/HospitalInsuranceMaster/{HospitalId}")]
+        [AllowAnonymous]
+        public IHttpActionResult HospitalInsuranceMaster(string HospitalId)
+        {
+            List<HospitaInsuranceModel> hospitalInsurancesList = new List<HospitaInsuranceModel>();
+            var _hospitalInsuranceList = _hospitalInsuranceRepo.GetAll().Where(x => x.HospitalId == HospitalId).ToList();
+            var _insuranceMaster = _insuranceMasterRepo.GetAll().Where(x => x.IsDeleted == false).ToList();
+            foreach (var item in _insuranceMaster.ToList())
+            {
+                HospitaInsuranceModel hospitaInsuranceModel = new HospitaInsuranceModel();
+                foreach (var hi in _hospitalInsuranceList)
+                {
+                    if (hi.InsuranceId== item.Id)
+                    {
+                        hospitaInsuranceModel.HospitalId = hi.HospitalId;
+                        hospitaInsuranceModel.IsHospital =Convert.ToBoolean (hi.IsActive);
+                        
+                    }
+                }
+                hospitaInsuranceModel.Name = item.InsuranceCompanyName;
+                hospitaInsuranceModel.Code = item.InsuranceCompanyCode;
+                hospitaInsuranceModel.InsuranceId = item.Id.ToString();
+                hospitalInsurancesList.Add(hospitaInsuranceModel);
+            }
+            
+            //var query = from i in _insuranceMaster.ToList() 
+            //            join hi in _hospitalInsuranceList.ToList() on i.Id equals hi.InsuranceId  into gj
+            //            from his in gj.DefaultIfEmpty()
+            //            select  new { Name = i.InsuranceCompanyName, Code = i.InsuranceCompanyCode,Id= i.Id, HospitalId=his.HospitalId==null?"0": his.HospitalId};
+
+            return Ok(hospitalInsurancesList);
+        }
+
+        
+
+            [HttpPost]
+        [Route("api/hospital/saveinsurance")]
+        [AllowAnonymous]
+        public IHttpActionResult SaveInsurance(HospitaInsuranceModel hospitaInsuranceModel)
+        {
+            string message = string.Empty;
+            try
+            {
+                HospitalInsurance hpli = _hospitalInsuranceRepo.GetAll().Where(x => x.HospitalId == hospitaInsuranceModel.HospitalId && x.InsuranceId == Convert.ToInt16(hospitaInsuranceModel.InsuranceIdes)).FirstOrDefault();
+                if (hpli == null)
+                {
+                    HospitalInsurance hospitalInsurance = new HospitalInsurance();
+                    hospitalInsurance = new HospitalInsurance();
+                    hospitalInsurance.HospitalId = hospitaInsuranceModel.HospitalId;
+                    hospitalInsurance.InsuranceId = Convert.ToInt32(hospitaInsuranceModel.InsuranceIdes);
+                    hospitalInsurance.CreatedBy = hospitaInsuranceModel.HospitalId;
+                    hospitalInsurance.CreatedDate = System.DateTime.Now;
+                    hospitalInsurance.IsActive = true;
+                    _hospitalInsuranceRepo.Insert(hospitalInsurance);
+                }
+                else
+                {
+                    if (hpli.IsActive==true)
+                    {
+                        hpli.IsActive = false;
+                    }
+                    else
+                    {
+                        hpli.IsActive = true;
+                    }
+                    hpli.ModifiedBy = hospitaInsuranceModel.HospitalId;
+                    hpli.ModifiedDate = DateTime.Now;
+                    _hospitalInsuranceRepo.Update(hpli);
+                }
+                message = "success";
+
+            }
+            catch (Exception ex)
+            {
+
+                message = ex.Message;
+            }
+
+            return Ok(message);
+        }
     }
 }

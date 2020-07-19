@@ -32,18 +32,15 @@ namespace NoorCare.Repository
     public class NewsBlogsRepository : EFRepositoryBase<ApplicationDbContext, NewsBlogs, int>, INewsBlogsRepository { }
     public class ReadLikeRepository : EFRepositoryBase<ApplicationDbContext, ReadLike, int>, IReadLikeRepository { }
     public class FacilityDetailRepository : EFRepositoryBase<ApplicationDbContext, FacilityDetail, int>, IFacilityDetailRepository { }
-
     public class FacilityImagesRepository : EFRepositoryBase<ApplicationDbContext, FacilityImages, int>, IFacilityImagesRepository { }
-
     public class HospitalDocumentsRepository : EFRepositoryBase<ApplicationDbContext, HospitalDocumentVerification, int>, IHospitalDocumentsRepository { }
     public class QuickUploadAssignRepository : EFRepositoryBase<ApplicationDbContext, QuickUploadAssign, int>, IQuickUploadAssignRepository { }
     public class LeadRepository : EFRepositoryBase<ApplicationDbContext, Lead, int>, ILeadRepository { }
-    
     public class EmailNotificationsRepository : EFRepositoryBase<ApplicationDbContext, EmailNotifications, int>, IEmailNotificationsRepository { }
     public class EnquiryRepository : EFRepositoryBase<ApplicationDbContext, Enquiry, int>, IEnquiryRepository { }
-
     public class InsuranceMasterRepository : EFRepositoryBase<ApplicationDbContext, InsuranceMaster, int>, IInsuranceMasterRepository { }
     public class LikeVisitorRepository : EFRepositoryBase<ApplicationDbContext, LikeVisitor, int>, ILikeVisitorRepository { }
+    public class HospitalInsuranceRepository : EFRepositoryBase<ApplicationDbContext, HospitalInsurance, int>, IHospitalInsuranceRepository { }
 }
 
 
