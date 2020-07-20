@@ -193,13 +193,14 @@ namespace WebAPI.Entity
 
     [Serializable]
     [Table("InsuranceMaster")]
-    public class InsuranceMaster : IEntity<int>
+    public partial class InsuranceMaster : IEntity<int>
     {
         [Key]
         public int Id { get; set; }
         public string InsuranceCompanyName { get; set; }
         public string InsuranceCompanyCode { get; set; }
-        public bool InUsed { get; set; }
+        public bool? InUsed { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
 }

@@ -163,6 +163,10 @@ namespace NoorCare.Repository
                     {
                         return new LikeVisitorRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IHospitalInsuranceRepository))
+                    {
+                        return new HospitalInsuranceRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;

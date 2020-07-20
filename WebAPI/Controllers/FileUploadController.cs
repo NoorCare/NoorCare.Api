@@ -240,9 +240,9 @@ namespace WebAPI.Controllers
                     message = "You have only " + diffLimit + " gallery limit . Please delete gallery and upload again";
                 }
             }
-            else if (facilityImageType.ToLower() == "vedio")
+            else if (facilityImageType.ToLower() == "video")
             {
-                var vediolimitCount = limitCount.LimitVedioCount == null ? 0 : limitCount.LimitVedioCount;
+                var vediolimitCount = limitCount.LimitVideoCount == null ? 0 : limitCount.LimitVideoCount;
                 int diffLimit = Convert.ToInt32(vediolimitCount - imageCount);
                 if (diffLimit <= 0)
                 {

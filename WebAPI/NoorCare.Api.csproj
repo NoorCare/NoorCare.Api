@@ -238,6 +238,7 @@
     <Compile Include="Controllers\SecretaryController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Entity\HospitalInsurance.cs" />
     <Compile Include="Entity\Appointment.cs" />
     <Compile Include="Entity\EmailNotifications.cs" />
     <Compile Include="Entity\Enquiry.cs" />
@@ -263,6 +264,7 @@
     <Compile Include="Models\AllPatient.cs" />
     <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\AccountModel.cs" />
+    <Compile Include="Models\HospitaInsuranceModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\result.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
