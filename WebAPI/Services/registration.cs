@@ -39,10 +39,12 @@ namespace WebAPI.Services
                 Email = model.Email,
                 Type = model.Type,
                 jobType = model.jobType,
-                Mobile =Convert.ToInt64(model.PhoneNumber),
+                Mobile = Convert.ToInt64(model.PhoneNumber),
                 FacilityId = model.FacilityId,
-                Country = model.NationalityId.ToString()
-                
+                Country = model.NationalityId.ToString(),
+                LimitBannerCount = 0,
+                LimitVideoCount=0,
+                LimitGallaryCount=0
             };
             return _hospitalDetailsRepository.Insert(_hospitalDetail);
         }
