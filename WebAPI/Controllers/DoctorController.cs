@@ -994,7 +994,7 @@ namespace WebAPI.Controllers
                 foreach (var h in hospitalDtls ?? new List<HospitalDetails>())
                 {
                     var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
-
+                    int likeCount = _likeVisitorRepo.Find(x => x.HFP_DOC_NCID.Trim() == h.HospitalId && x.IsDelete == false && x.Like_Dislike == true).Count();
                     _hospital = new Hospital();
 
                     _hospital.HospitalId = h.HospitalId;
@@ -1021,7 +1021,8 @@ namespace WebAPI.Controllers
                     _hospital.ServicesIds = h.Services == null ? a : Array.ConvertAll(h.Services.Split(','), s => int.Parse(s));
                     _hospital.Services = getHospitalService(h.Services, hospitalService);
                     _hospital.Doctors = getDoctors(h.HospitalId, searchFilter.DiseaseType, "null", ref _filterDoctor);
-                    _hospital.Likes = feedback.Where(x => x.ILike == true).Count();
+                    //_hospital.Likes = feedback.Where(x => x.ILike == true).Count();
+                    _hospital.Likes = likeCount;
                     _hospital.Feedbacks = feedback.Count();
                     _hospital.BookingUrl = $"booking/{h.HospitalId}";
                     _hospital.ProfileDetailUrl = $"hospitalDetails/{h.HospitalId}";

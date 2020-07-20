@@ -12,6 +12,7 @@ using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
 using System.Web.Http.OData;
+using System.Globalization;
 
 namespace WebAPI.Controllers
 {
@@ -550,8 +551,9 @@ namespace WebAPI.Controllers
             var httpRequest = HttpContext.Current.Request;
             string hospitalId = httpRequest.Form["HospitalId"];
             string address = httpRequest.Form["address"];
-            decimal latitude = Convert.ToDecimal(httpRequest.Form["Latitude"]);
-            decimal longitude = Convert.ToDecimal(httpRequest.Form["Longitude"]);
+            CultureInfo cultures = new CultureInfo("en-US");
+            decimal latitude = Convert.ToDecimal(httpRequest.Form["Latitude"], cultures);
+            decimal longitude = Convert.ToDecimal(httpRequest.Form["Longitude"], cultures);
             int objId = 0;
             try
             {
@@ -575,7 +577,24 @@ namespace WebAPI.Controllers
                     Latitude = latitude,
                     Longitude = longitude,
                 };
-                objId = _hospitalDocumentsRepo.Insert(hospitalDocuments);
+                HospitalDocumentVerification data = _hospitalDocumentsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
+                if (data != null)
+                {
+                    data.Latitude = latitude;
+                    data.Longitude = longitude;
+                    data.IdBackView = IdBackView;
+                    data.IdFrontView = IdFrontView;
+                    data.CrFrontView = CrFrontView;
+                    data.LicenseFrontView = LicenseFrontView;
+                    data.Address = address;
+
+                    bool retStatus = _hospitalDocumentsRepo.Update(data);
+                }
+                else
+                {
+                    objId = _hospitalDocumentsRepo.Insert(hospitalDocuments);
+                }
+               
                 string filepath = HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName);
                 httpRequest.Files["IdBackView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName));
                 httpRequest.Files["IdFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "FrontView/" + httpRequest.Files["IdBackView"].FileName));
