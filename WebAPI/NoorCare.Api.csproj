@@ -224,6 +224,7 @@
     <Compile Include="Controllers\EmailNotificationsController.cs" />
     <Compile Include="Controllers\EnquiryController.cs" />
     <Compile Include="Controllers\InsuranceinfoController.cs" />
+    <Compile Include="Controllers\LikeVisitorController.cs" />
     <Compile Include="Controllers\NewsBlogsController.cs" />
     <Compile Include="Controllers\PatientController.cs" />
     <Compile Include="Controllers\MasterController.cs" />
@@ -243,6 +244,7 @@
     <Compile Include="Entity\FacilityImages.cs" />
     <Compile Include="Entity\FacilityDetail.cs" />
     <Compile Include="Entity\HospitalDocuments.cs" />
+    <Compile Include="Entity\LikeVisitor.cs" />
     <Compile Include="Entity\NewsBlogs.cs" />
     <Compile Include="Entity\TimeMaster.cs" />
     <Compile Include="Entity\Feedback.cs" />
