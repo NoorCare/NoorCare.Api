@@ -364,14 +364,14 @@ namespace WebAPI.Controllers
                                        select new
                                        {
                                            HospitalName = h.HospitalName,
-                                           HospitalNCNumber = h.HospitalId,
+                                           HospitalNCNumber = h.HospitalId.Replace("-", " "),
                                            DoctorName = d.FirstName + " " + d.LastName,
-                                           DoctorNCNumber = d.DoctorId,
+                                           DoctorNCNumber = d.DoctorId.Replace("-"," "),
                                            Prescription = p.Prescription,
                                            PrescriptionDate = p.DateEntered,
                                            PrescriptionId = p.Id,
-                                           PatientId = p.PatientId,
-                                           Date = p.DateEntered,
+                                           PatientId = p.PatientId.Replace("-", " "),
+                                           Date =Convert.ToDateTime(p.DateEntered),
                                            Name = c.FirstName + " " + c.LastName,
                                            Age = this.GetAge(c.DOB),
                                            Gender = c.Gender == 1 ? "Male" : "FeMale",

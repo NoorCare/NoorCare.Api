@@ -18,7 +18,9 @@ namespace WebAPI.Controllers
     {
         INewsBlogsRepository _newsBlogsRepo = RepositoryFactory.Create<INewsBlogsRepository>(ContextTypes.EntityFramework);
         IReadLikeRepository _readLikeRepo = RepositoryFactory.Create<IReadLikeRepository>(ContextTypes.EntityFramework);
-
+        IHospitalDetailsRepository _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+        ISecretaryRepository _secretaryRepository = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
+        IDoctorRepository _doctorRepository = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         [Route("api/NewsBlogs/getAllNewsBlogs/{Type}")]
         [HttpGet]
         [AllowAnonymous]
@@ -81,9 +83,25 @@ namespace WebAPI.Controllers
         [Route("api/NewsBlogs/SaveNewsBlog")]
         [HttpPost]
         [AllowAnonymous]
-        public HttpResponseMessage SavePatientPrescription(NewsBlogs obj)
+        public HttpResponseMessage SaveNewsBlog(NewsBlogs obj)
         {
-            var _prescriptionCreated = _newsBlogsRepo.Insert(obj);
+            if (obj.UserId.Contains("NCH"))
+            {
+                var hospital = _hospitalDetailsRepository.Find(x => x.HospitalId == obj.UserId).FirstOrDefault();
+                if (hospital!=null)
+                {
+                    obj.CreatedBy = hospital.HospitalName;
+                }
+            }
+            else
+            {
+                var doctor = _doctorRepository.Find(x => x.DoctorId == obj.UserId).FirstOrDefault();
+                if (doctor != null)
+                {
+                    obj.CreatedBy = doctor.FirstName +" "+ doctor.LastName;
+                }
+            }
+            var _newsBlogCreated = _newsBlogsRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
         }
 
