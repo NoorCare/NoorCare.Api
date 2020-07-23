@@ -42,7 +42,8 @@ namespace WebAPI.Controllers
         public List<Disease> GetDisease()
         {
             IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
-            return _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            var diseaseTypes= _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            return diseaseTypes;
         }
 
         [Route("api/countryCode")]
