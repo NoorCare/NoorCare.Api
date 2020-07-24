@@ -15,6 +15,6 @@ namespace WebAPI.Entity
         [Key]
         public int Id { get; set; }
         public string DiseaseType { get; set; }
-
+        public string ReportType { get; set; }
     }
 }
