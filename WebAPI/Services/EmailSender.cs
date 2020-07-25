@@ -21,7 +21,7 @@ namespace AngularJSAuthentication.API.Services
         string SMSSid = ConfigurationManager.AppSettings.Get("SMSSid");
         string customMessage = ConfigurationManager.AppSettings.Get("customSMSMessage");
 
-        public void email_send(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care",
+        public void email_send(string mailTo = "noreply@noorcare.net", string clientName = "noorcare",
             string ClientId = "Test", int jobType = 0, string password = null)
         {
             try
@@ -34,13 +34,13 @@ namespace AngularJSAuthentication.API.Services
                 mail.To.Add(mailTo);
                 mail.IsBodyHtml = true;
                 mail.Subject = "Registration Successfully ";
-                mail.Body = html.Replace("CLIENTNAME", prifix + clientName + "(" + ClientId + ")");
+                mail.Body = html.Replace("CLIENTNAME", prifix + clientName + " " + ClientId.Replace("-"," "));
                 mail.Body = getLogoUrl(mail.Body);
                 mail.Body = getVereficationUrl(mail.Body, ClientId);
                 mail.Body = tempPassword(mail.Body, password, jobType);
 
-                SmtpServer.Port = SMTPPORT; // 25; // 587;
-                SmtpServer.EnableSsl = true;
+                SmtpServer.Port =  SMTPPORT; // 25; // 587;
+                SmtpServer.EnableSsl = false;
                 
                 SmtpServer.UseDefaultCredentials = false;
                 SmtpServer.Credentials = new NetworkCredential(From, SMTPPassword);
@@ -52,7 +52,7 @@ namespace AngularJSAuthentication.API.Services
             }
         }
 
-        public void email_sendforgotpassword(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care New",
+        public void email_sendforgotpassword(string mailTo = "noreply@noorcare.net", string clientName = "noorcare",
             string ClientId = "Test", string password = null)
         {
             string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templatforgot.html"));
@@ -157,7 +157,7 @@ namespace AngularJSAuthentication.API.Services
         #endregion
 
         #region Email
-        public void emailSend(string mailTo = "NoorCareNew@gmail.com", string clientName = "Noor Care",
+        public void emailSend(string mailTo = "noreply@noorcare.net", string clientName = "noorcare",
         string ClientId = "Test", int jobType = 0, string password = null, string sSubject = "", string html = "" )
         {
             string prifix = jobType == 3 ? "Dr " : "";
@@ -167,7 +167,7 @@ namespace AngularJSAuthentication.API.Services
             mail.To.Add(mailTo);
             mail.IsBodyHtml = true;
             mail.Subject = sSubject;
-            mail.Body = html.Replace("CLIENTNAME", prifix + clientName + "(" + ClientId + ")");
+            mail.Body = html.Replace("CLIENTNAME", prifix + clientName + " " + ClientId.Replace("-"," "));
             mail.Body = getLogoUrl(mail.Body);
             mail.Body = getVereficationUrl(mail.Body, ClientId);
             mail.Body = tempPassword(mail.Body, password, jobType);

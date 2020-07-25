@@ -42,6 +42,8 @@ namespace WebAPI.Services
                 Mobile = Convert.ToInt64(model.PhoneNumber),
                 FacilityId = model.FacilityId,
                 Country = model.NationalityId.ToString(),
+                ModifiedDate = DateTime.Now,
+                CreatedDate = DateTime.Now,
                 LimitBannerCount = 0,
                 LimitVideoCount=0,
                 LimitGallaryCount=0
