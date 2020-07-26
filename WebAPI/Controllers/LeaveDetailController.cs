@@ -18,12 +18,7 @@ namespace WebAPI.Controllers
         ILeaveDetailRepository _leaveDtlRepo = RepositoryFactory.Create<ILeaveDetailRepository>(ContextTypes.EntityFramework);
         ILeaveMasterRepository _leaveMasterRepo = RepositoryFactory.Create<ILeaveMasterRepository>(ContextTypes.EntityFramework);
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
-        public class DoctorTime
-        {
-
-            public int TimeId { get; set; }
-            public string TimeDesc { get; set; }
-        }
+       
 
         [Route("api/leavedetail/{clientId}")]
         [HttpGet]
@@ -50,29 +45,23 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        private List<DoctorTime> getDocAvailablity(string LeaveId)
+        private List<DoctorScheduleTime> getDocAvailablity(string LeaveId)
         {
             if (LeaveId == null || LeaveId == "")
             {
-                return new List<DoctorTime>();
+                return new List<DoctorScheduleTime>();
             }
             var leaveIds = LeaveId.Split(',');
             int[] myInts = Array.ConvertAll(leaveIds, s => int.Parse(s));
             var timeList = _timeMasterRepo.GetAll().Where(x => myInts.Contains(x.Id)).ToList();
-            List<DoctorTime> doctorTimes = new List<DoctorTime>();
+            List<DoctorScheduleTime> doctorTimes = new List<DoctorScheduleTime>();
             foreach (var item in timeList)
             {
-                DoctorTime obj = new DoctorTime();
+                DoctorScheduleTime obj = new DoctorScheduleTime();
                 obj.TimeId = item.Id;
                 obj.TimeDesc = item.TimeFrom.Trim() + ' ' + item.TimeTo.Trim() + ' ' + item.AM_PM.Trim();
                 doctorTimes.Add(obj);
-            }
-            //var dataObj = (from d in timeList
-            //               select new
-            //               {
-            //                   TimeId = d.Id,
-            //                   TimeDesc = d.TimeFrom.Trim() + ' ' + d.TimeTo.Trim() + ' ' + d.AM_PM.Trim()
-            //               }).ToList();
+            } 
 
             return doctorTimes;
         }

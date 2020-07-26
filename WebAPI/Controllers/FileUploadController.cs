@@ -466,12 +466,16 @@ namespace WebAPI.Controllers
                                     try
                                     {
                                         var _enqObj = _enquiryRepository.GetAll().Where(y => y.Id == Convert.ToInt32(file.HospitalId)).FirstOrDefault();
-                                        fileObj.HospitalId = "NA";
-                                        fileObj.HospitalName = _enqObj.Name;
-                                        fileObj.HospitalMobile = _enqObj.ContactNo;
-                                        fileObj.HospitalEmail = _enqObj.EmailId;
-                                        fileObj.HospitalWebsite = _enqObj.Website;
-                                        fileObj.HospitalAddress = _enqObj.Address;
+                                        if (_enqObj != null)
+                                        {
+                                            fileObj.HospitalId = "NA";
+                                            fileObj.HospitalName = _enqObj.Name;
+                                            fileObj.HospitalMobile = _enqObj.ContactNo;
+                                            fileObj.HospitalEmail = _enqObj.EmailId;
+                                            fileObj.HospitalWebsite = _enqObj.Website;
+                                            fileObj.HospitalAddress = _enqObj.Address;
+                                        }
+                                      
                                     }
                                     catch (Exception ex) { }
 
@@ -479,12 +483,16 @@ namespace WebAPI.Controllers
                                 else if (file.HospitalId.Length >= 22)
                                 {
                                     var _enqObj = _hospitaldetailsRepo.GetAll().Where(y => y.HospitalId == file.HospitalId).FirstOrDefault();
-                                    fileObj.HospitalId = _enqObj.HospitalId;
-                                    fileObj.HospitalName = _enqObj.HospitalName;
-                                    fileObj.HospitalMobile = _enqObj.Mobile.ToString();
-                                    fileObj.HospitalEmail = _enqObj.Email;
-                                    fileObj.HospitalWebsite = _enqObj.Website;
-                                    fileObj.HospitalAddress = _enqObj.Address;
+                                    if (_enqObj != null)
+                                    {
+                                        fileObj.HospitalId = _enqObj.HospitalId;
+                                        fileObj.HospitalName = _enqObj.HospitalName;
+                                        fileObj.HospitalMobile = _enqObj.Mobile.ToString();
+                                        fileObj.HospitalEmail = _enqObj.Email;
+                                        fileObj.HospitalWebsite = _enqObj.Website;
+                                        fileObj.HospitalAddress = _enqObj.Address;
+                                    }
+                                   
                                 }
                             }
                             var fileName = new FileName();

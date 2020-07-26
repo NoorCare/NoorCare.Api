@@ -276,27 +276,41 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, id);
         }
 
-        [Route("api/doctor/getDoctorAvailablity/{doctorid}")]
+        [Route("api/doctor/getDoctorAvailablity/{doctorid}/{caldate}")]
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage getDoctorAvailablity(string doctorid)
+        public IHttpActionResult getDoctorAvailablity(string doctorid, DateTime calDate)
         {
-            var result = _doctorAvailabilityRepo.Find(x => x.DoctorId == doctorid);
-            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+            var result = docAvailablity(doctorid);
+            List<DoctorAvailablity> docAvlList = new List<DoctorAvailablity>();
+            for (int i = 0; i < 7; i++)
+            {
+                DoctorAvailablity obj = new DoctorAvailablity();
+                obj.SchDate = i == 0 ? calDate : calDate.AddDays(i);
+                obj.SchTime = result;
+                docAvlList.Add(obj);
+            }
+            return Ok(docAvlList);
         }
 
         [Route("api/doctor/availablity/{doctorid}")]
         [HttpGet]
         [AllowAnonymous]
-        public HttpResponseMessage getAvailablity(string doctorid)
+        public IHttpActionResult getAvailablity(string doctorid)
         {
-            var result = _doctorAvailabilityRepo.Find(x => x.DoctorId == doctorid).FirstOrDefault();
+            var result = docAvailablity(doctorid);
+            return Ok(result);
+        }
+
+        private List<DoctorScheduleTime> docAvailablity(string doctorid)
+        {
+            var result = _doctorAvailabilityRepo.GetAll().Where(x => x.DoctorId == doctorid.Trim()).FirstOrDefault();
 
             if (result != null)
             {
                 if (result.TimeId == null || result.TimeId == "")
                 {
-                    return Request.CreateResponse(HttpStatusCode.Accepted, new { });
+                    return null;
                 }
                 var timeIds = result.TimeId.Split(',');
                 int[] myInts = Array.ConvertAll(timeIds, s => int.Parse(s));
@@ -305,24 +319,40 @@ namespace WebAPI.Controllers
                                select new
                                {
                                    TimeId = d.Id,
-                                   TimeDesc = d.TimeFrom.Trim() + ' ' + d.TimeTo.Trim() + ' ' + d.AM_PM.Trim()
+                                   TimeDesc = d.TimeFrom.Trim() + '-' + d.TimeTo.Trim() + ' ' + d.AM_PM.Trim()
                                }).ToList();
-                return Request.CreateResponse(HttpStatusCode.Accepted, dataObj);
+                List<DoctorScheduleTime> doctorSchedules = new List<DoctorScheduleTime>();
+                foreach (var item in dataObj)
+                {
+                    DoctorScheduleTime obj = new DoctorScheduleTime();
+                    obj.TimeId = item.TimeId;
+                    obj.TimeDesc = item.TimeDesc;
+                    doctorSchedules.Add(obj);
+                }
+              
+                return doctorSchedules;
             }
             else
             {
-                var diseasesList = _timeMasterRepo.GetAll().Where(x => x.IsActive == true).ToList();
-                var dataObj = (from d in diseasesList
+                var timeMasterList = _timeMasterRepo.GetAll().Where(x => x.IsActive == true).ToList();
+                var dataObj = (from d in timeMasterList
                                select new
                                {
                                    TimeId = d.Id,
-                                   TimeDesc = d.TimeFrom.Trim() + ' ' + d.TimeTo.Trim() + ' ' + d.AM_PM.Trim()
+                                   TimeDesc = d.TimeFrom.Trim() + '-' + d.TimeTo.Trim() + ' ' + d.AM_PM.Trim()
                                }).ToList();
-                return Request.CreateResponse(HttpStatusCode.Accepted, dataObj);
-            }
-            //return Request.CreateResponse(HttpStatusCode.Accepted, result);
-        }
+                List<DoctorScheduleTime> doctorSchedules = new List<DoctorScheduleTime>();
+                foreach (var item in dataObj)
+                {
+                    DoctorScheduleTime obj = new DoctorScheduleTime();
+                    obj.TimeId = item.TimeId;
+                    obj.TimeDesc = item.TimeDesc;
+                    doctorSchedules.Add(obj);
+                }
 
+                return doctorSchedules;
+            }
+        }
 
         [Route("api/doctor/doctorDetails/{doctorid}")]
         [HttpGet]

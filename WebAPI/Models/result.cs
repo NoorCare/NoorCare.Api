@@ -31,7 +31,16 @@ namespace WebAPI.Models
     {
         public List<decimal> Price { get; set; }
     }
-
+    public class DoctorScheduleTime
+    {
+        public int TimeId { get; set; }
+        public string TimeDesc { get; set; }
+    }
+    public class DoctorAvailablity
+    {
+        public DateTime SchDate { get; set; }
+        public List<DoctorScheduleTime> SchTime { get; set; }
+    }
     public class FilterData
     {
         public int Id { get; set; }

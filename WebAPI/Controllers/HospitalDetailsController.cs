@@ -482,7 +482,7 @@ namespace WebAPI.Controllers
             if (_hospitalDetails != null)
             {
                 _hospitalDetails.ProfilePath = "ProfilePic/hospital/" + hospitalId + ".jpeg";
-                ; obj.Patch(_hospitalDetails);
+                obj.Patch(_hospitalDetails);
                 var result = _hospitaldetailsRepo.Update(_hospitalDetails);
                 return Ok(result);
             }
@@ -594,7 +594,7 @@ namespace WebAPI.Controllers
                 {
                     objId = _hospitalDocumentsRepo.Insert(hospitalDocuments);
                 }
-               
+
                 string filepath = HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName);
                 httpRequest.Files["IdBackView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName));
                 httpRequest.Files["IdFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "FrontView/" + httpRequest.Files["IdBackView"].FileName));
@@ -726,7 +726,7 @@ namespace WebAPI.Controllers
         public IHttpActionResult HospitalInsurance(string HospitalId)
         {
             List<HospitaInsuranceModel> hospitalInsurancesList = new List<HospitaInsuranceModel>();
-            var _hospitalInsuranceList = _hospitalInsuranceRepo.GetAll().Where(x => x.HospitalId == HospitalId && x.IsActive==true).ToList();
+            var _hospitalInsuranceList = _hospitalInsuranceRepo.GetAll().Where(x => x.HospitalId == HospitalId && x.IsActive == true).ToList();
             var _insuranceMaster = _insuranceMasterRepo.GetAll().Where(x => x.IsDeleted == false).ToList();
             foreach (var item in _insuranceMaster.ToList())
             {
@@ -769,11 +769,11 @@ namespace WebAPI.Controllers
                 HospitaInsuranceModel hospitaInsuranceModel = new HospitaInsuranceModel();
                 foreach (var hi in _hospitalInsuranceList)
                 {
-                    if (hi.InsuranceId== item.Id)
+                    if (hi.InsuranceId == item.Id)
                     {
                         hospitaInsuranceModel.HospitalId = hi.HospitalId;
-                        hospitaInsuranceModel.IsHospital =Convert.ToBoolean (hi.IsActive);
-                        
+                        hospitaInsuranceModel.IsHospital = Convert.ToBoolean(hi.IsActive);
+
                     }
                 }
                 hospitaInsuranceModel.Name = item.InsuranceCompanyName;
@@ -785,9 +785,9 @@ namespace WebAPI.Controllers
             return Ok(hospitalInsurancesList);
         }
 
-        
 
-            [HttpPost]
+
+        [HttpPost]
         [Route("api/hospital/saveinsurance")]
         [AllowAnonymous]
         public IHttpActionResult SaveInsurance(HospitaInsuranceModel hospitaInsuranceModel)
@@ -809,7 +809,7 @@ namespace WebAPI.Controllers
                 }
                 else
                 {
-                    if (hpli.IsActive==true)
+                    if (hpli.IsActive == true)
                     {
                         hpli.IsActive = false;
                     }
