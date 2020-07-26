@@ -203,4 +203,16 @@ namespace WebAPI.Entity
         public bool IsDeleted { get; set; }
     }
 
+    [Serializable]
+    [Table("LeaveMaster")]
+    public partial class LeaveMaster : IEntity<int>
+    {
+        [Key]
+        public int Id { get; set; }
+        public string LeaveType { get; set; }
+        public int LeaveId { get; set; }
+        public bool? InUsed { get; set; }
+        public bool IsDeleted { get; set; }
+    }
+
 }

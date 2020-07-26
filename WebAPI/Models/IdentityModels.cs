@@ -70,6 +70,8 @@ namespace WebAPI.Models
             modelBuilder.Entity<InsuranceMaster>().ToTable("InsuranceMaster");
             modelBuilder.Entity<LikeVisitor>().ToTable("LikeVisitor");
             modelBuilder.Entity<HospitalInsurance>().ToTable("HospitalInsurance");
+            modelBuilder.Entity<LeaveDetail>().ToTable("LeaveDetail");
+            modelBuilder.Entity<LeaveMaster>().ToTable("LeaveMaster");
 
         }
     }

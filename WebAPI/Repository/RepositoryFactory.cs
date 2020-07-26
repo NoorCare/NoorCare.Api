@@ -167,6 +167,14 @@ namespace NoorCare.Repository
                     {
                         return new HospitalInsuranceRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(ILeaveMasterRepository))
+                    {
+                        return new LeaveMasterRepository() as TRepository;
+                    }
+                    if (typeof(TRepository) == typeof(ILeaveDetailRepository))
+                    {
+                        return new LeaveDetailRepository() as TRepository;
+                    }
                     return null;
                 default:
                     return null;

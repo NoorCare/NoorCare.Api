@@ -35,6 +35,7 @@ namespace WebAPI.Controllers
         IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         ILikeVisitorRepository _likeVisitorRepo = RepositoryFactory.Create<ILikeVisitorRepository>(ContextTypes.EntityFramework);
+        ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
 
         [Route("api/doctor/IsValidNoorCare/{doctorId}")]
         [HttpGet]
@@ -283,6 +284,45 @@ namespace WebAPI.Controllers
             var result = _doctorAvailabilityRepo.Find(x => x.DoctorId == doctorid);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
+
+        [Route("api/doctor/availablity/{doctorid}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage getAvailablity(string doctorid)
+        {
+            var result = _doctorAvailabilityRepo.Find(x => x.DoctorId == doctorid).FirstOrDefault();
+
+            if (result != null)
+            {
+                if (result.TimeId == null || result.TimeId == "")
+                {
+                    return Request.CreateResponse(HttpStatusCode.Accepted, new { });
+                }
+                var timeIds = result.TimeId.Split(',');
+                int[] myInts = Array.ConvertAll(timeIds, s => int.Parse(s));
+                var timeList = _timeMasterRepo.GetAll().Where(x => myInts.Contains(x.Id)).ToList();
+                var dataObj = (from d in timeList
+                               select new
+                               {
+                                   TimeId = d.Id,
+                                   TimeDesc = d.TimeFrom.Trim() + ' ' + d.TimeTo.Trim() + ' ' + d.AM_PM.Trim()
+                               }).ToList();
+                return Request.CreateResponse(HttpStatusCode.Accepted, dataObj);
+            }
+            else
+            {
+                var diseasesList = _timeMasterRepo.GetAll().Where(x => x.IsActive == true).ToList();
+                var dataObj = (from d in diseasesList
+                               select new
+                               {
+                                   TimeId = d.Id,
+                                   TimeDesc = d.TimeFrom.Trim() + ' ' + d.TimeTo.Trim() + ' ' + d.AM_PM.Trim()
+                               }).ToList();
+                return Request.CreateResponse(HttpStatusCode.Accepted, dataObj);
+            }
+            //return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
 
         [Route("api/doctor/doctorDetails/{doctorid}")]
         [HttpGet]

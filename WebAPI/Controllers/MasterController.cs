@@ -17,6 +17,7 @@ namespace WebAPI.Controllers
         IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
+        ILeaveMasterRepository _leaveMasterRepo = RepositoryFactory.Create<ILeaveMasterRepository>(ContextTypes.EntityFramework);
 
         [Route("api/GetTimeMaster")]
         [HttpGet]
@@ -36,13 +37,21 @@ namespace WebAPI.Controllers
             return _facilityDetailRepo.GetAll().OrderBy(x => x.facility).ToList();
         }
 
+        [Route("api/leaveMaster")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<LeaveMaster> GetLeaveMaster()
+        {
+            return _leaveMasterRepo.GetAll().Where(a => a.IsDeleted == false).OrderBy(x => x.LeaveType).ToList();
+        }
+
         [Route("api/diseaseType")]
         [HttpGet]
         [AllowAnonymous]
         public List<Disease> GetDisease()
         {
             IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
-            var diseaseTypes= _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            var diseaseTypes = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
             return diseaseTypes;
         }
 
@@ -196,7 +205,7 @@ namespace WebAPI.Controllers
                               join h in _hospitaldetailsRepo.GetAll() on d.HospitalId equals h.HospitalId
                               where (d.FirstName.ToLower().Contains(autosearchtext.ToLower()) || d.LastName.ToLower().Contains(autosearchtext.ToLower()))
                               && d.EmailConfirmed == true && d.IsDeleted == false
-                              select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + " " + d.DoctorId.Replace('-', ' ') +" " + h.HospitalName };
+                              select new { Id = d.DoctorId, Name = d.FirstName + " " + d.LastName + " " + d.DoctorId.Replace('-', ' ') + " " + h.HospitalName };
                 //List<AutocompleteData> autocompleteData = new List<AutocompleteData>();
                 foreach (var item in doctors)
                 {

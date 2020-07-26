@@ -41,6 +41,9 @@ namespace NoorCare.Repository
     public class InsuranceMasterRepository : EFRepositoryBase<ApplicationDbContext, InsuranceMaster, int>, IInsuranceMasterRepository { }
     public class LikeVisitorRepository : EFRepositoryBase<ApplicationDbContext, LikeVisitor, int>, ILikeVisitorRepository { }
     public class HospitalInsuranceRepository : EFRepositoryBase<ApplicationDbContext, HospitalInsurance, int>, IHospitalInsuranceRepository { }
+
+    public class LeaveDetailRepository : EFRepositoryBase<ApplicationDbContext, LeaveDetail, int>, ILeaveDetailRepository { }
+    public class LeaveMasterRepository : EFRepositoryBase<ApplicationDbContext, LeaveMaster, int>, ILeaveMasterRepository { }
 }
 
 
