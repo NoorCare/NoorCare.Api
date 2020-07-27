@@ -218,7 +218,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetUpcomingAppointment(string Id)
         {
-            var result = _appointmentRepo.Find(a => DateTime.Parse(a.AppointmentDate) >= DateTime.Now && a.ClientId == Id).ToList();
+            var result = _appointmentRepo.Find(a => a.AppointmentDate >= DateTime.Now && a.ClientId == Id).ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 

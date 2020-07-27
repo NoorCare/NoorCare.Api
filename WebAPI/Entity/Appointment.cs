@@ -24,8 +24,8 @@ namespace WebAPI.Entity
         [MaxLength(50)]
         public string TimingId { get; set; }
 
-        [MaxLength(50)]
-        public string AppointmentDate { get; set; }
+       
+        public DateTime AppointmentDate { get; set; }
         
         [MaxLength(50)]
         public string ClientId { get; set; }

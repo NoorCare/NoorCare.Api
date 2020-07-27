@@ -35,6 +35,8 @@ namespace WebAPI.Models
     {
         public int TimeId { get; set; }
         public string TimeDesc { get; set; }
+        public bool IsBooked { get; set; }
+        public bool IsSelected { get; set; }
     }
     public class DoctorAvailablity
     {

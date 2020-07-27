@@ -2,6 +2,7 @@
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Newtonsoft.Json;
 using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
 using WebAPI.Services;
+using WebGrease.Css.Extensions;
 
 namespace WebAPI.Controllers
 {
@@ -281,14 +283,42 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult getDoctorAvailablity(string doctorid, DateTime calDate)
         {
-            var result = docAvailablity(doctorid);
+            List<DoctorScheduleTime> result = new List<DoctorScheduleTime>();
+            result = docAvailablity(doctorid);
+
+
+
+            var docAvail = _appointmentRepo.GetAll().Where(x => x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid).ToList();
             List<DoctorAvailablity> docAvlList = new List<DoctorAvailablity>();
             for (int i = 0; i < 7; i++)
             {
+                string serialized = JsonConvert.SerializeObject(result);
+                var copy = JsonConvert.DeserializeObject<List<DoctorScheduleTime>>(serialized);
+
                 DoctorAvailablity obj = new DoctorAvailablity();
                 obj.SchDate = i == 0 ? calDate : calDate.AddDays(i);
-                obj.SchTime = result;
+                obj.SchTime = copy;
                 docAvlList.Add(obj);
+            }
+
+            foreach (var item in docAvlList)
+            {
+                docAvail.Where(x => x.AppointmentDate == item.SchDate).ForEach(a => (item.SchTime.Where(it => it.TimeId == Convert.ToInt32(a.TimingId)).ToList()).ForEach(ob => ob.IsBooked = true));
+                // docAvail.Where(x => x.AppointmentDate == item.SchDate).ForEach(a => (item.SchTime.Where(it => it.TimeId == Convert.ToInt32(a.TimingId)).ToList()).ForEach(ob => ob.IsBooked = true));
+                //foreach (var x in docAvail)
+                //{
+                //    if (item.SchDate == x.AppointmentDate)
+                //    {
+                //        //item.SchTime.Where(a => a.TimeId == Convert.ToInt32(x.TimingId)).ForEach(it => it.IsBooked = true);
+                //        foreach (var it in item.SchTime)
+                //        {
+                //            if (it.TimeId == Convert.ToInt32(x.TimingId))
+                //            {
+                //                it.IsBooked = true;
+                //            }
+                //        }
+                //    }
+                //}
             }
             return Ok(docAvlList);
         }
@@ -329,7 +359,7 @@ namespace WebAPI.Controllers
                     obj.TimeDesc = item.TimeDesc;
                     doctorSchedules.Add(obj);
                 }
-              
+
                 return doctorSchedules;
             }
             else
