@@ -24,7 +24,6 @@ namespace WebAPI.Controllers
     public class DoctorController : ApiController
     {
         Registration _registration = new Registration();
-
         ICountryRepository _countryRepo = RepositoryFactory.Create<ICountryRepository>(ContextTypes.EntityFramework);
         ICityRepository _cityRepo = RepositoryFactory.Create<ICityRepository>(ContextTypes.EntityFramework);
         IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
@@ -286,7 +285,17 @@ namespace WebAPI.Controllers
             List<DoctorScheduleTime> result = new List<DoctorScheduleTime>();
             result = docAvailablity(doctorid);
 
-
+            ApplicationDbContext dbContext = new ApplicationDbContext();
+            var leaveDtls = dbContext.Database.SqlQuery<LeaveSchedule>(" set dateformat dmy;" +
+                        " ; WITH CTE AS (" +
+                        " SELECT ROW_NUMBER() OVER(ORDER BY ClientId) AS RowNo, 1 AS IterationID, TimeId, FromDate, ToDate" +
+                        " from [dbo].[LeaveDetail] where clientid = '" + doctorid +"'"+
+                        " and fromDate >= '" + calDate + "' and toDate <= '" + calDate.AddDays(6) +"'"+
+                        " UNION ALL" +
+                        " SELECT RowNo, IterationID + 1, TimeId, DATEADD(dd, 1, FromDate)  AS FromDate, ToDate" +
+                        " FROM CTE WHERE FromDate < ToDate)" +
+                        " select distinct x.FromDate as 'SchDate',(select top 1 TimeId from CTE where FromDate = x.FromDate order by len(TimeId) Desc) 'TimeIds' from CTE x" +
+                        " order by FromDate").ToList();
 
             var docAvail = _appointmentRepo.GetAll().Where(x => x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid).ToList();
             List<DoctorAvailablity> docAvlList = new List<DoctorAvailablity>();
@@ -303,22 +312,16 @@ namespace WebAPI.Controllers
 
             foreach (var item in docAvlList)
             {
+                //already booked appointment
                 docAvail.Where(x => x.AppointmentDate == item.SchDate).ForEach(a => (item.SchTime.Where(it => it.TimeId == Convert.ToInt32(a.TimingId)).ToList()).ForEach(ob => ob.IsBooked = true));
-                // docAvail.Where(x => x.AppointmentDate == item.SchDate).ForEach(a => (item.SchTime.Where(it => it.TimeId == Convert.ToInt32(a.TimingId)).ToList()).ForEach(ob => ob.IsBooked = true));
-                //foreach (var x in docAvail)
-                //{
-                //    if (item.SchDate == x.AppointmentDate)
-                //    {
-                //        //item.SchTime.Where(a => a.TimeId == Convert.ToInt32(x.TimingId)).ForEach(it => it.IsBooked = true);
-                //        foreach (var it in item.SchTime)
-                //        {
-                //            if (it.TimeId == Convert.ToInt32(x.TimingId))
-                //            {
-                //                it.IsBooked = true;
-                //            }
-                //        }
-                //    }
-                //}
+
+                //leave management
+                leaveDtls.Where(l => l.SchDate == item.SchDate).ForEach(ld =>
+                {
+                    var timeIds = ld.TimeIds.Split(',');
+                    int[] myInts = Array.ConvertAll(timeIds, s => int.Parse(s));
+                    item.SchTime.Where(it => myInts.Contains(it.TimeId)).ToList().ForEach(ob => ob.IsBooked = true);
+                });               
             }
             return Ok(docAvlList);
         }

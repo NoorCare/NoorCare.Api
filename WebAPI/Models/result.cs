@@ -49,6 +49,13 @@ namespace WebAPI.Models
         public string Name { get; set; }
     }
 
+    public class LeaveSchedule
+    {
+        public DateTime SchDate { get; set; }
+        public string TimeIds { get; set; }
+    }
+
+
     public class Hospital
     {
         public int Id { get; set; }
