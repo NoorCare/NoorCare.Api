@@ -320,7 +320,7 @@ namespace WebAPI.Controllers
                 {
                     var timeIds = ld.TimeIds.Split(',');
                     int[] myInts = Array.ConvertAll(timeIds, s => int.Parse(s));
-                    item.SchTime.Where(it => myInts.Contains(it.TimeId)).ToList().ForEach(ob => ob.IsBooked = true);
+                    item.SchTime.Where(it => myInts.Contains(it.TimeId)).ToList().ForEach(ob => ob.IsLeave = true);
                 });               
             }
             return Ok(docAvlList);
