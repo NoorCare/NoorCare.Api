@@ -289,8 +289,8 @@ namespace WebAPI.Controllers
             var leaveDtls = dbContext.Database.SqlQuery<LeaveSchedule>(" set dateformat dmy;" +
                         " ; WITH CTE AS (" +
                         " SELECT ROW_NUMBER() OVER(ORDER BY ClientId) AS RowNo, 1 AS IterationID, TimeId, FromDate, ToDate" +
-                        " from [dbo].[LeaveDetail] where clientid = '" + doctorid +"'"+
-                        " and fromDate >= '" + calDate + "' and toDate <= '" + calDate.AddDays(6) +"'"+
+                        " from [dbo].[LeaveDetail] where clientid = '" + doctorid + "'" +
+                        " and fromDate >= '" + calDate + "' and toDate <= '" + calDate.AddDays(6) + "'" +
                         " UNION ALL" +
                         " SELECT RowNo, IterationID + 1, TimeId, DATEADD(dd, 1, FromDate)  AS FromDate, ToDate" +
                         " FROM CTE WHERE FromDate < ToDate)" +
@@ -321,7 +321,7 @@ namespace WebAPI.Controllers
                     var timeIds = ld.TimeIds.Split(',');
                     int[] myInts = Array.ConvertAll(timeIds, s => int.Parse(s));
                     item.SchTime.Where(it => myInts.Contains(it.TimeId)).ToList().ForEach(ob => ob.IsLeave = true);
-                });               
+                });
             }
             return Ok(docAvlList);
         }
@@ -1044,8 +1044,13 @@ namespace WebAPI.Controllers
                     //type not 0 and not2
                     //objHosp = objHosp.Where(x => x.IsDocumentApproved == 1 && x.Type == searchFilter.Type.ToString() && x.FacilityId == searchFilter.FacilityId).ToList();
                     objHosp = objHosp.Where(x => x.FacilityId == searchFilter.FacilityId).ToList();
-                    objHosp = objHosp.Where(x => x.Type != null && x.Type.Split(',').Select(ele => ele.Trim()).
-                    Any(ele => searchFilter.Type.Contains(ele))).ToList();
+                    if (searchFilter.Type == "2" || searchFilter.Type == "5" || searchFilter.Type == "23" || searchFilter.Type == "6"
+                        || searchFilter.Type == "32" || searchFilter.Type == "9")
+                    {
+                        objHosp = objHosp.Where(x => x.Type != null && x.Type.Split(',').Select(ele => ele.Trim()).
+                      Any(ele => searchFilter.Type.Contains(ele))).ToList();
+                    }
+
                 }
 
 
