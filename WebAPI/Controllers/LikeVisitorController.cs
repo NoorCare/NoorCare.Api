@@ -23,15 +23,7 @@ namespace WebAPI.Controllers
     {
         ILikeVisitorRepository _likeVisitorRepo = RepositoryFactory.Create<ILikeVisitorRepository>(ContextTypes.EntityFramework);
 
-        //[HttpGet]
-        //[Route("api/likevisitor/get/{clientId}/{hfpdocId}")]
-        //[AllowAnonymous]
-        //public IHttpActionResult getLikeVisitor(string clientId, string hfpdocId)
-        //{
-        //    LikeVisitor _likeVisitor = _likeVisitorRepo.Find(x => x.NoorId.Trim() == clientId.Trim() && x.HFP_DOC_NCID.Trim() == hfpdocId.Trim() && x.IsDelete == true).FirstOrDefault();
-
-        //    return Ok(_likeVisitor);
-        //}
+     
         [HttpGet]
         [Route("api/likevisitor/get/{hfpdocId}/{clientId?}")]
         [AllowAnonymous]

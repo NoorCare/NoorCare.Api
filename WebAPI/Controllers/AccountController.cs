@@ -22,7 +22,6 @@ namespace WebAPI.Controllers
 {
     public class AccountController : ApiController
     {
-
         IClientDetailRepository _clientDetailRepo = RepositoryFactory.Create<IClientDetailRepository>(ContextTypes.EntityFramework);
         IHospitalDetailsRepository _hospitalDetailsRepository = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
         ISecretaryRepository _secretaryRepository = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
@@ -31,8 +30,7 @@ namespace WebAPI.Controllers
 
         EmailSender _emailSender = new EmailSender();
         Registration _registration = new Registration();
-        //string tokenCode = "";
-
+        
         [Route("api/account/register")]
         [HttpPost]
         [AllowAnonymous]
