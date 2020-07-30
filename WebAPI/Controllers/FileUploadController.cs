@@ -88,7 +88,7 @@ namespace WebAPI.Controllers
             {
                 ClientId = clientId,
                 HospitalId = hospitalId,
-                DesiesType = Convert.ToInt32(diseaseType),
+                ReportType = Convert.ToInt32(diseaseType),
                 AddedYear = DateTime.Now.Year,
                 AddedMonth = DateTime.Now.Month,
                 FilePath = postedFile.FileName,
@@ -155,7 +155,7 @@ namespace WebAPI.Controllers
                     {
                         ClientId = clientId,
                         HospitalId = hospitalId,
-                        DesiesType = Convert.ToInt32(diseaseType),
+                        ReportType = Convert.ToInt32(diseaseType),
                         AddedYear = DateTime.Now.Year,
                         AddedMonth = DateTime.Now.Month,
                         FilePath = httpRequest.Files[i].FileName,

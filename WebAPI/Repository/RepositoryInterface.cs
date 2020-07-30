@@ -44,8 +44,8 @@ namespace WebAPI.Repository
     public interface IInsuranceMasterRepository : IRepository<InsuranceMaster, int> { }
 
     public interface ILikeVisitorRepository : IRepository<LikeVisitor, int> { }
-
     public interface IHospitalInsuranceRepository : IRepository<HospitalInsurance, int> { }
     public interface ILeaveMasterRepository : IRepository<LeaveMaster, int> { }
     public interface ILeaveDetailRepository : IRepository<LeaveDetail, int> { }
+    public interface IReportRepository : IRepository<Report, int> { }
 }

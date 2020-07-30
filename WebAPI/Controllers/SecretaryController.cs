@@ -21,6 +21,7 @@ namespace WebAPI.Controllers
     {
         ISecretaryRepository _secretaryRepo = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
         ISecretaryRepository _getSecretaryList = RepositoryFactory.Create<ISecretaryRepository>(ContextTypes.EntityFramework);
+        
         Registration _registration = new Registration();
 
         [Route("api/secretary/getall")]
@@ -123,7 +124,29 @@ namespace WebAPI.Controllers
         {
             return Ok(_secretaryRepo.Find(x => x.SecretaryId == secretaryId));
         }
-        
+        [HttpGet]
+        [Route("api/hpf/profile/{hpfid}")]
+        [AllowAnonymous]
+        public IHttpActionResult getProfile(string hpfid)
+        {
+            IDoctorRepository _doctorRepo = RepositoryFactory.Create<IDoctorRepository>(ContextTypes.EntityFramework);
+            IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+            var id = hpfid.Split('-')[0];
+            if (id=="NCS")
+            {
+                return Ok(_secretaryRepo.Find(x => x.SecretaryId == hpfid));
+            }
+            else if (id == "NCD")
+            {
+                return Ok(_doctorRepo.Find(x => x.DoctorId == hpfid));
+            }
+            else
+            {
+                return Ok(_hospitaldetailsRepo.Find(x => x.HospitalId == hpfid));
+            }
+            
+        }
+
         [Route("api/secretary/update")]
         [HttpPut]
         [AllowAnonymous]

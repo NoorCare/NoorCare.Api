@@ -22,6 +22,10 @@ namespace NoorCare.Repository
                     {
                         return new DiseaseRepository() as TRepository;
                     }
+                    if (typeof(TRepository) == typeof(IReportRepository))
+                    {
+                        return new ReportRepository() as TRepository;
+                    }
                     if (typeof(TRepository) == typeof(IEmergencyContactRepository))
                     {
                         return new EmergencyContactRepository() as TRepository;

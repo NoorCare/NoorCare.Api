@@ -39,6 +39,7 @@ namespace WebAPI.Models
             modelBuilder.Entity<PatientPrescription>().ToTable("PatientPrescription"); 
             modelBuilder.Entity<Facility>().ToTable("Facility");
             modelBuilder.Entity<Disease>().ToTable("DiseaseType");
+            modelBuilder.Entity<Report>().ToTable("ReportType");
             modelBuilder.Entity<EmergencyContact>().ToTable("EmergencyContact");
             modelBuilder.Entity<MedicalInformation>().ToTable("MedicalInformation");
             modelBuilder.Entity<CountryCode>().ToTable("CountryCode");

@@ -55,6 +55,16 @@ namespace WebAPI.Controllers
             return diseaseTypes;
         }
 
+        [Route("api/reporttype")]
+        [HttpGet]
+        [AllowAnonymous]
+        public List<Report> GetReportType()
+        {
+            IReportRepository _reportDetailRepo = RepositoryFactory.Create<IReportRepository>(ContextTypes.EntityFramework);
+            var reportTypes = _reportDetailRepo.GetAll().ToList();
+            return reportTypes;
+        }
+
         [Route("api/countryCode")]
         [HttpGet]
         [AllowAnonymous]
