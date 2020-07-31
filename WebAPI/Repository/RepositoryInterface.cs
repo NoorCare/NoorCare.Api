@@ -48,4 +48,7 @@ namespace WebAPI.Repository
     public interface ILeaveMasterRepository : IRepository<LeaveMaster, int> { }
     public interface ILeaveDetailRepository : IRepository<LeaveDetail, int> { }
     public interface IReportRepository : IRepository<Report, int> { }
+
+    public interface IDoctorEducationRepository : IRepository<DoctorEducation, int> { }
+    public interface ISpecialtiesRepository : IRepository<Specialties, int> { }
 }

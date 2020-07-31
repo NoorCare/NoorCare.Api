@@ -174,6 +174,7 @@ namespace WebAPI.Entity
         public string ModifiedBy { get; set; }
         public DateTime? DateEntered { get; set; }
         public DateTime? DateModified { get; set; }
+        public Int32? ReportType { get; set; }
     }
 
     [Serializable]

@@ -45,6 +45,11 @@ namespace NoorCare.Repository
 
     public class LeaveDetailRepository : EFRepositoryBase<ApplicationDbContext, LeaveDetail, int>, ILeaveDetailRepository { }
     public class LeaveMasterRepository : EFRepositoryBase<ApplicationDbContext, LeaveMaster, int>, ILeaveMasterRepository { }
+
+    public class DoctorEducationRepository : EFRepositoryBase<ApplicationDbContext, DoctorEducation, int>, IDoctorEducationRepository { }
+    public class SpecialtiesRepository : EFRepositoryBase<ApplicationDbContext, Specialties, int>, ISpecialtiesRepository { }
+
+
 }
 
 

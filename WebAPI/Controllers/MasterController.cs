@@ -296,5 +296,43 @@ namespace WebAPI.Controllers
 
             }
         }
+
+        [HttpGet]
+        [Route("api/allspecialties")]
+        [AllowAnonymous]
+        public HttpResponseMessage GetAllSpecialties()
+        {
+            ISpecialtiesRepository _specialtiesRepository = RepositoryFactory.Create<ISpecialtiesRepository>(ContextTypes.EntityFramework);
+            try
+            {
+                var specialties = _specialtiesRepository.GetAll().ToList();
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, specialties);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, "Error");
+
+            }
+        }
+
+        [HttpGet]
+        [Route("api/alleducation")]
+        [AllowAnonymous]
+        public HttpResponseMessage GetAllDoctorEducation()
+        {
+            IDoctorEducationRepository _doctorEducationRepository = RepositoryFactory.Create<IDoctorEducationRepository>(ContextTypes.EntityFramework);
+            try
+            {
+                var doctorEducations = _doctorEducationRepository.GetAll().ToList();
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, doctorEducations);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, "Error");
+
+            }
+        }
     }
 }

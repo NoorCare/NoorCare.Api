@@ -239,6 +239,7 @@
     <Compile Include="Controllers\SecretaryController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Entity\Disease.cs" />
     <Compile Include="Entity\HospitalInsurance.cs" />
     <Compile Include="Entity\Appointment.cs" />
     <Compile Include="Entity\EmailNotifications.cs" />
@@ -249,12 +250,14 @@
     <Compile Include="Entity\LeaveDetail.cs" />
     <Compile Include="Entity\LikeVisitor.cs" />
     <Compile Include="Entity\NewsBlogs.cs" />
+    <Compile Include="Entity\DoctorEducation.cs" />
+    <Compile Include="Entity\Specialties.cs" />
     <Compile Include="Entity\TimeMaster.cs" />
     <Compile Include="Entity\Feedback.cs" />
     <Compile Include="Entity\Doctor.cs" />
     <Compile Include="Entity\EmergencyContact.cs" />
     <Compile Include="Entity\ClientDetail.cs" />
-    <Compile Include="Entity\Disease.cs" />
+    <Compile Include="Entity\Report.cs" />
     <Compile Include="Entity\Facility.cs" />
     <Compile Include="Entity\HospitalDetails.cs" />
     <Compile Include="Entity\IEntity.cs" />
