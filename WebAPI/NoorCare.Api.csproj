@@ -270,6 +270,7 @@
     <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\AccountModel.cs" />
     <Compile Include="Models\HospitaInsuranceModel.cs" />
+    <Compile Include="Models\HospitalDocuments.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\result.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

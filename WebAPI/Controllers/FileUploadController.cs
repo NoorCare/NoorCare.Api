@@ -155,7 +155,7 @@ namespace WebAPI.Controllers
                     {
                         ClientId = clientId,
                         HospitalId = hospitalId,
-                        ReportType = Convert.ToInt32(diseaseType),
+                        DesiesType = Convert.ToInt32(diseaseType),
                         AddedYear = DateTime.Now.Year,
                         AddedMonth = DateTime.Now.Month,
                         FilePath = httpRequest.Files[i].FileName,
@@ -409,15 +409,21 @@ namespace WebAPI.Controllers
         public HttpResponseMessage GetUploadedDocInfo(string clientId)
         {
             var desiesTypeResultList = new List<DesiesTypeResult>();
-            var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            //var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
+            //IHospitalDetailsRepository _hospitaldetailsRepo = RepositoryFactory.Create<IHospitalDetailsRepository>(ContextTypes.EntityFramework);
+            IReportRepository _reportTypeRepo = RepositoryFactory.Create<IReportRepository>(ContextTypes.EntityFramework);
+
+            //var ReportTypeResultList = new List<Report>();
+            var ReportType = _reportTypeRepo.GetAll().OrderBy(x => x.ReportName).ToList();
+
             string host = ConfigurationManager.AppSettings.Get("ImageBaseUrl");//HttpContext.Current.Request.Url.Host;
-            //var result = _quickUploadRepo.GetAll();
+             
             var result = _quickUploadRepo.Find(x => x.ClientId == clientId);
 
 
             var list = result.ToList();
             var data = list.GroupBy(item => item.DesiesType)
-            .Select(group => new { diseaseType = group.Key, Items = group.ToList() })
+            .Select(group => new { DesiesType = group.Key, Items = group.ToList() })
             .ToList();
 
             foreach (var x in data)
@@ -427,10 +433,17 @@ namespace WebAPI.Controllers
                 Select(group => new { AddedYear = group.Key, Items = group.ToList() })
                 .ToList();
                 desiesTypeResult.Years = new List<int?>();
-                if (x.diseaseType != 0)
+                if (x.DesiesType != 0)
                 {
-                    desiesTypeResult.DiseaseType = x.diseaseType;
-                    desiesTypeResult.DesiesName = disease.Where(c => c.Id == x.diseaseType).FirstOrDefault().DiseaseType;
+                    desiesTypeResult.DiseaseType = x.DesiesType;
+                    try
+                    {
+                        desiesTypeResult.DesiesName = ReportType.Where(c => c.ReportID == x.DesiesType).FirstOrDefault().ReportName;
+                    }
+                    catch (Exception ex)
+                    { 
+                    }
+                   
                 }
                 desiesTypeResult.YearList = new List<YearList>();
                 foreach (var it in listYear)

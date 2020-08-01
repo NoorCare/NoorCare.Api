@@ -95,7 +95,7 @@ namespace WebAPI.Controllers
                                 select new
                                 {
                                     Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
-                                    Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate + " " + t.TimeTo + t.AM_PM).ToString("dd/MM/yyyy hh:mm")),
+                                    Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate.ToShortDateString() + " " + t.TimeTo + t.AM_PM).ToString("dd/MM/yyyy hh:mm")),
                                     ClientId = a.ClientId,
                                     DateEntered = a.DateEntered,
                                     DoctorId = a.DoctorId,
