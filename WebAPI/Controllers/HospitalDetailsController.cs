@@ -474,15 +474,25 @@ namespace WebAPI.Controllers
         }
 
         [Route("api/hospitaldetails/{hospitalId}/updatehospital")]
-        [HttpPatch]
+        [HttpPost]
         [AllowAnonymous]
-        public IHttpActionResult UpdateHospitalProfile(string hospitalId, Delta<HospitalDetails> obj)
+        public IHttpActionResult UpdateHospitalProfile(string hospitalId, HospitalDetails obj)
         {
             HospitalDetails _hospitalDetails = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
             if (_hospitalDetails != null)
             {
-                _hospitalDetails.ProfilePath = "ProfilePic/hospital/" + hospitalId + ".jpeg";
-                obj.Patch(_hospitalDetails);
+                //_hospitalDetails.ProfilePath = "ProfilePic/hospital/" + hospitalId + ".jpeg";
+                _hospitalDetails.HospitalName=obj.HospitalName;
+                _hospitalDetails.EstablishYear = obj.EstablishYear;
+                _hospitalDetails.Website = obj.Website;
+                _hospitalDetails.NumberofBed = obj.NumberofBed;
+                _hospitalDetails.NumberofAmbulance = obj.NumberofAmbulance;
+                _hospitalDetails.Mobile = obj.Mobile;
+                _hospitalDetails.AlternateNumber = obj.AlternateNumber;
+                _hospitalDetails.PaymentType = obj.PaymentType;
+                _hospitalDetails.Emergency = obj.Emergency;
+                //_hospitalDetails.InsuranceCompanies = obj.InsuranceCompanies;
+                //_hospitalDetails.InsuranceId = obj.InsuranceId;
                 var result = _hospitaldetailsRepo.Update(_hospitalDetails);
                 return Ok(result);
             }
