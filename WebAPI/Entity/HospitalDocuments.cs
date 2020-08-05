@@ -30,8 +30,8 @@ namespace WebAPI.Entity
         [MaxLength(500)]
         public string Address { get; set; }
 
-        public decimal Latitude { get; set; }
+        public string Latitude { get; set; }
 
-        public decimal Longitude { get; set; }
+        public string Longitude { get; set; }
     }
 }

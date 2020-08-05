@@ -38,13 +38,18 @@ namespace WebAPI.Controllers
         IHospitalInsuranceRepository _hospitalInsuranceRepo = RepositoryFactory.Create<IHospitalInsuranceRepository>(ContextTypes.EntityFramework);
         IInsuranceMasterRepository _insuranceMasterRepo = RepositoryFactory.Create<IInsuranceMasterRepository>(ContextTypes.EntityFramework);
 
-        [Route("api/hospitaldetails/getall")]
+        [Route("api/hospitaldetails/getall/{hfp?}")]
         [HttpGet]
         [AllowAnonymous]
         // GET: api/HospitalDetails
-        public HttpResponseMessage GetAll()
+        public HttpResponseMessage GetAll(int hfp=0)
         {
+            hfp = hfp == 0 ? 2 : hfp;
             var result = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted == false).ToList();
+            if(hfp!=0)
+            {
+                result = result.Where(x => x.jobType == hfp).ToList();
+            }
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -552,6 +557,48 @@ namespace WebAPI.Controllers
             return Ok(_hospitalDocumentsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault());
         }
 
+        [HttpPost]
+        [Route("api/hospital/updateLatLong")]
+        [AllowAnonymous]
+        public IHttpActionResult uploadhospitalLatLong()
+        {
+            var httpRequest = HttpContext.Current.Request;
+            string hospitalId = httpRequest.Form["HospitalId"];
+            string address = httpRequest.Form["address"];
+            CultureInfo cultures = new CultureInfo("en-US");
+            //decimal latitude = Convert.ToDecimal(httpRequest.Form["Latitude"], cultures);
+            //decimal longitude = Convert.ToDecimal(httpRequest.Form["Longitude"], cultures);
+            string latitude = httpRequest.Form["Latitude"];
+            string longitude = httpRequest.Form["Longitude"];
+            int objId = 0;
+            try
+            {
+                HospitalDocumentVerification hospitalDocuments = new HospitalDocumentVerification
+                {
+                    HospitalId = hospitalId,                   
+                    Address = address,
+                    Latitude = latitude,
+                    Longitude = longitude,
+                };
+                HospitalDocumentVerification data = _hospitalDocumentsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
+                if (data != null)
+                {
+                    data.Latitude = latitude;
+                    data.Longitude = longitude;
+                    data.Address = address;
+
+                    bool retStatus = _hospitalDocumentsRepo.Update(data);
+                }
+                else
+                {
+                    objId = _hospitalDocumentsRepo.Insert(hospitalDocuments);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return Ok(objId);
+        }
 
         [HttpPost]
         [Route("api/hospital/uploadhospitaldocuments")]
@@ -559,11 +606,7 @@ namespace WebAPI.Controllers
         public IHttpActionResult uploadhospitaldocuments()
         {
             var httpRequest = HttpContext.Current.Request;
-            string hospitalId = httpRequest.Form["HospitalId"];
-            string address = httpRequest.Form["address"];
-            CultureInfo cultures = new CultureInfo("en-US");
-            decimal latitude = Convert.ToDecimal(httpRequest.Form["Latitude"], cultures);
-            decimal longitude = Convert.ToDecimal(httpRequest.Form["Longitude"], cultures);
+            string hospitalId = httpRequest.Form["HospitalId"];           
             int objId = 0;
             try
             {
@@ -582,21 +625,15 @@ namespace WebAPI.Controllers
                     IdBackView = IdBackView,
                     IdFrontView = IdFrontView,
                     CrFrontView = CrFrontView,
-                    LicenseFrontView = LicenseFrontView,
-                    Address = address,
-                    Latitude = latitude,
-                    Longitude = longitude,
+                    LicenseFrontView = LicenseFrontView
                 };
                 HospitalDocumentVerification data = _hospitalDocumentsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
                 if (data != null)
                 {
-                    data.Latitude = latitude;
-                    data.Longitude = longitude;
                     data.IdBackView = IdBackView;
                     data.IdFrontView = IdFrontView;
                     data.CrFrontView = CrFrontView;
                     data.LicenseFrontView = LicenseFrontView;
-                    data.Address = address;
 
                     bool retStatus = _hospitalDocumentsRepo.Update(data);
                 }
