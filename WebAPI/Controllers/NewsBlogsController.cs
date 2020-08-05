@@ -28,10 +28,13 @@ namespace WebAPI.Controllers
         {
 
             var result = _newsBlogsRepo.Find(
-                 x => x.Category == Type
+                 x => x.Category == Type.ToLower()
+                 && x.IsDeleted==false
                  && (newsBlogs.UserId == null || newsBlogs.UserId.Contains(x.UserId))
                  && (newsBlogs.NewsCategory == null || x.NewsCategory.ToUpper().Contains(newsBlogs.NewsCategory.ToUpper()))
                  && (newsBlogs.NewsTitle == null || x.NewsTitle.ToUpper().Contains(newsBlogs.NewsTitle.ToUpper()))).OrderByDescending(x => x.Id).Take(15).ToList();
+
+         
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
