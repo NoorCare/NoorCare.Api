@@ -277,7 +277,7 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, id);
         }
 
-        [Route("api/doctor/getDoctorAvailablity/{doctorid}/{caldate}")]
+        [Route("api/doctor/getDoctorAvailablity/{doctorid}/{date}")]
         [HttpGet]
         [AllowAnonymous]
         public IHttpActionResult getDoctorAvailablity(string doctorid, string date)
@@ -300,7 +300,7 @@ namespace WebAPI.Controllers
                             " select distinct x.FromDate as 'SchDate',(select top 1 TimeId from CTE where FromDate = x.FromDate order by len(TimeId) Desc) 'TimeIds' from CTE x" +
                             " order by FromDate").ToList();
 
-                var docAvail = _appointmentRepo.GetAll().Where(x => x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid).ToList();
+                var docAvail = _appointmentRepo.GetAll().Where(x => x.IsDeleted==false && x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid).ToList();
                 List<DoctorAvailablity> docAvlList = new List<DoctorAvailablity>();
                 for (int i = 0; i < 7; i++)
                 {

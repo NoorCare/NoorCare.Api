@@ -45,17 +45,17 @@ namespace WebAPI.Controllers
                                 where a.DoctorId == doctorid && a.Status == "Booked"
                                 select new
                                 {
-                                    Id=a.Id,
+                                    Id = a.Id,
                                     Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
                                     Date = (Convert.ToDateTime(a.AppointmentDate)).ToShortDateString(),
                                     ClientId = a.ClientId,
                                     DateEntered = a.DateEntered,
                                     DoctorId = a.DoctorId,
-                                    Name=c.FirstName+" "+c.LastName,
-                                    Gender=c.Gender,
-                                    Age= this.GetAge(c.DOB),
+                                    Name = c.FirstName + " " + c.LastName,
+                                    Gender = c.Gender,
+                                    Age = this.GetAge(c.DOB),
                                 };
-            return Request.CreateResponse(HttpStatusCode.Accepted, appointDetail.OrderByDescending(x=>x.Id));
+            return Request.CreateResponse(HttpStatusCode.Accepted, appointDetail.OrderByDescending(x => x.Id));
         }
         public string GetAge(string dateOfbirth)
         {
@@ -77,9 +77,9 @@ namespace WebAPI.Controllers
 
                 return "0";
             }
-            
+
         }
-        
+
         [Route("api/appointment/getUpcommingAppointment/{ClientId}")]
         [HttpGet]
         [AllowAnonymous]
@@ -88,16 +88,16 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var result = _appointmentRepo.GetAll().ToList();
+                var result = _appointmentRepo.GetAll().Where(x => x.IsDeleted == false).ToList();
                 var resultTime = _timeMasterRepo.GetAll().ToList();
                 var appointDetail = from a in result
                                     join t in resultTime on a.TimingId equals t.Id.ToString()
-                                    join h in _hospitaldetailsRepo.GetAll().ToList() on a.HospitalId equals h.HospitalId
+                                    join h in _hospitaldetailsRepo.GetAll().Where(y=>y.IsDeleted==false && y.IsDocumentApproved==1).ToList() on a.HospitalId equals h.HospitalId
                                     where a.ClientId == ClientId
                                     select new
                                     {
-                                        Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
-                                        Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate.ToShortDateString() + " " + t.TimeTo + t.AM_PM).ToString("dd/MM/yyyy hh:mm")),
+                                        Time = t.TimeFrom.Trim() + "-" + t.TimeTo.Trim() + " " + t.AM_PM.Trim(),
+                                        Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate.ToShortDateString() + " " + t.TimeTo.Trim() + t.AM_PM.Trim()).ToString("dd/MM/yyyy hh:mm")),
                                         ClientId = a.ClientId,
                                         DateEntered = a.DateEntered,
                                         DoctorId = a.DoctorId,
@@ -108,12 +108,13 @@ namespace WebAPI.Controllers
                 DateTime todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm"));
                 var appintmentresult = appointDetail.Where(x => x.Date >= todaydate);
                 return Request.CreateResponse(HttpStatusCode.Accepted, appintmentresult);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
             }
         }
-      
+
         [Route("api/appointment/getdetail/{appointmentid}")]
         [HttpGet]
         [AllowAnonymous]
@@ -168,7 +169,7 @@ namespace WebAPI.Controllers
 
             //Email sent on status change
             string html = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
-             //_emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
+            //_emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
@@ -204,7 +205,8 @@ namespace WebAPI.Controllers
                     doctorDetail.FirstName + " " + doctorDetail.LastName,
                     appointment.AppointmentDate.ToString(),
                     clientDetail.ClientId, time.TimeFrom + "-" + time.TimeTo);
-            }catch(Exception ex) { }
+            }
+            catch (Exception ex) { }
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
