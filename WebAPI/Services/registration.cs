@@ -75,7 +75,15 @@ namespace WebAPI.Services
 
         public string creatId(int jobType, string NationalityId, int? gender)
         {
-            string priFix = "NCM-";
+            string priFix = "NCH-";
+            if (gender == 1 && jobType == 1)
+            {
+                priFix = "NCM-";
+            }
+            else if (gender == 2 && jobType == 1)
+            {
+                priFix = "NCF-";
+            }
             if (jobType == 3)
             {
                 priFix = "NCD-";
@@ -84,63 +92,81 @@ namespace WebAPI.Services
             {
                 priFix = "NCS-";
             }
-            else if (jobType == 5) // For Appointment
-            {
-                priFix = "NCA-";
-            }
-            else if (jobType == 2)
+            else //if (jobType == 2)
             {
                 priFix = "NCH-";
-            }
-            else if (gender == 1 && jobType == 1)
-            {
-                priFix = "NCM-";
-            }
-            else if (gender == 2 && jobType == 1)
-            {
-                priFix = "NCF-";
             }
 
-            else if (jobType == 6)//6   Medical Center
-            {
-                priFix = "NCH-";
-            }
-            else if (jobType == 7) //7   Nursing Home
-            {
-                priFix = "NCH-";
-            }
-            else if (jobType == 8) //8   Urgent Care Clinic
-            {
-                priFix = "NCH-";
-            }
-            else if (jobType == 9)//9   Dental Care
-            {
-                priFix = "NCH-";
-            }
-            else if (jobType == 9) //10  Medical Lab
-            {
-                priFix = "NCH-";
-            }
-            else if (jobType == 11)//11  Pharmacy
-            {
-                priFix = "NCH-";
-            }
-            else if (jobType == 12)//12  Blood Bank 
-            {
-                priFix = "NCH-";
-            }
-            else if (jobType == 13)//13  Insurance Company
-            {
-                priFix = "NCH-";
-            }
-            else if (jobType == 14)//14  X - Ray
-            {
-                priFix = "NCH-";
-            }
-            else if (jobType == 15) //15  Optics
-            {
-                priFix = "NCH-";
-            }
+
+
+
+            //if (jobType == 3)
+            //{
+            //    priFix = "NCD-";
+            //}
+            //else if (jobType == 4)
+            //{
+            //    priFix = "NCS-";
+            //}
+            //else if (jobType == 5) // For Appointment
+            //{
+            //    priFix = "NCA-";
+            //}
+            //else if (jobType == 2)
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (gender == 1 && jobType == 1)
+            //{
+            //    priFix = "NCM-";
+            //}
+            //else if (gender == 2 && jobType == 1)
+            //{
+            //    priFix = "NCF-";
+            //}
+
+            //else if (jobType == 6)//6   Medical Center
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (jobType == 7) //7   Nursing Home
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (jobType == 8) //8   Urgent Care Clinic
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (jobType == 9)//9   Dental Care
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (jobType == 9) //10  Medical Lab
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (jobType == 11)//11  Pharmacy
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (jobType == 12)//12  Blood Bank 
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (jobType == 13)//13  Insurance Company
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (jobType == 14)//14  X - Ray
+            //{
+            //    priFix = "NCH-";
+            //}
+            //else if (jobType == 15) //15  Optics
+            //{
+            //    priFix = "NCH-";
+            //}
+
+
 
             if (NationalityId.Length==2)
             {

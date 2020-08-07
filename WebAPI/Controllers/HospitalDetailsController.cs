@@ -215,10 +215,11 @@ namespace WebAPI.Controllers
             List<Doctors> _doctors = new List<Doctors>();
             List<Doctor> doctors = _doctorRepo.Find(x => x.HospitalId == HospitalId);
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
-
+            int[] myNum = { 0 };
             foreach (var d in doctors ?? new List<Doctor>())
             {
                 var feedback = _feedbackRepo.Find(x => x.PageId == d.DoctorId);
+                
                 var doctorAvailability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId).FirstOrDefault();
                 _doctor = new Doctors
                 {
@@ -234,7 +235,7 @@ namespace WebAPI.Controllers
                     Language = d.Language,
                     AgeGroupGender = d.AgeGroupGender,
                     Degree = d.Degree,
-                    SpecializationIds = Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
+                    SpecializationIds =  String.IsNullOrEmpty(d.Specialization)? myNum:Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
                     Specialization = getSpecialization(d.Specialization, disease),
                     AboutUs = d.AboutUs,
                     TimeAvailability = doctorAvailability != null ? getDoctorAvilability(doctorAvailability.TimeId, timeMaster) : null,
