@@ -191,6 +191,7 @@ namespace WebAPI.Models
     {
         public Int32 DiseaseType { get; set; }
         public string DesiesName { get; set; }
+        public string ReportType { get; set; }
         public List<Int32?> Years { get; set; }
         public List<YearList> YearList { get; set; }
         public Boolean IsChecked { get; set; }

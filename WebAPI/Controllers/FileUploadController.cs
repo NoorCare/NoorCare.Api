@@ -439,6 +439,7 @@ namespace WebAPI.Controllers
                     try
                     {
                         desiesTypeResult.DesiesName = ReportType.Where(c => c.ReportID == x.DesiesType).FirstOrDefault().ReportName;
+                        desiesTypeResult.ReportType = ReportType.Where(c => c.ReportID == x.DesiesType).FirstOrDefault().ReportType;
                     }
                     catch (Exception ex)
                     { 
@@ -545,7 +546,9 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetUploadedDocInfo(string clientId, string doctorId)
         {
+            IReportRepository _reportTypeRepo = RepositoryFactory.Create<IReportRepository>(ContextTypes.EntityFramework);
             var desiesTypeResultList = new List<DesiesTypeResult>();
+            var ReportType = _reportTypeRepo.GetAll().OrderBy(x => x.ReportName).ToList();
             var disease = _diseaseDetailRepo.GetAll().OrderBy(x => x.DiseaseType).ToList();
             string host = constant.imgUrl;// ConfigurationManager.AppSettings.Get("ImageBaseUrl");//HttpContext.Current.Request.Url.Host;
 
@@ -573,8 +576,17 @@ namespace WebAPI.Controllers
                 desiesTypeResult.Years = new List<int?>();
                 if (x.diseaseType != 0)
                 {
+                    //desiesTypeResult.DiseaseType = x.diseaseType;
+                    //desiesTypeResult.DesiesName = disease.Where(c => c.Id == x.diseaseType).FirstOrDefault().DiseaseType;
                     desiesTypeResult.DiseaseType = x.diseaseType;
-                    desiesTypeResult.DesiesName = disease.Where(c => c.Id == x.diseaseType).FirstOrDefault().DiseaseType;
+                    try
+                    {
+                        desiesTypeResult.DesiesName = ReportType.Where(c => c.ReportID == x.diseaseType).FirstOrDefault().ReportName;
+                        desiesTypeResult.ReportType = ReportType.Where(c => c.ReportID == x.diseaseType).FirstOrDefault().ReportType;
+                    }
+                    catch (Exception ex)
+                    {
+                    }
                 }
                 desiesTypeResult.YearList = new List<YearList>();
                 foreach (var it in listYear)
