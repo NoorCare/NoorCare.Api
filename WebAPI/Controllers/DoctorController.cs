@@ -280,10 +280,11 @@ namespace WebAPI.Controllers
         [Route("api/doctor/getDoctorAvailablity/{doctorid}/{caldate}")]
         [HttpGet]
         [AllowAnonymous]
-        public IHttpActionResult getDoctorAvailablity(string doctorid, DateTime calDate)
+        public IHttpActionResult getDoctorAvailablity(string doctorid, string date)
         {
             try
             {
+                DateTime calDate = Convert.ToDateTime(date);
                 List<DoctorScheduleTime> result = new List<DoctorScheduleTime>();
                 result = docAvailablity(doctorid);
 
