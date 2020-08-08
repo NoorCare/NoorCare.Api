@@ -97,7 +97,8 @@ namespace WebAPI.Controllers
                                     select new
                                     {
                                         Time = t.TimeFrom.Trim() + "-" + t.TimeTo.Trim() + " " + t.AM_PM.Trim(),
-                                        Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate.ToShortDateString() + " " + t.TimeTo.Trim() + t.AM_PM.Trim()).ToString("dd/MM/yyyy hh:mm")),
+                                        //Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate.ToShortDateString() + " " + t.TimeTo.Trim() + t.AM_PM.Trim()).ToString("dd/MM/yyyy hh:mm")),
+                                        Date = Convert.ToDateTime(Convert.ToDateTime(a.AppointmentDate.ToShortDateString() + " " + t.TimeTo.Trim() + t.AM_PM.Trim(), System.Globalization.CultureInfo.GetCultureInfo("hi-IN").DateTimeFormat).ToString("dd/MM/yyyy hh:mm"), System.Globalization.CultureInfo.GetCultureInfo("hi-IN").DateTimeFormat),
                                         ClientId = a.ClientId,
                                         DateEntered = a.DateEntered,
                                         DoctorId = a.DoctorId,
@@ -105,7 +106,8 @@ namespace WebAPI.Controllers
                                         HospitalName = h.HospitalName
 
                                     };
-                DateTime todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm"));
+                //DateTime todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm"));
+                DateTime todaydate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy hh:mm"), System.Globalization.CultureInfo.GetCultureInfo("hi-IN").DateTimeFormat);
                 var appintmentresult = appointDetail.Where(x => x.Date >= todaydate);
                 return Request.CreateResponse(HttpStatusCode.Accepted, appintmentresult);
             }

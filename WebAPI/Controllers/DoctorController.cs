@@ -284,7 +284,8 @@ namespace WebAPI.Controllers
         {
             try
             {
-                DateTime calDate = Convert.ToDateTime(date);
+                DateTime calDate = Convert.ToDateTime(date, System.Globalization.CultureInfo.GetCultureInfo("hi-IN").DateTimeFormat);
+                
                 List<DoctorScheduleTime> result = new List<DoctorScheduleTime>();
                 result = docAvailablity(doctorid);
 
