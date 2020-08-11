@@ -37,21 +37,21 @@ namespace WebAPI.Controllers
             {
                 var result = _emailNotificationsRepo.Find(x => x.To == userID && ((x.DeletedBy.IndexOf(userID) == -1) || x.DeletedBy == null)).OrderByDescending(x => x.Id).Take(10).ToList();
                 var data = (from r in result
-                           join u in users on r.From equals u.Id
-                           select new
-                           {
-                               Id = r.Id,
-                               To = r.To,
-                               From = r.From,
-                               FromName = u.FirstName + ' ' + u.LastName,
-                               Description = r.Description,
-                               IsDeleted = r.IsDeleted,
-                               Subject = r.Subject,
-                               Attachments = r.Attachments,
-                               DeletedBy = r.DeletedBy,
-                               CreatedDate = r.CreatedDate,
-                               CreatedTime = r.CreatedTime
-                           }).ToList();
+                            join u in users on r.From equals u.Id
+                            select new
+                            {
+                                Id = r.Id,
+                                To = r.To,
+                                From = r.From,
+                                FromName = u.FirstName + ' ' + u.LastName,
+                                Description = r.Description,
+                                IsDeleted = r.IsDeleted,
+                                Subject = r.Subject,
+                                Attachments = r.Attachments,
+                                DeletedBy = r.DeletedBy,
+                                CreatedDate = r.CreatedDate,
+                                CreatedTime = r.CreatedTime
+                            }).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.Accepted, data);
             }
@@ -158,8 +158,12 @@ namespace WebAPI.Controllers
         public HttpResponseMessage GetEMail(int id)
         {
             var result = _emailNotificationsRepo.Get(id);
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var users = userStore.Users.Where(x => x.Id == result.To).FirstOrDefault();
+            string name = users.FirstName + ' ' + users.LastName;
+            var data = new { toName = name, result.Id,result.Attachments,result.CreatedDate,result.CreatedTime,result.Description,result.From,result.Subject,result.To };
 
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+            return Request.CreateResponse(HttpStatusCode.OK, data);
         }
 
 
