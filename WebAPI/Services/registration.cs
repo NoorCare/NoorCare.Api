@@ -75,29 +75,41 @@ namespace WebAPI.Services
 
         public string creatId(int jobType, string NationalityId, int? gender)
         {
-            string priFix = "NCH-";
+            bool IsPriFix = false;
+            string priFix = "NCM-";
             if (gender == 1 && jobType == 1)
             {
-                priFix = "NCM-";
+               priFix = "NCM-";
+               IsPriFix = true;
             }
-            else if (gender == 2 && jobType == 1)
+            else if (gender == 2 && jobType == 1 && IsPriFix ==false)
             {
-                priFix = "NCF-";
+                 priFix = "NCF-";
+                IsPriFix = true;
             }
-            if (jobType == 3)
+            else if (jobType == 3 && IsPriFix == false)
             {
-                priFix = "NCD-";
+                 priFix = "NCD-"; IsPriFix = true;
             }
-            else if (jobType == 4)
+            else if (jobType == 4 && IsPriFix == false)
             {
-                priFix = "NCS-";
+                 priFix = "NCS-"; IsPriFix = true;
             }
-            else //if (jobType == 2)
+            else if (IsPriFix == false)
             {
-                priFix = "NCH-";
+                 priFix = "NCH-"; IsPriFix = true;
             }
 
-
+            if (NationalityId.Length == 2)
+            {
+                NationalityId = "0" + NationalityId;
+            }
+            if (NationalityId.Length == 1)
+            {
+                NationalityId = "00" + NationalityId;
+            }
+            string clientId = priFix + NationalityId + "-" + _emailSender.Get();
+            return clientId;
 
 
             //if (jobType == 3)
@@ -168,16 +180,7 @@ namespace WebAPI.Services
 
 
 
-            if (NationalityId.Length==2)
-            {
-                NationalityId = "0" + NationalityId;
-            }
-            if (NationalityId.Length == 1)
-            {
-                NationalityId = "00" + NationalityId;
-            }
-            string clientId = priFix + NationalityId + "-" + _emailSender.Get();
-            return clientId;
+
 
             //new Job Type
             //2   Hospital
