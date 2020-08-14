@@ -110,7 +110,14 @@ namespace WebAPI.Controllers
         public HttpResponseMessage getMobile(string clientId)
         {
             var result = _clientDetailRepo.Find(m => m.ClientId == clientId).FirstOrDefault();
-            return Request.CreateResponse(HttpStatusCode.Accepted, result.MobileNo.ToString());
+            if (result != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, result.MobileNo.ToString());
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.Accepted, "");
+            }
         }
 
 
@@ -176,10 +183,10 @@ namespace WebAPI.Controllers
             var prescription = _prescriptionRepo.GetAll().ToList();
             var presAssign = _prescriptionAssignRepo.GetAll().ToList();
             var result = (from PatientPrescription in prescription
-                          where PatientPrescription.DoctorId == doctorId  && PatientPrescription.PatientId==patientId||
+                          where PatientPrescription.DoctorId == doctorId && PatientPrescription.PatientId == patientId ||
                           (from PatientPrescriptionAssign in presAssign
                            where
-                             PatientPrescriptionAssign.AssignId == doctorId && PatientPrescriptionAssign.AssignBy==patientId &&
+                             PatientPrescriptionAssign.AssignId == doctorId && PatientPrescriptionAssign.AssignBy == patientId &&
                              Convert.ToString(PatientPrescriptionAssign.IsActive) == "True"
                            select new
                            {
@@ -187,7 +194,7 @@ namespace WebAPI.Controllers
                            }).Contains(new { PatientPresId = PatientPrescription.Id })
                           select PatientPrescription).ToList();
 
-            foreach (var res in result )
+            foreach (var res in result)
             {
                 Doctor doctor = _doctorRepo.Find(x => x.DoctorId == res.DoctorId).FirstOrDefault();
                 HospitalDetails hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == doctor.HospitalId).FirstOrDefault();
@@ -212,7 +219,7 @@ namespace WebAPI.Controllers
                 _patientPres.Add(_pres);
             }
 
-                return Request.CreateResponse(HttpStatusCode.Accepted, _patientPres.OrderBy(x => x.Id));
+            return Request.CreateResponse(HttpStatusCode.Accepted, _patientPres.OrderBy(x => x.Id));
         }
 
         [Route("api/patient/SavePatientPrescription")]
@@ -366,12 +373,12 @@ namespace WebAPI.Controllers
                                            HospitalName = h.HospitalName,
                                            HospitalNCNumber = h.HospitalId.Replace("-", " "),
                                            DoctorName = d.FirstName + " " + d.LastName,
-                                           DoctorNCNumber = d.DoctorId.Replace("-"," "),
+                                           DoctorNCNumber = d.DoctorId.Replace("-", " "),
                                            Prescription = p.Prescription,
                                            PrescriptionDate = p.DateEntered,
                                            PrescriptionId = p.Id,
                                            PatientId = p.PatientId.Replace("-", " "),
-                                           Date =Convert.ToDateTime(p.DateEntered),
+                                           Date = Convert.ToDateTime(p.DateEntered),
                                            Name = c.FirstName + " " + c.LastName,
                                            Age = this.GetAge(c.DOB),
                                            Gender = c.Gender == 1 ? "Male" : "FeMale",
