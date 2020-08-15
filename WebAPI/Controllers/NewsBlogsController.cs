@@ -164,7 +164,7 @@ namespace WebAPI.Controllers
         }
 
         [Route("api/NewsBlogs/DeleteNewsBlog/{userid}/{id}")]
-        [HttpDelete]
+        [HttpGet]
         [AllowAnonymous]
         public HttpResponseMessage DeleteNewsBlog(string userid, int id)
         {
