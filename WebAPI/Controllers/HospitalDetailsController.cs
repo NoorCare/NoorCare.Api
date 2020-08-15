@@ -645,7 +645,7 @@ namespace WebAPI.Controllers
 
                 string filepath = HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName);
                 httpRequest.Files["IdBackView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName));
-                httpRequest.Files["IdFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "FrontView/" + httpRequest.Files["IdBackView"].FileName));
+                httpRequest.Files["IdFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "IdFrontView/" + httpRequest.Files["IdFrontView"].FileName));
                 httpRequest.Files["CrFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "CrFrontView/" + httpRequest.Files["CrFrontView"].FileName));
                 httpRequest.Files["LicenseFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName));
             }
