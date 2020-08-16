@@ -479,6 +479,25 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
+        [Route("api/hospitaldetails/{hospitalId}/updateFacility")]
+        [HttpPost]
+        [AllowAnonymous]
+        public IHttpActionResult UpdateHospitalFacility(string hospitalId, HospitalDetails obj)
+        {
+            HospitalDetails _hospitalDetails = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
+            if (_hospitalDetails != null)
+            {
+               
+                _hospitalDetails.Specialization = obj.Specialization;
+                _hospitalDetails.Amenities = obj.Amenities;
+                _hospitalDetails.Services = obj.Services;
+                var result = _hospitaldetailsRepo.Update(_hospitalDetails);
+                return Ok(result);
+            }
+
+            return Ok();
+        }
+
         [Route("api/hospitaldetails/{hospitalId}/updatehospital")]
         [HttpPost]
         [AllowAnonymous]
