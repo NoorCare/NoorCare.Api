@@ -37,6 +37,7 @@ namespace WebAPI.Controllers
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         ILikeVisitorRepository _likeVisitorRepo = RepositoryFactory.Create<ILikeVisitorRepository>(ContextTypes.EntityFramework);
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
+        IDoctorEducationRepository _doctorEducationRep = RepositoryFactory.Create<IDoctorEducationRepository>(ContextTypes.EntityFramework);
 
         [Route("api/doctor/IsValidNoorCare/{doctorId}")]
         [HttpGet]
@@ -407,6 +408,7 @@ namespace WebAPI.Controllers
             var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
             var hospitalAmenitie = _hospitalAmenitieRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
             HospitalDetails hospitals = _hospitaldetailsRepo.Find(x => x.HospitalId == d.HospitalId).FirstOrDefault();
+            var degree = _doctorEducationRep.GetAll().OrderBy(x => x.Education).ToList();
             if (d != null)
             {
                 Doctors _doctor = new Doctors
@@ -423,6 +425,7 @@ namespace WebAPI.Controllers
                     Language = d.Language,
                     AgeGroupGender = d.AgeGroupGender,
                     Degree = d.Degree,
+                    Education= getDegree(d.Degree, degree),
                     AboutUs = d.AboutUs,
                     HospitalName = hospitals.HospitalName,
                     HospitalId = hospitals.HospitalId,
@@ -692,6 +695,18 @@ namespace WebAPI.Controllers
             return diseasesList;
         }
 
+        private List<DoctorEducation> getDegree(string degreeIds, List<DoctorEducation> _degree)
+        {
+            if (degreeIds == null || degreeIds == "")
+            {
+                return new List<DoctorEducation>();
+            }
+            var degreeList = degreeIds.Split(',');
+            int[] myInts = Array.ConvertAll(degreeList, s => int.Parse(s));
+            var education = _degree.Where(x => myInts.Contains(x.Id)).ToList();
+            return education;
+        }
+
         private List<TblHospitalServices> getHospitalService(string serviceType, List<TblHospitalServices> hospitalService)
         {
             if (serviceType == null)
@@ -837,7 +852,7 @@ namespace WebAPI.Controllers
             result _result = new result();
             if (searchFilter != null)
             {
-                if (searchFilter.HealthProvider == 0)
+                if (searchFilter.HealthProvider == 3)
                 {
                     //doctor Search
                     _result.Doctors = getDoctorList(searchFilter);
@@ -858,6 +873,7 @@ namespace WebAPI.Controllers
             Doctors _doctor = new Doctors();
             var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
             var docObj = _doctorRepo.Find(x => x.EmailConfirmed == true).ToList();
+            var degree = _doctorEducationRep.GetAll().OrderBy(x => x.Education).ToList();
             try
             {
                 //country
@@ -988,6 +1004,7 @@ namespace WebAPI.Controllers
                         Language = d.Language,
                         AgeGroupGender = d.AgeGroupGender,
                         Degree = d.Degree,
+                        Education = getDegree(d.Degree, degree),
                         SpecializationIds = Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
                         Specialization = getSpecialization(d.Specialization, disease),
                         aboutMe = d.AboutUs,

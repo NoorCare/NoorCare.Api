@@ -144,7 +144,8 @@ namespace WebAPI.Models
         public List<TimeMaster> TimeAvailability { get; set; }
         public List<Feedback> Feedback { get; set; }
         public List<TblHospitalAmenities> Amenities { get; set; }
-        public List<TblHospitalServices> Services { get; set; }        
+        public List<TblHospitalServices> Services { get; set; }   
+        public List<DoctorEducation> Education { get; set; }
     }
 
     public class Facilities
