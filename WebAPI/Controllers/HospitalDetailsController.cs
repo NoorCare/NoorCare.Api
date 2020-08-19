@@ -53,6 +53,16 @@ namespace WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
+        [Route("api/hospitaldetails/getAllHFP")]
+        [HttpGet]
+        [AllowAnonymous]        
+        public HttpResponseMessage getAllHFP()
+        {           
+            var result = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted == false).ToList();
+            
+            return Request.CreateResponse(HttpStatusCode.Accepted, result);
+        }
+
         //[Route("api/getHospitalDetail/{hospitalid}")] this is renamed by below name
         [Route("api/hospitaldetails/getdetail/{hospitalid}")]
         [HttpGet]
