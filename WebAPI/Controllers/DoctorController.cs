@@ -270,8 +270,17 @@ namespace WebAPI.Controllers
             {
                 foreach (DoctorAvailableTime element in obj)
                 {
-                    id = _doctorAvailabilityRepo.Insert(element);
-
+                    
+                    DoctorAvailableTime doctorAvailable = _doctorAvailabilityRepo.Find(x => x.DoctorId == element.DoctorId && x.Days==element.Days && x.IsActive==true && x.IsDeleted==false).FirstOrDefault();
+                    if (doctorAvailable != null)
+                    {
+                        doctorAvailable.TimeId = element.TimeId;
+                        var res = _doctorAvailabilityRepo.Update(doctorAvailable);
+                    }
+                    else
+                    {
+                        id = _doctorAvailabilityRepo.Insert(element);
+                    }
                 }
             }
             //var _Created = _doctorAvailabilityRepo.Insert(obj);
@@ -433,7 +442,7 @@ namespace WebAPI.Controllers
                     HospitalAddress = hospitals.Address,
                     HospitalPicUrl = $"{constant.imgUrl}/" + hospitals.ProfilePath,
                     aboutMe = d.AboutUs,
-                    DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
+                    DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId && x.IsActive==true),
                     Specialization = getSpecialization(d.Specialization, disease),
                     Amenities = getHospitalAmenities(hospitals.Amenities, hospitalAmenitie),
                     Services = getHospitalService(hospitals.Services, hospitalService),

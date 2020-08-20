@@ -1,4 +1,5 @@
-﻿using NoorCare.Repository;
+﻿using Newtonsoft.Json;
+using NoorCare.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,29 @@ namespace WebAPI.Controllers
             var result = _timeMasterRepo.GetAll().ToList();
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
+
+        [Route("api/GetDayWiseTimeMaster")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetDayTimeMaster()
+        {
+            var result = _timeMasterRepo.GetAll().ToList();
+            List<DayTimeMaster> timeMaster = new List<DayTimeMaster>();
+             
+            for (int i = 0; i < 7; i++)
+            {
+                string serialized = JsonConvert.SerializeObject(result);
+                var copy = JsonConvert.DeserializeObject<List<TimeMaster>>(serialized);
+                string[] array = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+                DayTimeMaster obj = new DayTimeMaster();
+                obj.Day = array[i];
+                obj.TimeMaster = copy;
+                timeMaster.Add(obj);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.Accepted, timeMaster);
+        }
+
 
         [Route("api/facility")]
         [HttpGet]

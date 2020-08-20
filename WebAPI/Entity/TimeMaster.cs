@@ -19,5 +19,7 @@ namespace WebAPI.Entity
         [MaxLength(10)]
         public string AM_PM { get; set; }
         public bool IsActive { get; set; }
+
+        public bool IsSelected = false;
     }
 }
