@@ -412,12 +412,12 @@ namespace WebAPI.Controllers
         {
             var result = _doctorAvailabilityRepo.GetAll().Where(x => x.DoctorId == doctorid.Trim() && x.Days.ToLower().Trim() == day.ToLower().Trim() && x.IsActive == true && x.IsDeleted == false).FirstOrDefault();
 
-            if (result != null && result.TimeId != "0")
+            if (result != null)
             {
-                if (result.TimeId == null || result.TimeId == "")
-                {
-                    return null;
-                }
+                //if (result.TimeId == null || result.TimeId == "" || result.TimeId == "0")
+                //{
+                //    return null;
+                //}
                 var timeIds = result.TimeId.Split(',');
                 int[] myInts = Array.ConvertAll(timeIds, s => int.Parse(s));
                 var timeList = _timeMasterRepo.GetAll().Where(x => myInts.Contains(x.Id)).ToList();
