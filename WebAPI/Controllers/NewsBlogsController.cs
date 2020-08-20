@@ -43,7 +43,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage GetNewsBlog(string clientId)
         {
-            var result = _newsBlogsRepo.GetAll().Where(x => x.UserId == clientId).ToList();
+            var result = _newsBlogsRepo.GetAll().Where(x => x.UserId == clientId && x.IsDeleted == false).ToList();
 
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
