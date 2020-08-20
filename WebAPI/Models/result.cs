@@ -295,4 +295,10 @@ namespace WebAPI.Models
         public string InsuranceId { get; set; }
         //Quick Specialtie
     }
+
+    public class DayTimeMaster
+    {
+        public string Day { get; set; }
+        public List<TimeMaster> TimeMaster { get; set; }
+    }
 }

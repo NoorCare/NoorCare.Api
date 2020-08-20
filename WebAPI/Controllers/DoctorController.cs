@@ -270,8 +270,8 @@ namespace WebAPI.Controllers
             {
                 foreach (DoctorAvailableTime element in obj)
                 {
-                    
-                    DoctorAvailableTime doctorAvailable = _doctorAvailabilityRepo.Find(x => x.DoctorId == element.DoctorId && x.Days==element.Days && x.IsActive==true && x.IsDeleted==false).FirstOrDefault();
+
+                    DoctorAvailableTime doctorAvailable = _doctorAvailabilityRepo.Find(x => x.DoctorId == element.DoctorId && x.Days == element.Days && x.IsActive == true && x.IsDeleted == false).FirstOrDefault();
                     if (doctorAvailable != null)
                     {
                         doctorAvailable.TimeId = element.TimeId;
@@ -295,9 +295,9 @@ namespace WebAPI.Controllers
             try
             {
                 DateTime calDate = Convert.ToDateTime(date, System.Globalization.CultureInfo.GetCultureInfo("hi-IN").DateTimeFormat);
-                
+
                 List<DoctorScheduleTime> result = new List<DoctorScheduleTime>();
-                result = docAvailablity(doctorid);
+                //result = docAvailablity(doctorid);
 
                 ApplicationDbContext dbContext = new ApplicationDbContext();
                 var leaveDtls = dbContext.Database.SqlQuery<LeaveSchedule>(" set dateformat dmy;" +
@@ -311,16 +311,18 @@ namespace WebAPI.Controllers
                             " select distinct x.FromDate as 'SchDate',(select top 1 TimeId from CTE where FromDate = x.FromDate order by len(TimeId) Desc) 'TimeIds' from CTE x" +
                             " order by FromDate").ToList();
 
-                var docAvail = _appointmentRepo.GetAll().Where(x => x.IsDeleted==false && x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid).ToList();
+                var docAvail = _appointmentRepo.GetAll().Where(x => x.IsDeleted == false && x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid).ToList();
                 List<DoctorAvailablity> docAvlList = new List<DoctorAvailablity>();
                 for (int i = 0; i < 7; i++)
                 {
-                    string serialized = JsonConvert.SerializeObject(result);
-                    var copy = JsonConvert.DeserializeObject<List<DoctorScheduleTime>>(serialized);
+                    DateTime schDate = i == 0 ? calDate : calDate.AddDays(i);
+                    result = docAvailablityDayWise(doctorid, schDate.DayOfWeek.ToString());
+                    //string serialized = JsonConvert.SerializeObject(result);
+                    //var copy = JsonConvert.DeserializeObject<List<DoctorScheduleTime>>(serialized);
 
                     DoctorAvailablity obj = new DoctorAvailablity();
-                    obj.SchDate = i == 0 ? calDate : calDate.AddDays(i);
-                    obj.SchTime = copy;
+                    obj.SchDate = schDate;
+                    obj.SchTime = result;
                     docAvlList.Add(obj);
                 }
 
@@ -338,7 +340,8 @@ namespace WebAPI.Controllers
                     });
                 }
                 return Ok(docAvlList);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return InternalServerError(ex);
             }
@@ -405,6 +408,59 @@ namespace WebAPI.Controllers
             }
         }
 
+        private List<DoctorScheduleTime> docAvailablityDayWise(string doctorid, string day)
+        {
+            var result = _doctorAvailabilityRepo.GetAll().Where(x => x.DoctorId == doctorid.Trim() && x.Days.ToLower().Trim() == day.ToLower().Trim() && x.IsActive == true && x.IsDeleted == false).FirstOrDefault();
+
+            if (result != null && result.TimeId != "0")
+            {
+                if (result.TimeId == null || result.TimeId == "")
+                {
+                    return null;
+                }
+                var timeIds = result.TimeId.Split(',');
+                int[] myInts = Array.ConvertAll(timeIds, s => int.Parse(s));
+                var timeList = _timeMasterRepo.GetAll().Where(x => myInts.Contains(x.Id)).ToList();
+                var dataObj = (from d in timeList
+                               select new
+                               {
+                                   TimeId = d.Id,
+                                   TimeDesc = d.TimeFrom.Trim() + '-' + d.TimeTo.Trim() + ' ' + d.AM_PM.Trim()
+                               }).ToList();
+                List<DoctorScheduleTime> doctorSchedules = new List<DoctorScheduleTime>();
+                foreach (var item in dataObj)
+                {
+                    DoctorScheduleTime obj = new DoctorScheduleTime();
+                    obj.TimeId = item.TimeId;
+                    obj.TimeDesc = item.TimeDesc;
+                    doctorSchedules.Add(obj);
+                }
+
+                return doctorSchedules;
+            }
+            else
+            {
+                var timeMasterList = _timeMasterRepo.GetAll().Where(x => x.IsActive == true).ToList();
+                var dataObj = (from d in timeMasterList
+                               select new
+                               {
+                                   TimeId = d.Id,
+                                   TimeDesc = d.TimeFrom.Trim() + '-' + d.TimeTo.Trim() + ' ' + d.AM_PM.Trim()
+                               }).ToList();
+                List<DoctorScheduleTime> doctorSchedules = new List<DoctorScheduleTime>();
+                foreach (var item in dataObj)
+                {
+                    DoctorScheduleTime obj = new DoctorScheduleTime();
+                    obj.TimeId = item.TimeId;
+                    obj.TimeDesc = item.TimeDesc;
+                    doctorSchedules.Add(obj);
+                }
+
+                return doctorSchedules;
+            }
+        }
+
+
         [Route("api/doctor/doctorDetails/{doctorid}")]
         [HttpGet]
         [AllowAnonymous]
@@ -434,7 +490,7 @@ namespace WebAPI.Controllers
                     Language = d.Language,
                     AgeGroupGender = d.AgeGroupGender,
                     Degree = d.Degree,
-                    Education= getDegree(d.Degree, degree),
+                    Education = getDegree(d.Degree, degree),
                     AboutUs = d.AboutUs,
                     HospitalName = hospitals.HospitalName,
                     HospitalId = hospitals.HospitalId,
@@ -442,7 +498,7 @@ namespace WebAPI.Controllers
                     HospitalAddress = hospitals.Address,
                     HospitalPicUrl = $"{constant.imgUrl}/" + hospitals.ProfilePath,
                     aboutMe = d.AboutUs,
-                    DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId && x.IsActive==true),
+                    DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId && x.IsActive == true),
                     Specialization = getSpecialization(d.Specialization, disease),
                     Amenities = getHospitalAmenities(hospitals.Amenities, hospitalAmenitie),
                     Services = getHospitalService(hospitals.Services, hospitalService),
