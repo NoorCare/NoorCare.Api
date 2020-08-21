@@ -104,8 +104,8 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage SaveEmail(EmailNotifications obj)
         {
-            obj.CreatedDate = DateTime.Now.ToString("dddd, dd MMMM yyyy") + " " + DateTime.Now.ToString("hh:mm tt");
-            obj.CreatedTime = DateTime.Now.ToString("hh:mm tt");
+            obj.CreatedDate = DateTime.UtcNow.ToString("dddd, dd MMMM yyyy") + " " + DateTime.UtcNow.ToString("hh:mm tt");
+            obj.CreatedTime = DateTime.UtcNow.ToString("hh:mm tt");
             var _prescriptionCreated = _emailNotificationsRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
         }
@@ -160,8 +160,10 @@ namespace WebAPI.Controllers
             var result = _emailNotificationsRepo.Get(id);
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var users = userStore.Users.Where(x => x.Id == result.To).FirstOrDefault();
+            var fromUsers = userStore.Users.Where(x => x.Id == result.From).FirstOrDefault();
             string name = users.FirstName + ' ' + users.LastName;
-            var data = new { toName = name, result.Id,result.Attachments,result.CreatedDate,result.CreatedTime,result.Description,result.From,result.Subject,result.To };
+            string fromName = fromUsers.FirstName + ' ' + fromUsers.LastName;
+            var data = new { fromName= fromName, toName = name, result.Id,result.Attachments,result.CreatedDate,result.CreatedTime,result.Description,result.From,result.Subject,result.To };
 
             return Request.CreateResponse(HttpStatusCode.OK, data);
         }

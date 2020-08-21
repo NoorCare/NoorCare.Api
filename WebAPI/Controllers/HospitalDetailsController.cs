@@ -455,6 +455,12 @@ namespace WebAPI.Controllers
                     postedFile.SaveAs(filePath);
 
                     // Save ProfilePath in table HospitalDetails
+                    HospitalDetails _hospDetails = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
+                    if (_hospDetails != null)
+                    {
+                        _hospDetails.ProfilePath = "ProfilePic/Hospital/" + imageName;
+                        var result = _hospitaldetailsRepo.Update(_hospDetails);
+                    }
                 }
             }
             catch (Exception ex)
