@@ -141,7 +141,37 @@ namespace WebAPI.Controllers
                 CreatedDate = DateTime.Now,
             };
             // _quickHealthRepository.Insert(quickHeathDetails);
-
+            //var medicalInfo = _medicalInformationRepository.Find(x => x.clientId == ClientId).FirstOrDefault();
+            //if (medicalInfo != null)
+            //{
+            //    medicalInfo.Pressure = _quickHeathDetails.Pressure != null ? Convert.ToInt32(_quickHeathDetails.Pressure) : 0;
+            //    medicalInfo.Heartbeats = _quickHeathDetails.Heartbeats != null ? Convert.ToInt32(_quickHeathDetails.Heartbeats) : 0;
+            //    medicalInfo.Temprature = _quickHeathDetails.Temprature != null ? Convert.ToInt32(_quickHeathDetails.Temprature) : 0;
+            //    medicalInfo.Sugar = _quickHeathDetails.Sugar != null ? Convert.ToInt32(_quickHeathDetails.Sugar) : 0;
+            //    medicalInfo.Hight = _quickHeathDetails.Length != null ? Convert.ToInt32(_quickHeathDetails.Length) : 0;
+            //    medicalInfo.Wight = _quickHeathDetails.Weight != null ? Convert.ToInt32(_quickHeathDetails.Weight) : 0;
+            //    medicalInfo.Cholesterol = _quickHeathDetails.Cholesterol != null ? Convert.ToInt32(_quickHeathDetails.Cholesterol) : 0;
+            //    medicalInfo.OtherDetails = _quickHeathDetails.Other;
+            //    medicalInfo.ModifiedBy = _quickHeathDetails.CreatedBy;
+            //    medicalInfo.ModifiedDate = DateTime.Now;
+            //    var objId = _medicalInformationRepository.Update(medicalInfo);
+            //}
+            //else
+            //{
+            //    MedicalInformation medicalInformation = new MedicalInformation();
+            //    medicalInformation.clientId = ClientId;
+            //    medicalInformation.Pressure = _quickHeathDetails.Pressure != null ? Convert.ToInt32(_quickHeathDetails.Pressure) : 0;
+            //    medicalInformation.Heartbeats = _quickHeathDetails.Heartbeats != null ? Convert.ToInt32(_quickHeathDetails.Heartbeats) : 0;
+            //    medicalInformation.Temprature = _quickHeathDetails.Temprature != null ? Convert.ToInt32(_quickHeathDetails.Temprature) : 0;
+            //    medicalInformation.Sugar = _quickHeathDetails.Sugar != null ? Convert.ToInt32(_quickHeathDetails.Sugar) : 0;
+            //    medicalInformation.Hight = _quickHeathDetails.Length != null ? Convert.ToInt32(_quickHeathDetails.Length) : 0;
+            //    medicalInformation.Wight = _quickHeathDetails.Weight != null ? Convert.ToInt32(_quickHeathDetails.Weight) : 0;
+            //    medicalInformation.Cholesterol = _quickHeathDetails.Cholesterol != null ? Convert.ToInt32(_quickHeathDetails.Cholesterol) : 0;
+            //    medicalInformation.OtherDetails = _quickHeathDetails.Other;
+            //    medicalInformation.CreatedBy = _quickHeathDetails.CreatedBy;
+            //    medicalInformation.CreatedDate = DateTime.Now;
+            //    var objId = _medicalInformationRepository.Insert(medicalInformation);
+            //}
             MedicalInformation medicalInformation = new MedicalInformation();
             medicalInformation.clientId = ClientId;
             medicalInformation.Pressure = _quickHeathDetails.Pressure != null ? Convert.ToInt32(_quickHeathDetails.Pressure) : 0;
@@ -154,8 +184,8 @@ namespace WebAPI.Controllers
             medicalInformation.OtherDetails = _quickHeathDetails.Other;
             medicalInformation.CreatedBy = _quickHeathDetails.CreatedBy;
             medicalInformation.CreatedDate = DateTime.Now;
-
             var objId = _medicalInformationRepository.Insert(medicalInformation);
+
             return Ok(_quickHealthRepository.Insert(quickHeathDetails));
 
         }
