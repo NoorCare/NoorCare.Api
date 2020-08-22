@@ -75,17 +75,17 @@ namespace NoorCare.Repository
 
         public TKey Insert(TEntity model)
         {
-            try
-            {
+            //try
+            //{
                 this.GetSet().Add(model);
                 this.m_dbContext.SaveChanges();
                 IEntity<TKey> entity = model as IEntity<TKey>;
                 return entity.Id;
-            }
-            catch (Exception ex)
-            {
-                return Activator.CreateInstance<TKey>();
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return Activator.CreateInstance<TKey>();
+            //}
         }
 
         public bool Remove(TKey id)
@@ -105,17 +105,17 @@ namespace NoorCare.Repository
 
         public bool Update(TEntity model)
         {
-            try
-            {
+            //try
+            //{
                 this.GetSet().Attach(model);
                 this.m_dbContext.Entry(model).State = EntityState.Modified;
                 this.m_dbContext.SaveChanges();
                 return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return false;
+            //}
         }
 
         protected DbSet<TEntity> GetSet()

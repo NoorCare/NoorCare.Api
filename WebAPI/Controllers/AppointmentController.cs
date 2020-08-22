@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
             var appointDetail = from a in result
                                 join t in resultTime on a.TimingId equals t.Id.ToString()
                                 join c in _clientDetailRepo.GetAll() on a.ClientId equals c.ClientId
-                                where a.DoctorId == doctorid && a.Status == "Booked"
+                                where a.DoctorId == doctorid && a.Status == "booked"
                                 select new
                                 {
                                     Id = a.Id,

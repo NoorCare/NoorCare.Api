@@ -49,8 +49,8 @@ namespace WebAPI.Controllers
                                 Subject = r.Subject,
                                 Attachments = r.Attachments,
                                 DeletedBy = r.DeletedBy,
-                                CreatedDate = r.CreatedDate,
-                                CreatedTime = r.CreatedTime
+                                CreatedDate = r.CreatedDate
+                                //CreatedTime = r.CreatedTime
                             }).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.Accepted, data);
@@ -71,8 +71,8 @@ namespace WebAPI.Controllers
                                 Subject = r.Subject,
                                 Attachments = r.Attachments,
                                 DeletedBy = r.DeletedBy,
-                                CreatedDate = r.CreatedDate,
-                                CreatedTime = r.CreatedTime
+                                CreatedDate = r.CreatedDate
+                                //CreatedTime = r.CreatedTime
                             }).ToList();
                 return Request.CreateResponse(HttpStatusCode.Accepted, data);
             }
@@ -92,8 +92,8 @@ namespace WebAPI.Controllers
                                 Subject = r.Subject,
                                 Attachments = r.Attachments,
                                 DeletedBy = r.DeletedBy,
-                                CreatedDate = r.CreatedDate,
-                                CreatedTime = r.CreatedTime
+                                CreatedDate = r.CreatedDate
+                                //CreatedTime = r.CreatedTime
                             }).ToList();
                 return Request.CreateResponse(HttpStatusCode.Accepted, data);
             }
@@ -104,8 +104,9 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public HttpResponseMessage SaveEmail(EmailNotifications obj)
         {
-            obj.CreatedDate = DateTime.UtcNow.ToString("dddd, dd MMMM yyyy") + " " + DateTime.UtcNow.ToString("hh:mm tt");
-            obj.CreatedTime = DateTime.UtcNow.ToString("hh:mm tt");
+            //obj.CreatedDate = DateTime.UtcNow.ToString("dddd, dd MMMM yyyy") + " " + DateTime.UtcNow.ToString("hh:mm tt");
+            obj.CreatedDate = DateTime.UtcNow;
+            // obj.CreatedTime = DateTime.UtcNow.ToString("hh:mm tt");
             var _prescriptionCreated = _emailNotificationsRepo.Insert(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.Id);
         }
@@ -163,8 +164,8 @@ namespace WebAPI.Controllers
             var fromUsers = userStore.Users.Where(x => x.Id == result.From).FirstOrDefault();
             string name = users.FirstName + ' ' + users.LastName;
             string fromName = fromUsers.FirstName + ' ' + fromUsers.LastName;
-            var data = new { fromName= fromName, toName = name, result.Id,result.Attachments,result.CreatedDate,result.CreatedTime,result.Description,result.From,result.Subject,result.To };
-
+            var data = new { fromName = fromName, toName = name, result.Id, result.Attachments, result.CreatedDate, result.Description, result.From, result.Subject, result.To };
+            //, result.CreatedTime
             return Request.CreateResponse(HttpStatusCode.OK, data);
         }
 

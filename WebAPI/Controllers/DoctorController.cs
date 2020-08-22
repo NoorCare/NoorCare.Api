@@ -220,6 +220,15 @@ namespace WebAPI.Controllers
                         File.Delete(filePath);
                     }
                     postedFile.SaveAs(filePath);
+
+                    //update profile photo
+                    var result = _doctorRepo.Find(x => x.DoctorId == doctorId).FirstOrDefault();
+                    if (result != null)
+                    {
+                        result.PhotoPath = "ProfilePic/Doctor/" + imageName;
+                        var flag = _doctorRepo.Update(result);
+                    }
+
                 }
             }
             catch (Exception)
@@ -244,6 +253,8 @@ namespace WebAPI.Controllers
         public HttpResponseMessage Update(Doctor obj)
         {
             obj.Id = _getDoctorList.Find(x => x.DoctorId == obj.DoctorId).FirstOrDefault().Id;
+            obj.EmailConfirmed = _getDoctorList.Find(x => x.DoctorId == obj.DoctorId).FirstOrDefault().EmailConfirmed;
+            obj.AboutUs = _getDoctorList.Find(x => x.DoctorId == obj.DoctorId).FirstOrDefault().AboutUs;
             var result = _doctorRepo.Update(obj);
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
@@ -311,7 +322,7 @@ namespace WebAPI.Controllers
                             " select distinct x.FromDate as 'SchDate',(select top 1 TimeId from CTE where FromDate = x.FromDate order by len(TimeId) Desc) 'TimeIds' from CTE x" +
                             " order by FromDate").ToList();
 
-                var docAvail = _appointmentRepo.GetAll().Where(x => x.IsDeleted == false && x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid).ToList();
+                var docAvail = _appointmentRepo.GetAll().Where(x => x.IsDeleted == false && x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid && x.Status.ToLower().Trim()!= "rejected").ToList();
                 List<DoctorAvailablity> docAvlList = new List<DoctorAvailablity>();
                 for (int i = 0; i < 7; i++)
                 {
@@ -1078,7 +1089,7 @@ namespace WebAPI.Controllers
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{d.DoctorId}",
                         ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                        ImgUrl = String.IsNullOrWhiteSpace(d.PhotoPath) ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}",
+                        ImgUrl = String.IsNullOrWhiteSpace(d.PhotoPath) ? $"{constant.imgUrl}/ProfilePic/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}",
                         HospitalEmail = hospRepo.Email,
                         HospitalName = hospRepo.HospitalName,
                         HospitalId = d.HospitalId,

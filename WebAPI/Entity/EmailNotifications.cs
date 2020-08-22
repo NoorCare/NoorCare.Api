@@ -21,8 +21,8 @@ namespace WebAPI.Entity
 
         public string DeletedBy { get; set; }
 
-        public string CreatedDate {get; set;}
+        public DateTime? CreatedDate {get; set;}
 
-        public string CreatedTime { get; set; }
+        //public string CreatedTime { get; set; }
     }
 }

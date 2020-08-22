@@ -221,7 +221,7 @@ namespace WebAPI.Controllers
                          join
                         d in _doctorRepo.GetAll() on a.DoctorId equals d.DoctorId
                          join pp in _patientPrescriptionRepo.GetAll() on a.ClientId equals pp.PatientId
-                         where a.ClientId == ClientId && a.Status == "Booked" && (a.DoctorId == DoctorId || a.HospitalId == DoctorId)
+                         where a.ClientId == ClientId && a.Status == "booked" && (a.DoctorId == DoctorId || a.HospitalId == DoctorId)
                          select pp;
             PrescriptionFeedbackCount.Add("PrescriptionCount", result.ToList().Count);
             return Request.CreateResponse(HttpStatusCode.Accepted, PrescriptionFeedbackCount);
