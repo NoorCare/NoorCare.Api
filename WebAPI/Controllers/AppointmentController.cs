@@ -92,7 +92,7 @@ namespace WebAPI.Controllers
                 var resultTime = _timeMasterRepo.GetAll().ToList();
                 var appointDetail = from a in result
                                     join t in resultTime on a.TimingId equals t.Id.ToString()
-                                    join h in _hospitaldetailsRepo.GetAll().Where(y=>y.IsDeleted==false && y.IsDocumentApproved==1).ToList() on a.HospitalId equals h.HospitalId
+                                    join h in _hospitaldetailsRepo.GetAll().Where(y => y.IsDeleted == false && y.IsDocumentApproved == 1).ToList() on a.HospitalId equals h.HospitalId
                                     where a.ClientId == ClientId
                                     select new
                                     {
@@ -134,10 +134,17 @@ namespace WebAPI.Controllers
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
             CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
-            string AppointmentId = _registration.creatId(5, obj.CountryCode.ToString(), 0);
-            obj.AppointmentId = AppointmentId;
-            var _appointmentCreated = _appointmentRepo.Insert(obj);
-            return Request.CreateResponse(HttpStatusCode.Accepted, obj.AppointmentId);
+            var reqStatus = new List<string> { "booked", "0" };
+            // 
+            var result = _appointmentRepo.Find(x => x.TimingId == obj.TimingId && x.DoctorId == obj.DoctorId && x.AppointmentDate == obj.AppointmentDate && reqStatus.Contains(x.Status)).FirstOrDefault();
+            if (result == null)
+            {
+                string AppointmentId = _registration.creatId(5, obj.CountryCode.ToString(), 0);
+                obj.AppointmentId = AppointmentId;
+                var _appointmentCreated = _appointmentRepo.Insert(obj);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.Accepted, obj.AppointmentId == null ? "0" : obj.AppointmentId);
         }
 
 
