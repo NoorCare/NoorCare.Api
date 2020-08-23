@@ -27,7 +27,10 @@ public partial class ClientDetail : IEntity<int>
     public int MaritalStatus { get; set; }
     public string DOB { get; set; }
     public DateTime CreatedDate { get; set; }
-    public int CountryCode { get; set; }
+    public string CountryCode { get; set; }
+    public string CountryShortCode { get; set; }
+    public string CountryShortCodeAlt { get; set; }
+    public string CountryCodeAlt { get; set; }
     public int PinCode { get; set; }
 
     public string ImageUrl { get; set; }

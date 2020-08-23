@@ -18,7 +18,11 @@ namespace WebAPI.Entity
         public string LastName { get; set; }
         [MaxLength(256)]
         public string Email { get; set; }
-        public int CountryCode { get; set; }
+        public string CountryCode { get; set; }
+        public string CountryShortCode { get; set; }
+        public string CountryShortCodeAlt { get; set; }
+        public string CountryCodeAlt { get; set; }
+
         [MaxLength(50)]
         public string PhoneNumber { get; set; }
         [MaxLength(50)]

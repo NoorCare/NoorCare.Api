@@ -155,7 +155,7 @@ namespace WebAPI.Controllers
         public List<State> GetState()
         {
             IStateRepository _stateRepository = RepositoryFactory.Create<IStateRepository>(ContextTypes.EntityFramework);
-            return _stateRepository.GetAll().OrderBy(x => x.state).ToList();
+            return _stateRepository.GetAll().OrderBy(x => x.state).OrderBy(x => x.state).ToList();
         }
 
         [Route("api/hospitalServices")]
@@ -164,7 +164,7 @@ namespace WebAPI.Controllers
         public List<TblHospitalServices> HospitalServices()
         {
             ITblHospitalServicesRepository _stateRepository = RepositoryFactory.Create<ITblHospitalServicesRepository>(ContextTypes.EntityFramework);
-            return _stateRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
+            return _stateRepository.GetAll().OrderBy(x => x.HospitalServices).OrderBy(x=>x.HospitalServices).ToList();
         }
 
         [Route("api/hospitalSpecialization")]
@@ -173,7 +173,7 @@ namespace WebAPI.Controllers
         public List<TblHospitalSpecialties> HospitalSpecialization()
         {
             ITblHospitalSpecialtiesRepository _stateRepository = RepositoryFactory.Create<ITblHospitalSpecialtiesRepository>(ContextTypes.EntityFramework);
-            return _stateRepository.GetAll().OrderBy(x => x.HospitalSpecialties).ToList();
+            return _stateRepository.GetAll().OrderBy(x => x.HospitalSpecialties).OrderBy(x => x.HospitalSpecialties).ToList();
         }
 
         [Route("api/hospitalAmenities")]
@@ -182,7 +182,7 @@ namespace WebAPI.Controllers
         public List<TblHospitalAmenities> HospitalAmenities()
         {
             ITblHospitalAmenitiesRepository _stateRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
-            var amenities = _stateRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
+            var amenities = _stateRepository.GetAll().OrderBy(x => x.HospitalAmenities).OrderBy(x => x.HospitalAmenities).ToList();
 
 
             return amenities;

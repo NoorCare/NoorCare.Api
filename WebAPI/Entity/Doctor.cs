@@ -45,7 +45,9 @@ namespace WebAPI.Entity
         public string HospitalId { get; set; }
 
         public int jobType { get; set; }
-        public int CountryCode { get; set; }
+        public string CountryCode { get; set; }
+        public string CountryShortCodeAlt { get; set; }
+        public string CountryCodeAlt { get; set; }
 
         public bool IsDeleted { get; set; }
         [MaxLength(128)]

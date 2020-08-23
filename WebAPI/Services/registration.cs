@@ -24,7 +24,7 @@ namespace WebAPI.Services
                 MobileNo = Convert.ToInt32(model.PhoneNumber),
                 EmailId = model.Email,
                 Jobtype = model.jobType,
-                CountryCode = model.CountryCode,
+                CountryCode = model.CountryCode.ToString(),
                 CreatedDate = DateTime.Now,
             };
             return _clientDetailRepo.Insert(_clientDetail);

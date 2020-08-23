@@ -13,7 +13,10 @@ public partial class HospitalDetails : IEntity<int>
     public string HospitalId { get; set; }
     [MaxLength(300)]
     public string HospitalName { get; set; }
-    public int CountryCode { get; set; }
+    public string CountryCode { get; set; }
+    public string CountryShortCode { get; set; }
+    public string CountryShortCodeAlt { get; set; }
+    public string CountryCodeAlt { get; set; }
     public Int64 Mobile { get; set; }
     public Int64 AlternateNumber { get; set; }
     [MaxLength(100)]

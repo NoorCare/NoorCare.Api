@@ -913,7 +913,7 @@ namespace WebAPI.Controllers
             var docList = from d in doctors
                           select new
                           {
-                              Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " + d.Degree,
+                              Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " ,
                               DoctorId = d.DoctorId
                           };
             return Request.CreateResponse(HttpStatusCode.Accepted, docList.ToList().Distinct());
@@ -955,7 +955,7 @@ namespace WebAPI.Controllers
                 //country
                 if (searchFilter.CountryId > 0)
                 {
-                    docObj = docObj.Where(x => x.CountryCode == searchFilter.CountryId).ToList();
+                    docObj = docObj.Where(x => x.CountryCode == searchFilter.CountryId.ToString()).ToList();
                 }
 
                 //city

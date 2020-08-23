@@ -83,7 +83,7 @@ namespace WebAPI.Controllers
                     {
                         var apdate = Convert.ToDateTime(item.AppointmentDate).ToString("yyyy-MM-dd");
                         var tdate = System.DateTime.Today.ToString("yyyy-MM-dd");
-                        if (apdate== tdate)
+                        if (apdate == tdate)
                         {
                             count++;
                         }
@@ -95,7 +95,7 @@ namespace WebAPI.Controllers
                 {
                     DashboardAppointmentListModel DashboardAppointmentListModel = new DashboardAppointmentListModel();
 
-                    DashboardAppointmentListModel.AppointmentDate =Convert.ToDateTime(item.AppointmentDate);
+                    DashboardAppointmentListModel.AppointmentDate = Convert.ToDateTime(item.AppointmentDate);
                     DashboardAppointmentListModel.AppointmentId = item.AppointmentId;
                     DashboardAppointmentListModel.Status = item.Status;
                     DashboardAppointmentListModel.TimeId = item.TimingId;
@@ -121,7 +121,7 @@ namespace WebAPI.Controllers
                     var doctorDetails = _doctorRepo.Find(d => d.DoctorId == item.DoctorId).FirstOrDefault();
                     if (doctorDetails != null)
                     {
-                        DashboardAppointmentListModel.DoctorName = doctorDetails.FirstName +" "+doctorDetails.LastName;
+                        DashboardAppointmentListModel.DoctorName = doctorDetails.FirstName + " " + doctorDetails.LastName;
                         DashboardAppointmentListModel.DoctorId = doctorDetails.DoctorId;
                     }
                     lstDashboardAppointmentListModel.Add(DashboardAppointmentListModel);
@@ -156,23 +156,23 @@ namespace WebAPI.Controllers
             DashboardTypeModel.HospitalId = HospitalId;
             DashboardTypeModel.TotalFeedback = _feedbackRepo.Find(x => x.PageId == pageId).ToList().Count();
             DashboardTypeModel.TotalDoctor = _doctorRepo.Find(d => d.HospitalId == pageId).ToList().Count();
-            DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "Booked").ToList().Count();
+            DashboardTypeModel.BookedAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "booked").ToList().Count();
             DashboardTypeModel.CancelAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "Cancel").ToList().Count();
-            var apDate = _appointmentRepo.Find(a => a.DoctorId == pageId ).ToList();
-           int TodayAppointmentCount = 0;
+            var apDate = _appointmentRepo.Find(a => a.DoctorId == pageId).ToList();
+            int TodayAppointmentCount = 0;
             foreach (var apt in apDate)
             {
                 var dbDate = Convert.ToDateTime(apt.AppointmentDate);
-                if (dbDate== DateTime.Today)
+                if (dbDate == DateTime.Today)
                 {
                     TodayAppointmentCount = TodayAppointmentCount + 1;
                 }
             }
             DashboardTypeModel.TodayAppointment = TodayAppointmentCount;
-           // DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.AppointmentDate.ToString() == DateTime.Today.ToString("yyyy-MM-dd")).ToList().Count();
-           DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "0").ToList().Count();
+            // DashboardTypeModel.TodayAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.AppointmentDate.ToString() == DateTime.Today.ToString("yyyy-MM-dd")).ToList().Count();
+            DashboardTypeModel.NewAppointment = _appointmentRepo.Find(a => a.DoctorId == pageId && a.Status == "0").ToList().Count();
 
-            foreach (var item in _appointmentRepo.Find(a => a.HospitalId == HospitalId).ToList())
+            foreach (var item in _appointmentRepo.Find(a => a.HospitalId == HospitalId && a.DoctorId == pageId && a.IsDeleted == false && a.Status == "booked").ToList())
             {
                 DashboardAppointmentListModel DashboardAppointmentListModel = new DashboardAppointmentListModel();
 
