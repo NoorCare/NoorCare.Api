@@ -56,7 +56,7 @@ namespace AngularJSAuthentication.API.Services
             string ClientId = "Test", string password = null)
         {
             string html = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templatforgot.html"));
-            html = html.Replace("PASSWORD", password).Replace("USERNAME",mailTo).Replace("CLIENTNAME", clientName+" " + "(" + ClientId + ")");
+            html = html.Replace("PASSWORD", password).Replace("USERNAME",mailTo).Replace("CLIENTNAME", clientName+" " + "(" + ClientId.Replace("-"," ") + ")");
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient(SMTP);
             mail.From = new MailAddress(From);
@@ -182,7 +182,7 @@ namespace AngularJSAuthentication.API.Services
 
         #endregion
         #region Booked Or Reject Appointment
-        public void email_send_booked_reject_appointment(string mailTo = "NoorCareNew@gmail.com", string clientName = "AppointMent", string status="Booked",string doctorname="test",string appointmentdate="test",
+        public void email_send_booked_reject_appointment(string mailTo = "noreply@noorcare.net", string clientName = "AppointMent", string status="Booked",string doctorname="test",string appointmentdate="test",
            string ClientId = "Test",string time="")
         {
             string message = "";
