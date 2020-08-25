@@ -29,7 +29,7 @@ namespace WebAPI.Controllers
         public string Register(AccountModel obj)
         {
             ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
-            CountryCode countryCode = _countryCodeRepository.Find(x => x.Id == obj.CountryCode).FirstOrDefault();
+            CountryCode countryCode = _countryCodeRepository.Find(x => x.Id.ToString() == obj.CountryCode).FirstOrDefault();
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             ApplicationUser user = _registration.UserAcoount(obj, Convert.ToInt16(countryCode.CountryCodes));
@@ -120,6 +120,7 @@ namespace WebAPI.Controllers
                     FirstName = f.FirstName,
                     LastName = f.LastName,
                     CountryCode = f.CountryCode,
+                    CountryShortCode = f.CountryShortCode,
                     Email = f.Email,
                     EmailConfirmed = f.EmailConfirmed,
                     PhoneNumber = f.PhoneNumber,

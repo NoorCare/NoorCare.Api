@@ -256,6 +256,9 @@ namespace WebAPI.Controllers
             obj.EmailConfirmed = _getDoctorList.Find(x => x.DoctorId == obj.DoctorId).FirstOrDefault().EmailConfirmed;
             obj.AboutUs = _getDoctorList.Find(x => x.DoctorId == obj.DoctorId).FirstOrDefault().AboutUs;
             var result = _doctorRepo.Update(obj);
+            AccountController account = new AccountController();
+            bool res = account.UpdateUserPhoneNo(obj.DoctorId, obj.CountryCode, obj.PhoneNumber.ToString());
+
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -495,6 +498,9 @@ namespace WebAPI.Controllers
                     Email = d.Email,
                     PhoneNumber = d.PhoneNumber,
                     AlternatePhoneNumber = d.AlternatePhoneNumber,
+                    CountryShortCode=d.CountryShortCode,
+                    CountryShortCodeAlt=d.CountryShortCodeAlt,
+                    CountryCode=d.CountryCode,
                     Gender = d.Gender,
                     Experience = d.Experience,
                     FeeMoney = d.FeeMoney,
@@ -663,6 +669,9 @@ namespace WebAPI.Controllers
                     _hospital.HospitalName = h.HospitalName;
                     _hospital.Mobile = h.Mobile;
                     _hospital.AlternateNumber = h.AlternateNumber;
+                    _hospital.CountryShortCode = h.CountryShortCode;
+                    _hospital.CountryShortCodeAlt = h.CountryShortCodeAlt;
+                    _hospital.CountryCode = h.CountryCode;
                     _hospital.Website = h.Website;
                     _hospital.EstablishYear = h.EstablishYear;
                     _hospital.NumberofBed = h.NumberofBed;
@@ -705,6 +714,9 @@ namespace WebAPI.Controllers
                         HospitalName = h.HospitalName,
                         Mobile = h.Mobile,
                         AlternateNumber = h.AlternateNumber,
+                        CountryCode=h.CountryCode,
+                        CountryShortCode=h.CountryShortCode,
+                        CountryShortCodeAlt=h.CountryShortCodeAlt,
                         Website = h.Website,
                         EstablishYear = h.EstablishYear,
                         NumberofBed = h.NumberofBed,
@@ -1074,6 +1086,9 @@ namespace WebAPI.Controllers
                         Email = d.Email,
                         PhoneNumber = d.PhoneNumber,
                         AlternatePhoneNumber = d.AlternatePhoneNumber,
+                        CountryCode=d.CountryCode,
+                        CountryShortCode=d.CountryCodeAlt,
+                        CountryShortCodeAlt=d.CountryShortCodeAlt,
                         Gender = d.Gender,
                         Experience = d.Experience,
                         FeeMoney = d.FeeMoney,
@@ -1210,6 +1225,9 @@ namespace WebAPI.Controllers
                     _hospital.HospitalName = h.HospitalName;
                     _hospital.Mobile = h.Mobile;
                     _hospital.AlternateNumber = h.AlternateNumber;
+                    _hospital.CountryCode = h.CountryCode;
+                    _hospital.CountryShortCode = h.CountryShortCode;
+                    _hospital.CountryShortCodeAlt = h.CountryShortCodeAlt;
                     _hospital.Website = h.Website;
                     _hospital.EstablishYear = h.EstablishYear;
                     _hospital.NumberofBed = h.NumberofBed;

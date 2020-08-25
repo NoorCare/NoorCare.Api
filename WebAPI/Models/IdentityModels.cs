@@ -9,10 +9,12 @@ namespace WebAPI.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int JobType { get; set; }
-        public int CountryCodes { get; set; }
+        public string CountryCodes { get; set; }
         public int? Gender { get; set; }
         public bool IsBlocked { get; set; }
         public bool IsDeleted { get; set; }
+        public string CountryShortCode { get; set; }
+
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {

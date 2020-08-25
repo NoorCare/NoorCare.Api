@@ -20,7 +20,8 @@ namespace WebAPI.Models
         public string Country { get; set; }
         public string LoggedOn { get; set; }
         public bool EmailConfirmed { get; set; }
-        public int CountryCode { get; set; }
+        public string CountryCode { get; set; }
+        public string CountryShortCode { get; set; }
         public string NationalityId { get; set; }
         public int FacilityId { get; set; }
 
@@ -40,7 +41,8 @@ namespace WebAPI.Models
         public string ProviderName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int CountryCode { get; set; }
+        public string CountryCode { get; set; }
+        public string CountryShortCode { get; set; }
         public string Email { get; set; }
         public bool EmailConfirmed { get; set; }
         public string PhoneNumber { get; set; }
@@ -78,6 +80,7 @@ namespace WebAPI.Models
         public string JobType { get; set; }
         public string JobTypePermission { get; set; }
         public string CountryCode { get; set; }
+        public string CountryShortCode { get; set; }
         public string ProfilePic { get; set; }
     }
 

@@ -159,6 +159,9 @@ namespace WebAPI.Controllers
                 obj.Id = secretary.Id;
             }
             var result = _secretaryRepo.Update(obj);
+            AccountController account = new AccountController();
+            bool res = account.UpdateUserPhoneNo(obj.SecretaryId, obj.CountryCode, obj.PhoneNumber.ToString());
+
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 

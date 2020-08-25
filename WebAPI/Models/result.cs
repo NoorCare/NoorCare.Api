@@ -64,6 +64,10 @@ namespace WebAPI.Models
         public string HospitalName { get; set; }
         public Int64 Mobile { get; set; }
         public Int64 AlternateNumber { get; set; }
+        public string CountryCode { get; set; }
+        public string CountryShortCode { get; set; }
+        public string CountryShortCodeAlt { get; set; }
+        
         public string Email { get; set; }
         public string Website { get; set; }
         public string EstablishYear { get; set; }
@@ -112,6 +116,11 @@ namespace WebAPI.Models
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string AlternatePhoneNumber { get; set; }
+
+        public string CountryCode { get; set; }
+        public string CountryShortCode { get; set; }
+        public string CountryShortCodeAlt { get; set; }
+
         public int Gender { get; set; }
         public string Experience { get; set; }
         public decimal FeeMoney { get; set; }
@@ -156,7 +165,10 @@ namespace WebAPI.Models
         public string ProviderName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int CountryCode { get; set; }
+        public string CountryCode { get; set; }
+        public string CountryShortCode { get; set; }
+        //public string CountryShortCodeAlt { get; set; }
+        //public string CountryCodeAlt { get; set; }
         public string Email { get; set; }
         public bool EmailConfirmed { get; set; }
         public string PhoneNumber { get; set; }

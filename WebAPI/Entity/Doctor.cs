@@ -46,6 +46,7 @@ namespace WebAPI.Entity
 
         public int jobType { get; set; }
         public string CountryCode { get; set; }
+        public string CountryShortCode { get; set; }
         public string CountryShortCodeAlt { get; set; }
         public string CountryCodeAlt { get; set; }
 

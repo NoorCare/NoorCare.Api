@@ -30,14 +30,14 @@ namespace WebAPI.Controllers
 
         EmailSender _emailSender = new EmailSender();
         Registration _registration = new Registration();
-        
+
         [Route("api/account/register")]
         [HttpPost]
         [AllowAnonymous]
         public string Register(AccountModel model)
         {
-           // ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
-           // CountryCode countryCode = _countryCodeRepository.Find(x=>x.Id == model.CountryCode).FirstOrDefault();
+            // ICountryCodeRepository _countryCodeRepository = RepositoryFactory.Create<ICountryCodeRepository>(ContextTypes.EntityFramework);
+            // CountryCode countryCode = _countryCodeRepository.Find(x=>x.Id == model.CountryCode).FirstOrDefault();
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var manager = new UserManager<ApplicationUser>(userStore);
             ApplicationUser user = _registration.UserAccount(model, Convert.ToInt16(model.CountryCode));
@@ -67,16 +67,29 @@ namespace WebAPI.Controllers
                     return "Registration has been done & getting error in sending email & message" +
                                             ex.Message;
                 }
-                
+
             }
-            
+
             return "Registration has been done, And Account activation link" +
-                        "has been sent your eamil id: " + 
+                        "has been sent your eamil id: " +
                             model.Email;
         }
-    
-        
 
+        public bool UpdateUserPhoneNo(string userId, string countryCode, string phoneNo)
+        {
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            var usermanager = new UserManager<ApplicationUser>(userStore);
+            var userDtls = usermanager.FindById(userId);
+            if (userDtls != null)
+            {
+                userDtls.CountryCodes = countryCode;
+                userDtls.PhoneNumber = phoneNo;
+                usermanager.Update(userDtls);
+                return true;
+            }
+
+            return true;
+        }
         [HttpGet]
         [Route("api/GetUserClaims")]
         public ViewAccount GetUserClaims()
@@ -90,7 +103,7 @@ namespace WebAPI.Controllers
             string profilepic = "";
             string CountryCode = "";
             var usertype = id.Split('-')[0];
-            
+
             string fileName = id + ".Jpeg";
             try
             {
@@ -161,7 +174,7 @@ namespace WebAPI.Controllers
                     {
                         firstname = hospital.HospitalName;
                         phoneno = hospital.Mobile.ToString();
-                        CountryCode = Convert.ToString(hospital.Country);
+                        CountryCode = Convert.ToString(hospital.CountryCode);
                         string[] fileEntries = Directory.GetFiles(HttpContext.Current.Server.MapPath("~/ProfilePic/Hospital"));
                         foreach (var item in fileEntries)
                         {
@@ -173,7 +186,8 @@ namespace WebAPI.Controllers
                         //profilepic = $"{constant.baseUrl}/{hospital.ProfilePath}";
                     }
                 }
-            }catch(Exception ex) { }
+            }
+            catch (Exception ex) { }
             ViewAccount model = new ViewAccount()
             {
                 UserName = identityClaims.FindFirst("Username").Value,
@@ -185,7 +199,7 @@ namespace WebAPI.Controllers
                 JobType = identityClaims.FindFirst("JobType").Value,
                 JobTypePermission = identityClaims.FindFirst("JobTypePermission").Value,
                 ProfilePic = profilepic,
-                CountryCode=CountryCode
+                CountryCode = CountryCode
             };
             return model;
         }
@@ -256,9 +270,9 @@ namespace WebAPI.Controllers
             catch (Exception)
             {
             }
-            
+
             ClientDetail clientDetail = _clientDetailRepo.Find(p => p.ClientId == clientId).FirstOrDefault();
-            clientDetail.FirstName = httpRequest.Form["FirstName"] == null ? clientDetail.FirstName: httpRequest.Form["FirstName"];
+            clientDetail.FirstName = httpRequest.Form["FirstName"] == null ? clientDetail.FirstName : httpRequest.Form["FirstName"];
             clientDetail.LastName = httpRequest.Form["LastName"] == null ? clientDetail.LastName : httpRequest.Form["LastName"];
             clientDetail.PinCode = httpRequest.Form["PinCode"] == null ? clientDetail.PinCode : Convert.ToInt32(httpRequest.Form["PinCode"]);
             clientDetail.Gender = httpRequest.Form["Gender"] == null ? clientDetail.Gender : Convert.ToInt16(httpRequest.Form["Gender"]);
@@ -266,11 +280,19 @@ namespace WebAPI.Controllers
             clientDetail.City = httpRequest.Form["City"] == null ? clientDetail.City : httpRequest.Form["City"];
             clientDetail.State = httpRequest.Form["State"] == null ? clientDetail.State : httpRequest.Form["State"];
             clientDetail.Country = httpRequest.Form["Country"] == null ? clientDetail.Country : httpRequest.Form["Country"];
-            clientDetail.MobileNo = httpRequest.Form["MobileNo"] == null ? clientDetail.MobileNo : Convert.ToInt32(httpRequest.Form["MobileNo"].Replace(" ",""));
+            clientDetail.MobileNo = httpRequest.Form["MobileNo"] == null ? clientDetail.MobileNo : Convert.ToInt32(httpRequest.Form["MobileNo"]);
+            clientDetail.CountryCode = httpRequest.Form["CountryCode"] == null ? clientDetail.CountryCode : httpRequest.Form["CountryCode"];
+            clientDetail.CountryShortCode = httpRequest.Form["CountryShortCode"] == null ? clientDetail.CountryShortCode :httpRequest.Form["CountryShortCode"];
             clientDetail.EmailId = httpRequest.Form["EmailId"] == null ? clientDetail.EmailId : httpRequest.Form["EmailId"];
-            clientDetail.MaritalStatus = httpRequest.Form["MaritalStatus"]== null ? clientDetail.MaritalStatus : Convert.ToInt16(httpRequest.Form["MaritalStatus"]);
-            clientDetail.DOB = httpRequest.Form["DOB"]== null ? clientDetail.DOB :httpRequest.Form["DOB"];
-            
+            clientDetail.MaritalStatus = httpRequest.Form["MaritalStatus"] == null ? clientDetail.MaritalStatus : Convert.ToInt16(httpRequest.Form["MaritalStatus"]);
+            clientDetail.DOB = httpRequest.Form["DOB"] == null ? clientDetail.DOB : httpRequest.Form["DOB"];
+
+            if (httpRequest.Form["CountryCode"]!=null && httpRequest.Form["CountryShortCode"]!=null && httpRequest.Form["MobileNo"]!=null)
+            {
+                bool res = UpdateUserPhoneNo(clientId, httpRequest.Form["CountryCode"], httpRequest.Form["CountryShortCode"]);
+            }
+          
+
             return Ok(_clientDetailRepo.Update(clientDetail));
         }
 
@@ -279,8 +301,8 @@ namespace WebAPI.Controllers
         public IHttpActionResult getProfileData(string ClientId)
         {
             var clientType = ClientId.Split('-')[0];
-            
-            if (clientType== "NCH")
+
+            if (clientType == "NCH")
             {
                 var user = _hospitalDetailsRepository.Find(x => x.HospitalId == ClientId);
                 return Ok(user);
@@ -295,7 +317,7 @@ namespace WebAPI.Controllers
                 var user = _secretaryRepository.Find(x => x.SecretaryId == ClientId);
                 return Ok(user);
             }
-            else 
+            else
             {
                 var user = _clientDetailRepo.Find(x => x.ClientId == ClientId);
                 return Ok(user);
@@ -375,7 +397,7 @@ namespace WebAPI.Controllers
             var manager = new UserManager<ApplicationUser>(userStore);
             ApplicationUser cUser = manager.FindByName(model.UserName);
             string hashedNewPassword = manager.PasswordHasher.HashPassword(password);
-            if (cUser!=null)
+            if (cUser != null)
             {
                 cUser.PasswordHash = hashedNewPassword;
                 IdentityResult result = manager.Update(cUser);
@@ -386,10 +408,10 @@ namespace WebAPI.Controllers
             {
                 return Ok("fail");
             }
-           
-           
+
+
         }
-       
+
         [HttpPost]
         [Route("api/userNameExist")]
         [AllowAnonymous]
@@ -406,7 +428,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]
         public IHttpActionResult GetUserEmailId(AccountModel model)
         {
-            if(model.Email == null)
+            if (model.Email == null)
             {
                 return Ok();
             }

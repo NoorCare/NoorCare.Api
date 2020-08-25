@@ -20,11 +20,12 @@ namespace WebAPI.Services
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Gender = model.Gender,
+                Gender = model.Gender,                
                 MobileNo = Convert.ToInt32(model.PhoneNumber),
                 EmailId = model.Email,
                 Jobtype = model.jobType,
                 CountryCode = model.CountryCode.ToString(),
+                CountryShortCode = model.CountryShortCode,
                 CreatedDate = DateTime.Now,
             };
             return _clientDetailRepo.Insert(_clientDetail);
@@ -40,6 +41,8 @@ namespace WebAPI.Services
                 Type = model.Type,
                 jobType = model.jobType,
                 Mobile = Convert.ToInt64(model.PhoneNumber),
+                CountryShortCode = model.CountryShortCode,
+                CountryCode = model.CountryCode,
                 FacilityId = model.FacilityId,
                 Country = model.NationalityId.ToString(),
                 ModifiedDate = DateTime.Now,
@@ -62,8 +65,9 @@ namespace WebAPI.Services
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 CountryCode = model.CountryCode,
+                CountryShortCode = model.CountryShortCode,
                 EmailConfirmed = model.EmailConfirmed,
-                PhoneNumber = model.PhoneNumber,
+                PhoneNumber = model.PhoneNumber,               
                 CreatedBy = "Self",
                 ModifiedBy = "Self",
                 DateEntered = DateTime.Now.ToString(),
@@ -228,12 +232,13 @@ namespace WebAPI.Services
                 UserName = model.Email,
                 Email = model.Email,
                 JobType = model.jobType,
-                CountryCodes = countrycodevalue,
+                CountryCodes = countrycodevalue.ToString(),
                 Gender = model.jobType == 1 ? model.Gender : 0,
             };
             user.FirstName = model.FirstName;
             user.PhoneNumber = model.PhoneNumber;
             user.LastName = model.LastName;
+            user.CountryShortCode = model.CountryShortCode;
             if (model.HospitalId != null)
             {
                 string hid = model.HospitalId;
@@ -259,12 +264,13 @@ namespace WebAPI.Services
                 UserName = model.Email,
                 Email = model.Email,
                 JobType = model.jobType,
-                CountryCodes = countrycodevalue,
+                CountryCodes = countrycodevalue.ToString(),
                 Gender = model.jobType == 1 ? model.Gender : 0,
             };
             user.FirstName = model.FirstName;
             user.PhoneNumber = model.PhoneNumber;
             user.LastName = model.LastName;
+            user.CountryShortCode = model.CountryShortCode;
             if (model.HospitalId != null)
             {
                 string hid = model.HospitalId;
