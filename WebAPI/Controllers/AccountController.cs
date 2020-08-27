@@ -280,7 +280,7 @@ namespace WebAPI.Controllers
             clientDetail.City = httpRequest.Form["City"] == null ? clientDetail.City : httpRequest.Form["City"];
             clientDetail.State = httpRequest.Form["State"] == null ? clientDetail.State : httpRequest.Form["State"];
             clientDetail.Country = httpRequest.Form["Country"] == null ? clientDetail.Country : httpRequest.Form["Country"];
-            clientDetail.MobileNo = httpRequest.Form["MobileNo"] == null ? clientDetail.MobileNo : Convert.ToInt32(httpRequest.Form["MobileNo"]);
+            clientDetail.MobileNo = httpRequest.Form["MobileNo"] == null ? clientDetail.MobileNo : httpRequest.Form["MobileNo"];
             clientDetail.CountryCode = httpRequest.Form["CountryCode"] == null ? clientDetail.CountryCode : httpRequest.Form["CountryCode"];
             clientDetail.CountryShortCode = httpRequest.Form["CountryShortCode"] == null ? clientDetail.CountryShortCode :httpRequest.Form["CountryShortCode"];
             clientDetail.EmailId = httpRequest.Form["EmailId"] == null ? clientDetail.EmailId : httpRequest.Form["EmailId"];

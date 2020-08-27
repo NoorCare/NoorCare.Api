@@ -62,8 +62,8 @@ namespace WebAPI.Models
         public int Id { get; set; }
         public string HospitalId { get; set; }
         public string HospitalName { get; set; }
-        public Int64 Mobile { get; set; }
-        public Int64 AlternateNumber { get; set; }
+        public string Mobile { get; set; }
+        public string AlternateNumber { get; set; }
         public string CountryCode { get; set; }
         public string CountryShortCode { get; set; }
         public string CountryShortCodeAlt { get; set; }
@@ -146,7 +146,7 @@ namespace WebAPI.Models
         public string HospitalAddress { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
-        public long Mobile { get; set; }
+        public string Mobile { get; set; }
         public List<DoctorAvailableTime> DoctorAvilability { get; set; }
         public FilterDoctor FilterDoctor { get; set; }
         public List<Disease> Specialization { get; set; }

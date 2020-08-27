@@ -19,7 +19,7 @@ public partial class ClientDetail : IEntity<int>
     public string City { get; set; }
     public string State { get; set; }
     public string Country { get; set; }
-    public int MobileNo { get; set; }
+    public string MobileNo { get; set; }
     public string EmailId { get; set; }
     public string ModifyBy { get; set; }
     public int Jobtype { get; set; }

@@ -17,8 +17,8 @@ namespace WebAPI.Entity
         public int Gender { get; set; }
         public int Relationship { get; set; }
         public string Email { get; set; }
-        public int Mobile { get; set; }
-        public int AlternateNumber { get; set; }
+        public string Mobile { get; set; }
+        public string AlternateNumber { get; set; }
         public int WorkNumber { get; set; }
         public string Address { get; set; }
     }

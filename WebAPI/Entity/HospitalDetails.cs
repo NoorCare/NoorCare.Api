@@ -17,8 +17,8 @@ public partial class HospitalDetails : IEntity<int>
     public string CountryShortCode { get; set; }
     public string CountryShortCodeAlt { get; set; }
     public string CountryCodeAlt { get; set; }
-    public Int64 Mobile { get; set; }
-    public Int64 AlternateNumber { get; set; }
+    public string Mobile { get; set; }
+    public string AlternateNumber { get; set; }
     [MaxLength(100)]
     public string Email { get; set; }
     public bool EmailConfirmed { get; set; }

@@ -668,14 +668,18 @@ namespace WebAPI.Controllers
             try
             {
                 string basicPath = "~/HospitalDoc/" + hospitalId + "/";
+                
                 var directoryBackViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "BackView"));
                 var directoryFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "FrontView"));
                 var directoryCRFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "CRFrontView"));
                 var directoryLicenseFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "LicenseFrontView"));
+
+
                 string IdBackView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/BackView/" + httpRequest.Files["IdBackView"].FileName;
-                string IdFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/IdFrontView/" + httpRequest.Files["IdFrontView"].FileName;
-                string CrFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/CrFrontView/" + httpRequest.Files["CrFrontView"].FileName;
+                string IdFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/FrontView/" + httpRequest.Files["IdFrontView"].FileName;
+                string CrFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/CRFrontView/" + httpRequest.Files["CrFrontView"].FileName;
                 string LicenseFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName;
+               
                 HospitalDocumentVerification hospitalDocuments = new HospitalDocumentVerification
                 {
                     HospitalId = hospitalId,
@@ -699,10 +703,9 @@ namespace WebAPI.Controllers
                     objId = _hospitalDocumentsRepo.Insert(hospitalDocuments);
                 }
 
-                string filepath = HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName);
                 httpRequest.Files["IdBackView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "BackView/" + httpRequest.Files["IdBackView"].FileName));
-                httpRequest.Files["IdFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "IdFrontView/" + httpRequest.Files["IdFrontView"].FileName));
-                httpRequest.Files["CrFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "CrFrontView/" + httpRequest.Files["CrFrontView"].FileName));
+                httpRequest.Files["IdFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "FrontView/" + httpRequest.Files["IdFrontView"].FileName));
+                httpRequest.Files["CrFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "CRFrontView/" + httpRequest.Files["CrFrontView"].FileName));
                 httpRequest.Files["LicenseFrontView"].SaveAs(HttpContext.Current.Server.MapPath(basicPath + "LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName));
             }
             catch (Exception ex)
