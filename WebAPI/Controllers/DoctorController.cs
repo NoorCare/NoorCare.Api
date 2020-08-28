@@ -38,6 +38,7 @@ namespace WebAPI.Controllers
         ILikeVisitorRepository _likeVisitorRepo = RepositoryFactory.Create<ILikeVisitorRepository>(ContextTypes.EntityFramework);
         ITimeMasterRepository _timeMasterRepo = RepositoryFactory.Create<ITimeMasterRepository>(ContextTypes.EntityFramework);
         IDoctorEducationRepository _doctorEducationRep = RepositoryFactory.Create<IDoctorEducationRepository>(ContextTypes.EntityFramework);
+        IFacilityRepository _facilityRepo = RepositoryFactory.Create<IFacilityRepository>(ContextTypes.EntityFramework);
 
         [Route("api/doctor/IsValidNoorCare/{doctorId}")]
         [HttpGet]
@@ -1219,6 +1220,8 @@ namespace WebAPI.Controllers
                 {
                     var feedback = _feedbackRepo.Find(x => x.PageId == h.HospitalId);
                     int likeCount = _likeVisitorRepo.Find(x => x.HFP_DOC_NCID.Trim() == h.HospitalId && x.IsDelete == false && x.Like_Dislike == true).Count();
+                    var facility = _facilityRepo.Find(x => x.JobType == h.jobType).FirstOrDefault();
+
                     _hospital = new Hospital();
 
                     _hospital.HospitalId = h.HospitalId;
@@ -1236,6 +1239,7 @@ namespace WebAPI.Controllers
                     _hospital.Emergency = h.Emergency;
                     _hospital.FacilityId = h.FacilityId;
                     _hospital.JobType = h.jobType;
+                    _hospital.JobTypePermission = facility.Permission;
                     _hospital.Address = h.Address;
                     _hospital.Street = h.Street;
                     _hospital.Country = GetCountryName(Convert.ToInt16(h.Country));
