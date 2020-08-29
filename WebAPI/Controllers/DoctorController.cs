@@ -33,6 +33,8 @@ namespace WebAPI.Controllers
         IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
         ITblHospitalServicesRepository _hospitalServicesRepository = RepositoryFactory.Create<ITblHospitalServicesRepository>(ContextTypes.EntityFramework);
         ITblHospitalAmenitiesRepository _hospitalAmenitieRepository = RepositoryFactory.Create<ITblHospitalAmenitiesRepository>(ContextTypes.EntityFramework);
+        ITblHospitalSpecialtiesRepository _hospitalSpecialtiesRepo = RepositoryFactory.Create<ITblHospitalSpecialtiesRepository>(ContextTypes.EntityFramework);
+
         IFeedbackRepository _feedbackRepo = RepositoryFactory.Create<IFeedbackRepository>(ContextTypes.EntityFramework);
         IAppointmentRepository _appointmentRepo = RepositoryFactory.Create<IAppointmentRepository>(ContextTypes.EntityFramework);
         ILikeVisitorRepository _likeVisitorRepo = RepositoryFactory.Create<ILikeVisitorRepository>(ContextTypes.EntityFramework);
@@ -658,6 +660,7 @@ namespace WebAPI.Controllers
             }
             List<TblHospitalServices> _hospitalServices = new List<TblHospitalServices>();
             List<TblHospitalAmenities> _hospitalAmenities = new List<TblHospitalAmenities>();
+
             if (searchType != "2")
             {
                 foreach (var h in hospitals ?? new List<HospitalDetails>())
@@ -1143,6 +1146,8 @@ namespace WebAPI.Controllers
         {
             var hospitalService = _hospitalServicesRepository.GetAll().OrderBy(x => x.HospitalServices).ToList();
             var hospitalAmenitie = _hospitalAmenitieRepository.GetAll().OrderBy(x => x.HospitalAmenities).ToList();
+            var hospitalSpecialties = _hospitalSpecialtiesRepo.GetAll().OrderBy(x => x.HospitalSpecialties).ToList();
+
             Hospital _hospital = new Hospital();
             List<Hospital> _hospitals = new List<Hospital>();
             List<HospitalDetails> hospitalDtls = new List<HospitalDetails>();
@@ -1264,6 +1269,7 @@ namespace WebAPI.Controllers
                     _hospital.ServicesIds = h.Services == null ? a : Array.ConvertAll(h.Services.Split(','), s => int.Parse(s));
                     _hospital.Services = getHospitalService(h.Services, hospitalService);
                     _hospital.Doctors = getDoctors(h.HospitalId, searchFilter.DiseaseType, "null", ref _filterDoctor);
+                    _hospital.Specialization = getHospitalSpecialization(h.Specialization, hospitalSpecialties);
                     //_hospital.Likes = feedback.Where(x => x.ILike == true).Count();
                     _hospital.Likes = likeCount;
                     _hospital.Feedbacks = feedback.Count();
@@ -1281,6 +1287,21 @@ namespace WebAPI.Controllers
                 return _hospitals;
             }
             return _hospitals;
+        }
+
+        private List<TblHospitalSpecialties> getHospitalSpecialization(string specialization, List<TblHospitalSpecialties> specializationList)
+        {
+            if (!string.IsNullOrEmpty(specialization))
+            {
+                var specializationTypes = specialization.Split(',');
+                int[] myInts = Array.ConvertAll(specializationTypes, s => int.Parse(s));
+                var _specializationList = specializationList.Where(x => myInts.Contains(x.Id)).ToList();
+                return _specializationList;
+            }
+            else
+            {
+                return null;
+            }
         }
 
     }

@@ -59,7 +59,7 @@ namespace WebAPI.Controllers
         [AllowAnonymous]        
         public HttpResponseMessage getAllHFP()
         {           
-            var result = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted == false).ToList();
+            var result = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted == false && x.IsBlocked==false).ToList();
             
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
