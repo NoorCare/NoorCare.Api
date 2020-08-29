@@ -47,7 +47,7 @@ namespace WebAPI.Controllers
                                 {
                                     Id = a.Id,
                                     Time = t.TimeFrom + "-" + t.TimeTo + " " + t.AM_PM,
-                                    Date = (Convert.ToDateTime(a.AppointmentDate)).ToShortDateString(),
+                                    Date = a.AppointmentDate,
                                     ClientId = a.ClientId,
                                     DateEntered = a.DateEntered,
                                     DoctorId = a.DoctorId,
