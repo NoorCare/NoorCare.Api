@@ -103,10 +103,13 @@ namespace WebAPI.Controllers
                     imageName = secretaryId + "." + ImageFormat.Jpeg;
                     var filePath = HttpContext.Current.Server.MapPath("~/ProfilePic/Secretary/" + imageName);
                     bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath("~/ProfilePic/Secretary/" + imageName));
+                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/ProfilePic/Secretary/"));
+
                     if (exists)
                     {
                         File.Delete(filePath);
                     }
+                   
                     postedFile.SaveAs(filePath);
                 }
             }

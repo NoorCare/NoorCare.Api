@@ -326,7 +326,7 @@ namespace WebAPI.Controllers
                             " select distinct x.FromDate as 'SchDate',(select top 1 TimeId from CTE where FromDate = x.FromDate order by len(TimeId) Desc) 'TimeIds' from CTE x" +
                             " order by FromDate").ToList();
 
-                var docAvail = _appointmentRepo.GetAll().Where(x => x.IsDeleted == false && x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid && x.Status.ToLower().Trim()!= "rejected").ToList();
+                var docAvail = _appointmentRepo.GetAll().Where(x => x.IsDeleted == false && x.AppointmentDate >= calDate && x.AppointmentDate < calDate.AddDays(6) && x.DoctorId == doctorid && x.Status.ToLower().Trim() != "rejected").ToList();
                 List<DoctorAvailablity> docAvlList = new List<DoctorAvailablity>();
                 for (int i = 0; i < 7; i++)
                 {
@@ -499,9 +499,9 @@ namespace WebAPI.Controllers
                     Email = d.Email,
                     PhoneNumber = d.PhoneNumber,
                     AlternatePhoneNumber = d.AlternatePhoneNumber,
-                    CountryShortCode=d.CountryShortCode,
-                    CountryShortCodeAlt=d.CountryShortCodeAlt,
-                    CountryCode=d.CountryCode,
+                    CountryShortCode = d.CountryShortCode,
+                    CountryShortCodeAlt = d.CountryShortCodeAlt,
+                    CountryCode = d.CountryCode,
                     Gender = d.Gender,
                     Experience = d.Experience,
                     FeeMoney = d.FeeMoney,
@@ -715,9 +715,9 @@ namespace WebAPI.Controllers
                         HospitalName = h.HospitalName,
                         Mobile = h.Mobile,
                         AlternateNumber = h.AlternateNumber,
-                        CountryCode=h.CountryCode,
-                        CountryShortCode=h.CountryShortCode,
-                        CountryShortCodeAlt=h.CountryShortCodeAlt,
+                        CountryCode = h.CountryCode,
+                        CountryShortCode = h.CountryShortCode,
+                        CountryShortCodeAlt = h.CountryShortCodeAlt,
                         Website = h.Website,
                         EstablishYear = h.EstablishYear,
                         NumberofBed = h.NumberofBed,
@@ -877,7 +877,7 @@ namespace WebAPI.Controllers
                         Feedbacks = feedback.Count(),
                         BookingUrl = $"booking/{d.DoctorId}",
                         ProfileDetailUrl = $"doctorDetails/{d.DoctorId}",
-                        ImgUrl = String.IsNullOrWhiteSpace(d.PhotoPath) ? $"{constant.imgUrl}/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}"
+                        ImgUrl = String.IsNullOrWhiteSpace(d.PhotoPath) ? $"{constant.imgUrl}/ProfilePic/Doctor/{d.DoctorId}.Jpeg" : $"{constant.imgUrl}/{d.PhotoPath}"
                     };
 
                     // Add Filter Value
@@ -926,7 +926,7 @@ namespace WebAPI.Controllers
             var docList = from d in doctors
                           select new
                           {
-                              Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") " ,
+                              Name = d.FirstName + " " + d.LastName + "(" + d.DoctorId + ") ",
                               DoctorId = d.DoctorId
                           };
             return Request.CreateResponse(HttpStatusCode.Accepted, docList.ToList().Distinct());
@@ -1079,6 +1079,8 @@ namespace WebAPI.Controllers
                     var hospRepo = _hospitaldetailsRepo.Find(x => x.HospitalId == d.HospitalId).FirstOrDefault();
                     var feedback = _feedbackRepo.Find(x => x.PageId == d.DoctorId);
                     int likeCount = _likeVisitorRepo.Find(x => x.HFP_DOC_NCID.Trim() == d.DoctorId && x.IsDelete == false && x.Like_Dislike == true).Count();
+                    var facility = _facilityRepo.Find(x => x.JobType == d.jobType).FirstOrDefault();
+
                     _doctor = new Doctors
                     {
                         DoctorId = d.DoctorId,
@@ -1086,10 +1088,11 @@ namespace WebAPI.Controllers
                         LastName = d.LastName,
                         Email = d.Email,
                         PhoneNumber = d.PhoneNumber,
+                        JobTypePermission = facility.Permission,
                         AlternatePhoneNumber = d.AlternatePhoneNumber,
-                        CountryCode=d.CountryCode,
-                        CountryShortCode=d.CountryCodeAlt,
-                        CountryShortCodeAlt=d.CountryShortCodeAlt,
+                        CountryCode = d.CountryCode,
+                        CountryShortCode = d.CountryCodeAlt,
+                        CountryShortCodeAlt = d.CountryShortCodeAlt,
                         Gender = d.Gender,
                         Experience = d.Experience,
                         FeeMoney = d.FeeMoney,
@@ -1135,7 +1138,7 @@ namespace WebAPI.Controllers
             List<Hospital> _hospitals = new List<Hospital>();
             List<HospitalDetails> hospitalDtls = new List<HospitalDetails>();
             //country
-            var objHosp = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1).ToList();
+            var objHosp = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted==false && x.IsBlocked==false).ToList();
             try
             {
                 //city

@@ -155,7 +155,8 @@ namespace WebAPI.Controllers
                 _pres.HospitalName = hospitals.HospitalName;
                 _pres.HospitalEmail = hospitals.Email;
                 _pres.HospitalAddress = hospitals.Address;
-                _pres.HospitalPicUrl = $"{constant.imgUrl}/" + hospitals.ProfilePath;
+                _pres.HospitalPicUrl = String.IsNullOrWhiteSpace(hospitals.ProfilePath) ? $"{constant.imgUrl}/ProfilePic/Hospital/{doctor.HospitalId}.Jpeg" : $"{constant.imgUrl}/{hospitals.ProfilePath}";
+
 
                 _pres.DoctorId = res.DoctorId;
                 _pres.Id = res.Id;
@@ -207,7 +208,7 @@ namespace WebAPI.Controllers
                 _pres.HospitalName = hospitals.HospitalName;
                 _pres.HospitalEmail = hospitals.Email;
                 _pres.HospitalAddress = hospitals.Address;
-                _pres.HospitalPicUrl = $"{constant.imgUrl}/" + hospitals.ProfilePath;
+                _pres.HospitalPicUrl = String.IsNullOrWhiteSpace(hospitals.ProfilePath) ? $"{constant.imgUrl}/ProfilePic/Hospital/{doctor.HospitalId}.Jpeg" : $"{constant.imgUrl}/{hospitals.ProfilePath}";
 
                 _pres.DoctorId = res.DoctorId;
                 _pres.Id = res.Id;
@@ -307,7 +308,7 @@ namespace WebAPI.Controllers
                     HospitalId = hospitals.HospitalId,
                     HospitalEmail = hospitals.Email,
                     HospitalAddress = hospitals.Address,
-                    HospitalPicUrl = $"{constant.imgUrl}/" + hospitals.ProfilePath,
+                    HospitalPicUrl = String.IsNullOrWhiteSpace(hospitals.ProfilePath) ? $"{constant.imgUrl}/ProfilePic/Hospital/{hospitals.HospitalId}.Jpeg" : $"{constant.imgUrl}/{hospitals.ProfilePath}",
                     aboutMe = d.AboutUs,
                     DoctorAvilability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId),
                     Specialization = getSpecialization(d.Specialization, disease),

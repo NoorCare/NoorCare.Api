@@ -82,6 +82,8 @@ public partial class HospitalDetails : IEntity<int>
     public string InsuranceId { get; set; }
 
     public bool IsDeleted { get; set; }
+    public bool IsBlocked { get; set; }
+
     [MaxLength(50)]
     public string CreatedBy { get; set; }
     [MaxLength(50)]

@@ -254,7 +254,7 @@ namespace WebAPI.Controllers
                 }
             }
 
-            if (message==string.Empty)
+            if (message == string.Empty)
             {
                 string PostedFileName = string.Empty;
                 string PostedFileExt = string.Empty;
@@ -417,7 +417,7 @@ namespace WebAPI.Controllers
             var ReportType = _reportTypeRepo.GetAll().OrderBy(x => x.ReportName).ToList();
 
             string host = ConfigurationManager.AppSettings.Get("ImageBaseUrl");//HttpContext.Current.Request.Url.Host;
-             
+
             var result = _quickUploadRepo.Find(x => x.ClientId == clientId);
 
 
@@ -442,9 +442,9 @@ namespace WebAPI.Controllers
                         desiesTypeResult.ReportType = ReportType.Where(c => c.ReportID == x.DesiesType).FirstOrDefault().ReportType;
                     }
                     catch (Exception ex)
-                    { 
+                    {
                     }
-                   
+
                 }
                 desiesTypeResult.YearList = new List<YearList>();
                 foreach (var it in listYear)
@@ -485,11 +485,12 @@ namespace WebAPI.Controllers
                                             fileObj.HospitalId = "NA";
                                             fileObj.HospitalName = _enqObj.Name;
                                             fileObj.HospitalMobile = _enqObj.ContactNo;
+                                            fileObj.HospitalMobileCountryCode = _enqObj.CountryCode;
                                             fileObj.HospitalEmail = _enqObj.EmailId;
                                             fileObj.HospitalWebsite = _enqObj.Website;
                                             fileObj.HospitalAddress = _enqObj.Address;
                                         }
-                                      
+
                                     }
                                     catch (Exception ex) { }
 
@@ -502,11 +503,12 @@ namespace WebAPI.Controllers
                                         fileObj.HospitalId = _enqObj.HospitalId;
                                         fileObj.HospitalName = _enqObj.HospitalName;
                                         fileObj.HospitalMobile = _enqObj.Mobile.ToString();
+                                        fileObj.HospitalMobileCountryCode = _enqObj.CountryCode;
                                         fileObj.HospitalEmail = _enqObj.Email;
                                         fileObj.HospitalWebsite = _enqObj.Website;
                                         fileObj.HospitalAddress = _enqObj.Address;
                                     }
-                                   
+
                                 }
                             }
                             var fileName = new FileName();
@@ -514,6 +516,7 @@ namespace WebAPI.Controllers
                             fileName.HospitalId = file.HospitalId;
                             fileName.Id = file.Id;
                             fileName.UploadedBy = file.CreatedBy;
+                            fileName.DocExtension = Path.GetExtension(file.FilePath).ToLower();
                             //baseURL/ClientDocument/ClientId/DesiseType/Year/Month/Files.jpg
                             fileName.DocUrl = constant.imgUrl + "ClientDocument/" + clientId + "/" + desiesTypeResult.DiseaseType + "/" + it.AddedYear
                             + "/" + mo.AddedMonth + "/" + file.FilePath;
@@ -525,6 +528,7 @@ namespace WebAPI.Controllers
                                 fileName.HospitalAddress = fileObj.HospitalAddress;
                                 fileName.HospitalEmail = fileObj.HospitalEmail;
                                 fileName.HospitalWebsite = fileObj.HospitalWebsite;
+                                fileName.HospitalMobileCountryCode = fileObj.HospitalMobileCountryCode;
                             }
                             monthList.FileList.Add(fileName);
 
@@ -536,8 +540,7 @@ namespace WebAPI.Controllers
 
                 desiesTypeResultList.Add(desiesTypeResult);
             }
-
-            return Request.CreateResponse(HttpStatusCode.Accepted, desiesTypeResultList);
+            return Request.CreateResponse(HttpStatusCode.Accepted, desiesTypeResultList.OrderBy(x => x.DesiesName));
         }
 
 
@@ -636,6 +639,7 @@ namespace WebAPI.Controllers
                                         fileObj.HospitalEmail = _enqObj.EmailId;
                                         fileObj.HospitalWebsite = _enqObj.Website;
                                         fileObj.HospitalAddress = _enqObj.Address;
+                                        fileObj.HospitalMobileCountryCode = _enqObj.CountryCode;
                                     }
                                     catch (Exception ex) { }
 
@@ -649,6 +653,7 @@ namespace WebAPI.Controllers
                                     fileObj.HospitalEmail = _enqObj.Email;
                                     fileObj.HospitalWebsite = _enqObj.Website;
                                     fileObj.HospitalAddress = _enqObj.Address;
+                                    fileObj.HospitalMobileCountryCode = _enqObj.CountryCode;
                                 }
                             }
                             var fileName = new FileName();
@@ -656,6 +661,7 @@ namespace WebAPI.Controllers
                             fileName.HospitalId = file.HospitalId;
                             fileName.Id = file.Id;
                             fileName.UploadedBy = file.CreatedBy;
+                            fileName.DocExtension = Path.GetExtension(file.FilePath).ToLower();
                             //baseURL/ClientDocument/ClientId/DesiseType/Year/Month/Files.jpg
                             fileName.DocUrl = constant.imgUrl + "ClientDocument/" + clientId + "/" + desiesTypeResult.DiseaseType + "/" + it.AddedYear
                             + "/" + mo.AddedMonth + "/" + file.FilePath;
@@ -667,6 +673,7 @@ namespace WebAPI.Controllers
                                 fileName.HospitalAddress = fileObj.HospitalAddress;
                                 fileName.HospitalEmail = fileObj.HospitalEmail;
                                 fileName.HospitalWebsite = fileObj.HospitalWebsite;
+                                fileName.HospitalMobileCountryCode = fileObj.HospitalMobileCountryCode;
                             }
                             monthList.FileList.Add(fileName);
                         }

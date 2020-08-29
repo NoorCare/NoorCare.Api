@@ -21,7 +21,8 @@ namespace WebAPI.Entity
         public string EmailId { get; set; }
         [Required]
         public string ContactNo { get; set; }
-       
+        public string CountryShortCode { get; set; }
+        public string CountryCode { get; set; }
         public string Comments { get; set; }
 
         public string Type { get; set; }

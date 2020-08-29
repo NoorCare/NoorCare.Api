@@ -37,6 +37,7 @@ namespace WebAPI.Controllers
         IFacilityImagesRepository _facilityImagesRepo = RepositoryFactory.Create<IFacilityImagesRepository>(ContextTypes.EntityFramework);
         IHospitalInsuranceRepository _hospitalInsuranceRepo = RepositoryFactory.Create<IHospitalInsuranceRepository>(ContextTypes.EntityFramework);
         IInsuranceMasterRepository _insuranceMasterRepo = RepositoryFactory.Create<IInsuranceMasterRepository>(ContextTypes.EntityFramework);
+        IDoctorEducationRepository _doctorEducationRep = RepositoryFactory.Create<IDoctorEducationRepository>(ContextTypes.EntityFramework);
 
         [Route("api/hospitaldetails/getall/{hfp?}")]
         [HttpGet]
@@ -223,7 +224,7 @@ namespace WebAPI.Controllers
         {
             List<TimeMaster> _timeMaster = new List<TimeMaster>();
             var timeMaster = _timeMasterRepo.GetAll().OrderBy(x => x.Id).ToList();
-
+            var degree = _doctorEducationRep.GetAll().OrderBy(x => x.Education).ToList();
 
             List<Disease> _disease = new List<Disease>();
             List<decimal> _priceses = new List<decimal>();
@@ -254,6 +255,7 @@ namespace WebAPI.Controllers
                     Language = d.Language,
                     AgeGroupGender = d.AgeGroupGender,
                     Degree = d.Degree,
+                    Education = getDegree(d.Degree, degree),
                     SpecializationIds =  String.IsNullOrEmpty(d.Specialization)? myNum:Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
                     Specialization = getSpecialization(d.Specialization, disease),
                     AboutUs = d.AboutUs,
@@ -268,6 +270,18 @@ namespace WebAPI.Controllers
                 _doctors.Add(_doctor);
             }
             return _doctors;
+        }
+
+        private List<DoctorEducation> getDegree(string degreeIds, List<DoctorEducation> _degree)
+        {
+            if (degreeIds == null || degreeIds == "")
+            {
+                return new List<DoctorEducation>();
+            }
+            var degreeList = degreeIds.Split(',');
+            int[] myInts = Array.ConvertAll(degreeList, s => int.Parse(s));
+            var education = _degree.Where(x => myInts.Contains(x.Id)).ToList();
+            return education;
         }
 
         [Route("api/hospital/doctor/{HospitalId}/{Specialtyid}")]

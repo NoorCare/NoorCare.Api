@@ -116,7 +116,7 @@ namespace WebAPI.Models
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string AlternatePhoneNumber { get; set; }
-
+        public int JobTypePermission { get; set; }
         public string CountryCode { get; set; }
         public string CountryShortCode { get; set; }
         public string CountryShortCodeAlt { get; set; }
@@ -231,6 +231,7 @@ namespace WebAPI.Models
     {
         public string DocName { get; set; }
         public string DocUrl { get; set; }
+        public string DocExtension { get; set; }
         public string HospitalId { get; set; }
 
         public string UploadedBy { get; set; }
@@ -243,6 +244,7 @@ namespace WebAPI.Models
         public string HospitalAddress { get; set; }
         public string HospitalWebsite { get; set; }
         public string HospitalMobile { get; set; }
+        public string HospitalMobileCountryCode { get; set; }
     }
 
     public class PatientPrescriptionList 
