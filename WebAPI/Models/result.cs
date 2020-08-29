@@ -308,6 +308,7 @@ namespace WebAPI.Models
         //insurance
         public string InsuranceId { get; set; }
         //Quick Specialtie
+        public string QuickSpecialtie { get; set; }
     }
 
     public class DayTimeMaster

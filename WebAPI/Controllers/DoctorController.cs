@@ -1031,6 +1031,15 @@ namespace WebAPI.Controllers
                       Any(ele => searchFilter.DiseaseType.Contains(ele))).ToList();
                 }
 
+                //by QuickSpecialtie
+                if (searchFilter.QuickSpecialtie != null && searchFilter.QuickSpecialtie.Length > 0)
+                {
+                    //docObj = docObj.Where(x => x.Specialization.ToLower().Contains(searchFilter.DiseaseType.ToLower())).ToList();
+                    docObj = docObj.Where(x => x.Specialization != null && x.Specialization.Split(',').Select(ele => ele.Trim()).
+                      Any(ele => searchFilter.QuickSpecialtie.Contains(ele))).ToList();
+                }
+
+
                 //by price 
                 if (searchFilter.ByPriceMax > 0 && searchFilter.ByPriceMin >= 0)
                 {
