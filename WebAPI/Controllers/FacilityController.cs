@@ -47,6 +47,7 @@ namespace WebAPI.Controllers
                 try
                 {
                     _registration.sendRegistrationEmail(user);
+                   
                 }
                 catch (Exception ex)
                 {
@@ -61,7 +62,7 @@ namespace WebAPI.Controllers
                     return ex.Message;
                 }
             }
-
+            _registration.sendRegistrationMessageInbox(user.Id, "", "");
             return "Registration has been done, And Account activation link" +
                         "has been sent your eamil id: " +
                             obj.Email;

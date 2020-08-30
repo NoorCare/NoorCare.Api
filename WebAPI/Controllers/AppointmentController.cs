@@ -142,6 +142,9 @@ namespace WebAPI.Controllers
                 string AppointmentId = _registration.creatId(5, obj.CountryCode.ToString(), 0);
                 obj.AppointmentId = AppointmentId;
                 var _appointmentCreated = _appointmentRepo.Insert(obj);
+
+                string msg = "Your booked appointment is pending for Date " + obj.AppointmentDate.ToShortDateString()+" We will notify when booked/reject";
+                _registration.sendRegistrationMessageInbox(obj.ClientId, msg, "Appointment Send For Approval");
             }
 
             return Request.CreateResponse(HttpStatusCode.Accepted, obj.AppointmentId == null ? "0" : obj.AppointmentId);
@@ -176,6 +179,11 @@ namespace WebAPI.Controllers
             }
             var result = _appointmentRepo.Update(obj);
 
+            //Send Email to Inbox
+            string msg = "Your booked appointment is " + status.ToUpper() + " for Date " + obj.AppointmentDate.ToShortDateString();
+            _registration.sendRegistrationMessageInbox(obj.ClientId, msg, "Appointment Status");
+
+
             //Email sent on status change
             string html = System.IO.File.ReadAllText(HttpContext.Current.Server.MapPath("~/Services/templat.html"));
             //_emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
@@ -200,6 +208,8 @@ namespace WebAPI.Controllers
 
             }
             var result = _appointmentRepo.Update(obj);
+            string msg = "Your booked appointment is "+ appointment.Status.ToUpper() + " for Date "+ obj.AppointmentDate.ToShortDateString() ;
+            _registration.sendRegistrationMessageInbox(obj.ClientId, msg, "Appointment Status");
             //Email sent on status change
             try
             {

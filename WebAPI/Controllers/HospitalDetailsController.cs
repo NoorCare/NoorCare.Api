@@ -43,11 +43,11 @@ namespace WebAPI.Controllers
         [HttpGet]
         [AllowAnonymous]
         // GET: api/HospitalDetails
-        public HttpResponseMessage GetAll(int hfp=0)
+        public HttpResponseMessage GetAll(int hfp = 0)
         {
-            hfp = hfp == 0 ? 2 : hfp;
-            var result = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted == false).ToList();
-            if(hfp!=0)
+            hfp = (hfp == 0 || hfp == 3) ? 2 : hfp;
+            var result = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted == false && x.IsBlocked==false).ToList();
+            if (hfp != 0)
             {
                 result = result.Where(x => x.jobType == hfp).ToList();
             }
@@ -56,11 +56,11 @@ namespace WebAPI.Controllers
 
         [Route("api/hospitaldetails/getAllHFP")]
         [HttpGet]
-        [AllowAnonymous]        
+        [AllowAnonymous]
         public HttpResponseMessage getAllHFP()
-        {           
-            var result = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted == false && x.IsBlocked==false).ToList();
-            
+        {
+            var result = _hospitaldetailsRepo.Find(x => x.EmailConfirmed == true && x.IsDocumentApproved == 1 && x.IsDeleted == false && x.IsBlocked == false).ToList();
+
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }
 
@@ -88,10 +88,10 @@ namespace WebAPI.Controllers
                     HospitalId = h.HospitalId,
                     HospitalName = h.HospitalName,
                     Mobile = h.Mobile,
-                    CountryCode=h.CountryCode,
+                    CountryCode = h.CountryCode,
                     AlternateNumber = h.AlternateNumber,
-                    CountryShortCode=h.CountryShortCode,
-                    CountryShortCodeAlt=h.CountryShortCodeAlt,                   
+                    CountryShortCode = h.CountryShortCode,
+                    CountryShortCodeAlt = h.CountryShortCodeAlt,
                     Email = h.Email,
                     Website = h.Website,
                     EstablishYear = h.EstablishYear,
@@ -236,7 +236,7 @@ namespace WebAPI.Controllers
             foreach (var d in doctors ?? new List<Doctor>())
             {
                 var feedback = _feedbackRepo.Find(x => x.PageId == d.DoctorId);
-                
+
                 var doctorAvailability = _doctorAvailabilityRepo.Find(x => x.DoctorId == d.DoctorId).FirstOrDefault();
                 _doctor = new Doctors
                 {
@@ -256,7 +256,7 @@ namespace WebAPI.Controllers
                     AgeGroupGender = d.AgeGroupGender,
                     Degree = d.Degree,
                     Education = getDegree(d.Degree, degree),
-                    SpecializationIds =  String.IsNullOrEmpty(d.Specialization)? myNum:Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
+                    SpecializationIds = String.IsNullOrEmpty(d.Specialization) ? myNum : Array.ConvertAll(d.Specialization.Split(','), s => int.Parse(s)),//d.Specialization,
                     Specialization = getSpecialization(d.Specialization, disease),
                     AboutUs = d.AboutUs,
                     TimeAvailability = doctorAvailability != null ? getDoctorAvilability(doctorAvailability.TimeId, timeMaster) : null,
@@ -531,7 +531,7 @@ namespace WebAPI.Controllers
             HospitalDetails _hospitalDetails = _hospitaldetailsRepo.Find(x => x.HospitalId == hospitalId).FirstOrDefault();
             if (_hospitalDetails != null)
             {
-               
+
                 _hospitalDetails.Specialization = obj.Specialization;
                 _hospitalDetails.Amenities = obj.Amenities;
                 _hospitalDetails.Services = obj.Services;
@@ -551,7 +551,7 @@ namespace WebAPI.Controllers
             if (_hospitalDetails != null)
             {
                 //_hospitalDetails.ProfilePath = "ProfilePic/hospital/" + hospitalId + ".jpeg";
-                _hospitalDetails.HospitalName=obj.HospitalName;
+                _hospitalDetails.HospitalName = obj.HospitalName;
                 _hospitalDetails.EstablishYear = obj.EstablishYear;
                 _hospitalDetails.Website = obj.Website;
                 _hospitalDetails.NumberofBed = obj.NumberofBed;
@@ -568,7 +568,7 @@ namespace WebAPI.Controllers
                 var result = _hospitaldetailsRepo.Update(_hospitalDetails);
 
                 AccountController account = new AccountController();
-                bool res=account.UpdateUserPhoneNo(_hospitalDetails.HospitalId,_hospitalDetails.CountryCode, _hospitalDetails.Mobile.ToString());
+                bool res = account.UpdateUserPhoneNo(_hospitalDetails.HospitalId, _hospitalDetails.CountryCode, _hospitalDetails.Mobile.ToString());
 
                 return Ok(result);
             }
@@ -646,7 +646,7 @@ namespace WebAPI.Controllers
             {
                 HospitalDocumentVerification hospitalDocuments = new HospitalDocumentVerification
                 {
-                    HospitalId = hospitalId,                   
+                    HospitalId = hospitalId,
                     Address = address,
                     Latitude = latitude,
                     Longitude = longitude,
@@ -677,12 +677,12 @@ namespace WebAPI.Controllers
         public IHttpActionResult uploadhospitaldocuments()
         {
             var httpRequest = HttpContext.Current.Request;
-            string hospitalId = httpRequest.Form["HospitalId"];           
+            string hospitalId = httpRequest.Form["HospitalId"];
             int objId = 0;
             try
             {
                 string basicPath = "~/HospitalDoc/" + hospitalId + "/";
-                
+
                 var directoryBackViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "BackView"));
                 var directoryFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "FrontView"));
                 var directoryCRFrontViewPath = Directory.CreateDirectory(HttpContext.Current.Server.MapPath(basicPath + "CRFrontView"));
@@ -693,7 +693,7 @@ namespace WebAPI.Controllers
                 string IdFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/FrontView/" + httpRequest.Files["IdFrontView"].FileName;
                 string CrFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/CRFrontView/" + httpRequest.Files["CrFrontView"].FileName;
                 string LicenseFrontView = constant.imgUrl + "HospitalDoc/" + hospitalId + "/LicenseFrontView/" + httpRequest.Files["LicenseFrontView"].FileName;
-               
+
                 HospitalDocumentVerification hospitalDocuments = new HospitalDocumentVerification
                 {
                     HospitalId = hospitalId,

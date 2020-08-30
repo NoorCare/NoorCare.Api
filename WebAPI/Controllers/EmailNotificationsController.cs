@@ -37,13 +37,15 @@ namespace WebAPI.Controllers
             {
                 var result = _emailNotificationsRepo.Find(x => x.To == userID && ((x.DeletedBy.IndexOf(userID) == -1) || x.DeletedBy == null)).OrderByDescending(x => x.Id).Take(10).ToList();
                 var data = (from r in result
-                            join u in users on r.From equals u.Id
+                                //join u in users on r.From equals u.Id
+                            join u in users on r.From equals u.Id into gj
+                            from subUser in gj.DefaultIfEmpty()
                             select new
                             {
                                 Id = r.Id,
                                 To = r.To,
                                 From = r.From,
-                                FromName = u.FirstName + ' ' + u.LastName,
+                                FromName = subUser?.FirstName ?? String.Empty +' '+ subUser?.LastName ?? String.Empty,
                                 Description = r.Description,
                                 IsDeleted = r.IsDeleted,
                                 Subject = r.Subject,
@@ -59,13 +61,16 @@ namespace WebAPI.Controllers
             {
                 var result = _emailNotificationsRepo.Find(x => x.From == userID && ((x.DeletedBy.IndexOf(userID) == -1) || x.DeletedBy == null)).OrderByDescending(x => x.Id).Take(10).ToList();
                 var data = (from r in result
-                            join u in users on r.To equals u.Id
+                                //join u in users on r.To equals u.Id
+                            join u in users on r.From equals u.Id into gj
+                            from subUser in gj.DefaultIfEmpty()
                             select new
                             {
                                 Id = r.Id,
                                 To = r.To,
                                 From = r.From,
-                                ToName = u.FirstName + ' ' + u.LastName,
+                                //ToName = u.FirstName + ' ' + u.LastName,
+                                ToName = subUser?.FirstName ?? String.Empty + ' ' + subUser?.LastName ?? String.Empty,
                                 Description = r.Description,
                                 IsDeleted = r.IsDeleted,
                                 Subject = r.Subject,
@@ -80,13 +85,16 @@ namespace WebAPI.Controllers
             {
                 var result = _emailNotificationsRepo.Find(x => (x.From == userID || x.To == userID) && (x.DeletedBy.IndexOf(userID) >= 0)).OrderByDescending(x => x.Id).Take(10).ToList();
                 var data = (from r in result
-                            join u in users on r.From equals u.Id
+                                //join u in users on r.From equals u.Id
+                            join u in users on r.From equals u.Id into gj
+                            from subUser in gj.DefaultIfEmpty()
                             select new
                             {
                                 Id = r.Id,
                                 To = r.To,
                                 From = r.From,
-                                FromName = u.FirstName + ' ' + u.LastName,
+                                //FromName = u.FirstName + ' ' + u.LastName,
+                                ToName = subUser?.FirstName ?? String.Empty + ' ' + subUser?.LastName ?? String.Empty,
                                 Description = r.Description,
                                 IsDeleted = r.IsDeleted,
                                 Subject = r.Subject,
@@ -162,8 +170,8 @@ namespace WebAPI.Controllers
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var users = userStore.Users.Where(x => x.Id == result.To).FirstOrDefault();
             var fromUsers = userStore.Users.Where(x => x.Id == result.From).FirstOrDefault();
-            string name = users.FirstName + ' ' + users.LastName;
-            string fromName = fromUsers.FirstName + ' ' + fromUsers.LastName;
+            string name = users?.FirstName ?? String.Empty + ' ' + users?.LastName ?? String.Empty;
+            string fromName = fromUsers?.FirstName ?? String.Empty  + ' ' + fromUsers?.LastName ?? String.Empty;
             var data = new { fromName = fromName, toName = name, result.Id, result.Attachments, result.CreatedDate, result.Description, result.From, result.Subject, result.To };
             //, result.CreatedTime
             return Request.CreateResponse(HttpStatusCode.OK, data);

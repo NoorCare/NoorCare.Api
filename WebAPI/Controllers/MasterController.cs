@@ -187,6 +187,32 @@ namespace WebAPI.Controllers
 
             return amenities;
         }
+
+        [Route("api/Specialization/{type}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public HttpResponseMessage GetSpecialization(string type)
+        {
+            if (type == "3")
+            {
+                //doctor Search
+                IDiseaseRepository _diseaseDetailRepo = RepositoryFactory.Create<IDiseaseRepository>(ContextTypes.EntityFramework);
+                var diseaseTypes = from d in _diseaseDetailRepo.GetAll()
+                                   select new { Id = d.Id, Name = d.DiseaseType};
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, diseaseTypes.OrderBy(x=>x.Name)); 
+            }
+            else
+            {
+                //Hospital Search 
+                ITblHospitalSpecialtiesRepository _stateRepository = RepositoryFactory.Create<ITblHospitalSpecialtiesRepository>(ContextTypes.EntityFramework);
+                var result= from h in  _stateRepository.GetAll()
+                            select new { Id = h.Id, Name = h.HospitalSpecialties.ToString() };
+
+                return Request.CreateResponse(HttpStatusCode.Accepted, result.OrderBy(x=>x.Name));
+            }
+        }
+
         [Route("api/autocomplete/{searchtype}/{autosearchtext}")]
         [HttpGet]
         [AllowAnonymous]

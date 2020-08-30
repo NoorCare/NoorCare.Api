@@ -61,6 +61,7 @@ namespace WebAPI.Controllers
                 {
                     _registration.sendRegistrationEmail(user);
                     _registration.sendRegistrationMessage(user);
+                    _registration.sendRegistrationMessageInbox(user.Id, "","");
                 }
                 catch (Exception ex)
                 {

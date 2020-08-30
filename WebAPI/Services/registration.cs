@@ -2,6 +2,7 @@
 using NoorCare.Repository;
 using System;
 using System.Text;
+using WebAPI.Controllers;
 using WebAPI.Entity;
 using WebAPI.Models;
 using WebAPI.Repository;
@@ -20,8 +21,8 @@ namespace WebAPI.Services
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Gender = model.Gender,                
-                MobileNo =model.PhoneNumber,
+                Gender = model.Gender,
+                MobileNo = model.PhoneNumber,
                 EmailId = model.Email,
                 Jobtype = model.jobType,
                 CountryCode = model.CountryCode.ToString(),
@@ -48,8 +49,8 @@ namespace WebAPI.Services
                 ModifiedDate = DateTime.Now,
                 CreatedDate = DateTime.Now,
                 LimitBannerCount = 0,
-                LimitVideoCount=0,
-                LimitGallaryCount=0
+                LimitVideoCount = 0,
+                LimitGallaryCount = 0
             };
             return _hospitalDetailsRepository.Insert(_hospitalDetail);
         }
@@ -67,7 +68,7 @@ namespace WebAPI.Services
                 CountryCode = model.CountryCode,
                 CountryShortCode = model.CountryShortCode,
                 EmailConfirmed = model.EmailConfirmed,
-                PhoneNumber = model.PhoneNumber,               
+                PhoneNumber = model.PhoneNumber,
                 CreatedBy = "Self",
                 ModifiedBy = "Self",
                 DateEntered = DateTime.Now.ToString(),
@@ -83,25 +84,25 @@ namespace WebAPI.Services
             string priFix = "NCM-";
             if (gender == 1 && jobType == 1)
             {
-               priFix = "NCM-";
-               IsPriFix = true;
+                priFix = "NCM-";
+                IsPriFix = true;
             }
-            else if (gender == 2 && jobType == 1 && IsPriFix ==false)
+            else if (gender == 2 && jobType == 1 && IsPriFix == false)
             {
-                 priFix = "NCF-";
+                priFix = "NCF-";
                 IsPriFix = true;
             }
             else if (jobType == 3 && IsPriFix == false)
             {
-                 priFix = "NCD-"; IsPriFix = true;
+                priFix = "NCD-"; IsPriFix = true;
             }
             else if (jobType == 4 && IsPriFix == false)
             {
-                 priFix = "NCS-"; IsPriFix = true;
+                priFix = "NCS-"; IsPriFix = true;
             }
             else if (IsPriFix == false)
             {
-                 priFix = "NCH-"; IsPriFix = true;
+                priFix = "NCH-"; IsPriFix = true;
             }
 
             if (NationalityId.Length == 2)
@@ -290,12 +291,12 @@ namespace WebAPI.Services
             {
                 _emailSender.email_send(model.Email, model.FirstName + " " + model.LastName == null ? "" : model.LastName, model.Id, model.JobType, model.PasswordHash);
 
-               // string sMessage = "Welcome to NoorCare family(" + model.FirstName + ") this is your NoorCare number save it for further communication (" + model.NoorCareNumber + ") ";
+                // string sMessage = "Welcome to NoorCare family(" + model.FirstName + ") this is your NoorCare number save it for further communication (" + model.NoorCareNumber + ") ";
 
-              //  _emailSender.SendSMS(model.PhoneNumber, sMessage);
+                //  _emailSender.SendSMS(model.PhoneNumber, sMessage);
 
-               // Welcome to NoorCare family(user name) this is your NoorCare number save it for further communication
-               // (NoorCare number)
+                // Welcome to NoorCare family(user name) this is your NoorCare number save it for further communication
+                // (NoorCare number)
 
                 //http://api.smscountry.com/SMSCwebservice_bulk.aspx?User=NoorCare&passwd=NoorCare@123&mobilenumber=97433977547&message=Hi Aslam This is test by Veerendra if you received this message plz let men know on whatsapp
                 // &sid = Noorcare & mtype = N & DR = Y
@@ -317,27 +318,47 @@ namespace WebAPI.Services
             }
         }
 
-        public void sendForgotPassword(ApplicationUser model,string password)
+        public void sendRegistrationMessageInbox(string noorCareId, string sMessage, string subject)
+        {
+            //string sMessage = "Welcome to NoorCare family(" +name + ") this is your NoorCare number save it for further communication (" +noorCareId + ") ";
+            sMessage = sMessage == "" ? "Welcome to Noorcare Please Verify your account you’re one step closer to be as a member With us." : sMessage;
+            subject = subject == "" ? "Welcome to Noorcare" : subject;
+            EmailNotifications notifications = new EmailNotifications();
+            notifications.Id = 0;
+            notifications.To = noorCareId;
+            notifications.From = "noreply@noorcare.net";
+            notifications.Description = sMessage;
+            notifications.Subject = subject;
+            EmailNotificationsController email = new EmailNotificationsController();
+            try
+            {
+                var res = email.SaveEmail(notifications);
+            }
+            catch(Exception ex) { }
+            
+        }
+
+        public void sendForgotPassword(ApplicationUser model, string password)
         {
             try
             {
 
                 string ClientName = "";//model.FirstName + " " + model.LastName == null ? "" : model.LastName;
-                if (model.LastName==null)
+                if (model.LastName == null)
                 {
                     ClientName = model.FirstName;
                 }
                 else
                 {
-                    ClientName = model.FirstName + " "+ model.LastName;
+                    ClientName = model.FirstName + " " + model.LastName;
                 }
                 _emailSender.email_sendforgotpassword(model.Email, ClientName, model.Id, password);
             }
             catch (Exception ex)
             {
-                
+
             }
-               
+
         }
     }
 }
