@@ -138,6 +138,7 @@ namespace WebAPI.Controllers
         public HttpResponseMessage DoctorDetails(string doctorid)
         {
             var result = _doctorRepo.Find(x => x.DoctorId == doctorid).FirstOrDefault();
+            
 
             return Request.CreateResponse(HttpStatusCode.Accepted, result);
         }

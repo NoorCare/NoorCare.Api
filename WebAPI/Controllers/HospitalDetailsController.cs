@@ -561,6 +561,7 @@ namespace WebAPI.Controllers
                 _hospitalDetails.CountryShortCode = obj.CountryShortCode;
                 _hospitalDetails.CountryShortCodeAlt = obj.CountryShortCodeAlt;
                 _hospitalDetails.CountryCode = obj.CountryCode;
+                _hospitalDetails.CountryCodeAlt = obj.CountryCodeAlt;
                 _hospitalDetails.PaymentType = obj.PaymentType;
                 _hospitalDetails.Emergency = obj.Emergency;
                 //_hospitalDetails.InsuranceCompanies = obj.InsuranceCompanies;
