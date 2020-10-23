@@ -71,7 +71,7 @@ namespace WebAPI.Entity
         public int Id { get; set; }
         [MaxLength(50)]
         public string DoctorId { get; set; }
-        [MaxLength(50)]
+        [MaxLength(200)]
         public string TimeId { get; set; }
         [MaxLength(100)]
         public string Days { get; set; }
