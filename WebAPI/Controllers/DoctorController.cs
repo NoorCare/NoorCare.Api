@@ -981,7 +981,7 @@ namespace WebAPI.Controllers
                 if (searchFilter.CityID > 0)
                 {
                     docObj = (from p in docObj
-                              join d in _hospitaldetailsRepo.GetAll() on p.HospitalId equals d.HospitalId
+                              join d in _hospitaldetailsRepo.GetAll().Where(d=>d.IsDeleted==false && d.IsBlocked==false && d.IsDocumentApproved == 1) on p.HospitalId equals d.HospitalId
                               where (d.City == searchFilter.CityID.ToString())
                               select p).ToList();
                 }
@@ -1091,7 +1091,7 @@ namespace WebAPI.Controllers
                 doctors = docObj.ToList();
                 foreach (var d in doctors ?? new List<Doctor>())
                 {
-                    var hospRepo = _hospitaldetailsRepo.Find(x => x.HospitalId == d.HospitalId).FirstOrDefault();
+                    var hospRepo = _hospitaldetailsRepo.Find(x => x.HospitalId == d.HospitalId && x.IsDeleted==false && x.IsBlocked==false).FirstOrDefault();
                     var feedback = _feedbackRepo.Find(x => x.PageId == d.DoctorId);
                     int likeCount = _likeVisitorRepo.Find(x => x.HFP_DOC_NCID.Trim() == d.DoctorId && x.IsDelete == false && x.Like_Dislike == true).Count();
                     var facility = _facilityRepo.Find(x => x.JobType == d.jobType).FirstOrDefault();
